@@ -12,7 +12,7 @@ window.PLAYLIST = {
             pos: 10,
             name: 'C-POP',
             songs: [
-                'music/C-POP/飞咯 - 窦靖童.mp3'
+                'music/C-POP/飞咯-窦靖童.mp3'
             ]
         },
         {
