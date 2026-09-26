@@ -225,50 +225,6 @@
     border-radius: 1px;
   }
 
-  /* LANG 切换开关 */
-  .toggle-switch {
-    width: 50px; height: 26px;
-    background: #b0b0b0;
-    border-radius: 2px;
-    position: relative;
-    cursor: pointer;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-    border: 1px solid #888;
-  }
-  .toggle-switch::after {
-    content: '';
-    position: absolute;
-    top: 2px; left: 2px;
-    width: 20px; height: 20px;
-    background: linear-gradient(180deg, #eee, #999);
-    border-radius: 2px;
-    transition: transform 0.2s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-  }
-  .toggle-switch.on::after { transform: translateX(24px); }
-
-  .lang-label {
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    color: #555;
-    font-weight: 700;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .lang-mode-display {
-    font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
-    color: #c0392b;
-    font-weight: 700;
-    background: #e8e8e4;
-    padding: 2px 10px;
-    border: 1px solid #b0b0b0;
-    border-radius: 2px;
-    letter-spacing: 2px;
-  }
-
   .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
   .meter {
     width: 220px;
@@ -422,14 +378,6 @@
       <div class="small-knob" id="volumeKnob"></div>
     </div>
 
-    <div class="control-group">
-      <div class="lang-label">
-        LANG
-        <div class="lang-mode-display" id="langMode">FM</div>
-      </div>
-      <div class="toggle-switch" id="langSwitch"></div>
-    </div>
-
     <div class="meters-group">
       <div class="meter">
         <div class="meter-label">SIGNAL</div>
@@ -466,12 +414,10 @@
   // ==================== 电台配置 ====================
   // 每首歌格式：{ title, album, artist, file }
   // 显示格式：歌曲名 - 专辑名 - 歌手名
-
-  // FM 模式 — 中文歌曲
-  const stationsFM = [
+  const stations = [
     {
-      pos: 38,
-      name: '中文电台 · JAY',
+      pos: 20,
+      name: 'JAY CHOU',
       songs: [
         { title: '晴天', album: '叶惠美', artist: '周杰伦', file: 'music/jay/晴天.mp3' },
         { title: '七里香', album: '七里香', artist: '周杰伦', file: 'music/jay/七里香.mp3' },
@@ -479,62 +425,27 @@
       ]
     },
     {
-      pos: 51,
-      name: '中文电台 · JJ',
+      pos: 40,
+      name: 'JJ LIN',
       songs: [
         { title: '江南', album: '第二天堂', artist: '林俊杰', file: 'music/jj/江南.mp3' },
         { title: '曹操', album: '曹操', artist: '林俊杰', file: 'music/jj/曹操.mp3' }
       ]
     },
     {
-      pos: 71,
-      name: '中文电台 · EASON',
+      pos: 60,
+      name: 'EASON CHAN',
       songs: [
         { title: '十年', album: '黑白灰', artist: '陈奕迅', file: 'music/eason/十年.mp3' },
         { title: '浮夸', album: 'U87', artist: '陈奕迅', file: 'music/eason/浮夸.mp3' }
       ]
     },
     {
-      pos: 88,
-      name: '中文电台 · 古典',
+      pos: 85,
+      name: 'CLASSICAL',
       songs: [
         { title: '卡农', album: '古典精选', artist: '帕赫贝尔', file: 'music/classical/卡农.mp3' },
         { title: '月光', album: '贝多芬奏鸣曲', artist: '贝多芬', file: 'music/classical/月光.mp3' }
-      ]
-    }
-  ];
-
-  // AM 模式 — 英文歌曲
-  const stationsAM = [
-    {
-      pos: 22,
-      name: 'AM · THE BEATLES',
-      songs: [
-        { title: 'Hey Jude', album: 'Hey Jude', artist: 'The Beatles', file: 'music/beatles/hey-jude.mp3' },
-        { title: 'Let It Be', album: 'Let It Be', artist: 'The Beatles', file: 'music/beatles/let-it-be.mp3' }
-      ]
-    },
-    {
-      pos: 46,
-      name: 'AM · QUEEN',
-      songs: [
-        { title: 'Bohemian Rhapsody', album: 'A Night at the Opera', artist: 'Queen', file: 'music/queen/bohemian.mp3' },
-        { title: 'We Will Rock You', album: 'News of the World', artist: 'Queen', file: 'music/queen/rock-you.mp3' }
-      ]
-    },
-    {
-      pos: 68,
-      name: 'AM · COLDPLAY',
-      songs: [
-        { title: 'Yellow', album: 'Parachutes', artist: 'Coldplay', file: 'music/coldplay/yellow.mp3' },
-        { title: 'Viva La Vida', album: 'Viva la Vida', artist: 'Coldplay', file: 'music/coldplay/viva.mp3' }
-      ]
-    },
-    {
-      pos: 85,
-      name: 'AM · JAZZ',
-      songs: [
-        { title: 'Autumn Leaves', album: "Somethin' Else", artist: 'Cannonball Adderley', file: 'music/jazz/autumn.mp3' }
       ]
     }
   ];
@@ -552,14 +463,11 @@
   const ledPower = document.getElementById('ledPower');
   const ledStereo = document.getElementById('ledStereo');
   const volumeKnob = document.getElementById('volumeKnob');
-  const langSwitch = document.getElementById('langSwitch');
-  const langMode = document.getElementById('langMode');
   const tuningKnob = document.getElementById('tuningKnob');
   const footerInfoLink = document.getElementById('footerInfoLink');
 
   let isPowered = false;
-  let mode = 'FM';
-  let currentPos = 38;
+  let currentPos = 20;
   let lockedStation = null;
   let isPlaying = false;
   let currentSongIndex = 0;
@@ -568,10 +476,6 @@
   let dataArray = null;
   let signalNeedle, tuningNeedle;
   let volumeLevel = 0.7;
-
-  function getStations() {
-    return mode === 'FM' ? stationsFM : stationsAM;
-  }
 
   // ============ 表头构建（扁平版） ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -737,7 +641,6 @@
     trackDisplayInner.style.animation = 'none';
     trackDisplayInner.style.transform = 'translateX(0)';
 
-    // 强制重排，让 scrollWidth 反映最新文本
     void trackDisplayInner.offsetWidth;
 
     const tunerEl = document.querySelector('.tuner');
@@ -760,13 +663,11 @@
 
   // ============ 调谐逻辑 ============
   function posToFreq(pos) {
-    if (mode === 'FM') return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
-    return AM_MIN + (pos / 100) * (AM_MAX - AM_MIN);
+    return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
   }
 
   function formatFreq(pos) {
-    if (mode === 'FM') return posToFreq(pos).toFixed(1) + ' MHz';
-    return Math.round(posToFreq(pos)) + ' kHz';
+    return posToFreq(pos).toFixed(1) + ' MHz';
   }
 
   function updateTuning(pos) {
@@ -777,7 +678,6 @@
     freqDisplay.textContent = formatFreq(pos);
     needle.style.left = pos + '%';
 
-    const stations = getStations();
     let found = null;
     for (const st of stations) {
       if (Math.abs(pos - st.pos) < 1.2) {
@@ -860,29 +760,12 @@
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-    const stations = getStations();
     let pool = stations;
     if (lockedStation && stations.length > 1) {
       pool = stations.filter(s => s !== lockedStation);
     }
     const randomStation = pool[Math.floor(Math.random() * pool.length)];
     tuneToStation(randomStation);
-  }
-
-  // ============ LANG 模式切换 ============
-  function switchMode() {
-    mode = mode === 'FM' ? 'AM' : 'FM';
-    langMode.textContent = mode;
-    langSwitch.classList.toggle('on', mode === 'AM');
-
-    audio.pause();
-    isPlaying = false;
-    lockedStation = null;
-
-    const stations = getStations();
-    if (stations.length > 0) {
-      tuneToStation(stations[0]);
-    }
   }
 
   // ============ 交互事件 ============
@@ -905,8 +788,6 @@
     volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
     audio.volume = volumeLevel;
   });
-
-  langSwitch.addEventListener('click', switchMode);
 
   // 大旋钮：拖动 / 点击 / 滚轮
   let isDragging = false;
@@ -975,11 +856,11 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· POWER 开关控制电源\n· LANG 按钮切换 FM（中文）/ AM（英文）\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 曲目显示：歌曲名 - 专辑名 - 歌手名\n· 超长曲目名会自动滚动显示');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· POWER 开关控制电源\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 曲目显示：歌曲名 - 专辑名 - 歌手名\n· 超长曲目名会自动滚动显示');
   });
 
   // 初始化
-  updateTuning(38);
+  updateTuning(20);
   audio.volume = volumeLevel;
 })();
 </script>
