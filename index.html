@@ -200,8 +200,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
     padding: 0 4px;
+  }
+
+  .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
   }
 
   .control-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -247,6 +254,64 @@
     border-radius: 1px;
   }
 
+  /* ===== 卡座按键 ===== */
+  .transport-key {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .transport-key .key-body {
+    width: 60px;
+    height: 40px;
+    background: linear-gradient(180deg, #3a3530 0%, #1a1614 100%);
+    border: 1px solid #0a0806;
+    border-radius: 3px;
+    box-shadow: 0 4px 0 #0a0806, inset 0 1px 0 rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #d4c4a8;
+    transition: all 0.05s;
+    position: relative;
+  }
+
+  .transport-key .key-body::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 6px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #333;
+    transition: all 0.2s;
+  }
+
+  .transport-key.play.active .key-body::before {
+    background: #4cd964;
+    box-shadow: 0 0 6px #4cd964;
+  }
+
+  .transport-key.stop .key-body::before {
+    background: #ff3b30;
+    box-shadow: 0 0 6px #ff3b30;
+  }
+
+  .transport-key:active .key-body {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #0a0806, inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .transport-key .key-label {
+    font-size: 0.55rem;
+    letter-spacing: 1.5px;
+    color: #555;
+    font-weight: 700;
+  }
+
   .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
   .meter {
     width: 220px;
@@ -259,7 +324,7 @@
   .meter-label { font-size: 0.55rem; letter-spacing: 2px; color: #555; text-align: center; margin-bottom: 1px; font-weight: 700; }
   .meter-svg { display: block; width: 100%; height: auto; }
 
-  .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
   .big-knob {
     width: 118px; height: 118px;
     border-radius: 50%;
@@ -313,6 +378,27 @@
   }
   .knob-hint strong { color: #c0392b; display: block; font-size: 0.6rem; }
 
+  /* 状态条 */
+  .status-bar {
+    margin-top: 14px;
+    padding: 6px 14px;
+    background: #1a1614;
+    color: #ffb347;
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    border-radius: 3px;
+    border: 1px solid #0a0806;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .status-bar .status-text { color: #ffb347; }
+  .status-bar .status-count { color: #8a8078; }
+
   footer {
     margin-top: 28px;
     display: flex;
@@ -335,7 +421,8 @@
     .tuner { padding: 20px; }
     .brand-name { font-size: 1.3rem; }
     .brand-model { display: none; }
-    .control-row { flex-wrap: wrap; gap: 16px; }
+    .control-row { flex-wrap: wrap; gap: 14px; }
+    .left-controls { width: 100%; justify-content: space-around; }
     .meters-group { order: -1; width: 100%; justify-content: space-around; }
     .meter { width: 46%; }
     .big-knob { width: 90px; height: 90px; }
@@ -392,14 +479,28 @@
   </div>
 
   <div class="control-row">
-    <div class="control-group">
-      <div class="control-label">POWER</div>
-      <div class="switch" id="powerSwitch"></div>
-    </div>
+    <div class="left-controls">
+      <div class="control-group">
+        <div class="control-label">POWER</div>
+        <div class="switch" id="powerSwitch"></div>
+      </div>
 
-    <div class="control-group">
-      <div class="control-label">OUTPUT</div>
-      <div class="small-knob" id="volumeKnob"></div>
+      <div class="control-group">
+        <div class="control-label">OUTPUT</div>
+        <div class="small-knob" id="volumeKnob"></div>
+      </div>
+
+      <!-- ★ 播放按钮 -->
+      <div class="transport-key play" id="playBtn">
+        <div class="key-body">▶</div>
+        <div class="key-label">PLAY</div>
+      </div>
+
+      <!-- ★ 停止按钮 -->
+      <div class="transport-key stop" id="stopBtn">
+        <div class="key-body">■</div>
+        <div class="key-label">STOP</div>
+      </div>
     </div>
 
     <div class="meters-group">
@@ -421,6 +522,12 @@
       </div>
     </div>
   </div>
+
+  <!-- ★ 状态条 -->
+  <div class="status-bar">
+    <span class="status-text" id="statusText">正在初始化...</span>
+    <span class="status-count" id="statusCount">歌单: —</span>
+  </div>
 </div>
 
 <footer>
@@ -433,12 +540,11 @@
 
 <audio id="bgMusic" preload="auto"></audio>
 
-<!-- ★ 歌单配置：单独文件，先于主脚本加载 -->
 <script src="playlist.js"></script>
 
 <script>
 (function() {
-  // ==================== 从 playlist.js 读取电台配置 ====================
+  // ==================== 读取歌单 ====================
   const config = window.PLAYLIST || { stations: [] };
   const stations = Array.isArray(config.stations) ? config.stations : [];
 
@@ -457,6 +563,10 @@
   const ledStereo = document.getElementById('ledStereo');
   const volumeKnob = document.getElementById('volumeKnob');
   const tuningKnob = document.getElementById('tuningKnob');
+  const playBtn = document.getElementById('playBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const statusText = document.getElementById('statusText');
+  const statusCount = document.getElementById('statusCount');
   const footerInfoLink = document.getElementById('footerInfoLink');
 
   let isPowered = false;
@@ -469,6 +579,12 @@
   let dataArray = null;
   let signalNeedle, tuningNeedle;
   let volumeLevel = 0.7;
+
+  // ============ 状态显示 ============
+  function setStatus(text) {
+    statusText.textContent = text;
+    console.log('[状态]', text);
+  }
 
   // ============ 表头构建 ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -598,15 +714,19 @@
       if (audioContext.state === 'suspended') audioContext.resume();
       return;
     }
-    const AC = window.AudioContext || window.webkitAudioContext;
-    audioContext = new AC();
-    const source = audioContext.createMediaElementSource(audio);
-    analyser = audioContext.createAnalyser();
-    analyser.fftSize = 1024;
-    source.connect(analyser);
-    analyser.connect(audioContext.destination);
-    dataArray = new Uint8Array(analyser.fftSize);
-    requestAnimationFrame(animateMeters);
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioContext = new AC();
+      const source = audioContext.createMediaElementSource(audio);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 1024;
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+      dataArray = new Uint8Array(analyser.fftSize);
+      requestAnimationFrame(animateMeters);
+    } catch (err) {
+      console.warn('AudioContext 初始化失败:', err);
+    }
   }
 
   function animateMeters() {
@@ -691,7 +811,6 @@
       ledStereo.classList.add('on');
       const offset = (pos - found.pos) / 1.2;
       tuningNeedle.setAttribute('transform', `rotate(${offset * 15} ${CX} ${CY})`);
-
       stationTag.textContent = found.name || '—';
 
       if (found !== lockedStation) {
@@ -699,20 +818,14 @@
         if (isPowered) {
           playStation(found);
         } else {
-          updateTrackDisplay('待机');
+          setStatus('已锁定电台：' + found.name + '（电源未开）');
         }
-      } else if (isPowered && !isPlaying) {
-        playStation(found);
-      } else if (!isPowered) {
-        updateTrackDisplay('待机');
       }
     } else {
       lockedStation = null;
       ledStereo.classList.remove('on');
       tuningNeedle.setAttribute('transform', `rotate(0 ${CX} ${CY})`);
       stationTag.textContent = '—';
-      updateTrackDisplay(isPowered ? '无信号' : '关机');
-
       if (isPowered && isPlaying) {
         audio.pause();
         isPlaying = false;
@@ -721,13 +834,17 @@
   }
 
   function playStation(station) {
-    if (!station || !station.songs || station.songs.length === 0) return;
+    if (!station || !station.songs || station.songs.length === 0) {
+      setStatus('该电台没有歌曲');
+      return;
+    }
     currentSongIndex = Math.floor(Math.random() * station.songs.length);
     playSong(station.songs[currentSongIndex]);
   }
 
   function playSong(file) {
     initAudioContext();
+    setStatus('正在加载：' + getFileName(file));
     audio.src = file;
     audio.volume = volumeLevel;
     const promise = audio.play();
@@ -735,9 +852,13 @@
       promise.then(() => {
         isPlaying = true;
         updateTrackDisplay(getFileName(file));
+        setStatus('正在播放：' + getFileName(file));
+        playBtn.classList.add('active');
       }).catch(err => {
         console.warn('播放失败:', err);
         isPlaying = false;
+        setStatus('播放失败：' + (err.message || err.name));
+        updateTrackDisplay('播放失败');
       });
     }
   }
@@ -758,46 +879,69 @@
     }, 950);
   }
 
-  function autoTuneRandom() {
+  // ============ 播放 / 停止按钮 ============
+  function handlePlay() {
     if (stations.length === 0) {
+      setStatus('歌单为空，请检查 playlist.js');
       updateTrackDisplay('歌单为空');
       return;
     }
+
     if (!isPowered) {
       isPowered = true;
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-    let pool = stations;
-    if (lockedStation && stations.length > 1) {
-      pool = stations.filter(s => s !== lockedStation);
+
+    // 如果当前已锁定电台，直接播放；否则随机选一个
+    if (lockedStation) {
+      playStation(lockedStation);
+    } else {
+      const randomStation = stations[Math.floor(Math.random() * stations.length)];
+      tuneToStation(randomStation);
     }
-    const randomStation = pool[Math.floor(Math.random() * pool.length)];
-    tuneToStation(randomStation);
   }
 
-  // ============ 交互事件 ============
+  function handleStop() {
+    audio.pause();
+    audio.currentTime = 0;
+    isPlaying = false;
+    playBtn.classList.remove('active');
+    setStatus('已停止');
+    updateTrackDisplay('已停止');
+  }
+
+  playBtn.addEventListener('click', handlePlay);
+  stopBtn.addEventListener('click', handleStop);
+
+  // ============ 电源 ============
   powerSwitch.addEventListener('click', () => {
     isPowered = !isPowered;
     powerSwitch.classList.toggle('on', isPowered);
     ledPower.classList.toggle('on', isPowered);
 
     if (isPowered) {
+      setStatus('电源已开');
       updateTuning(currentPos);
     } else {
       audio.pause();
       isPlaying = false;
       ledStereo.classList.remove('on');
       stationTag.textContent = '—';
+      setStatus('电源已关');
       updateTrackDisplay('关机');
+      playBtn.classList.remove('active');
     }
   });
 
+  // ============ 音量 ============
   volumeKnob.addEventListener('click', () => {
     volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
     audio.volume = volumeLevel;
+    setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
   });
 
+  // ============ 大旋钮 ============
   let isDragging = false;
   let startY = 0;
   let startPos = 0;
@@ -822,7 +966,20 @@
   });
 
   document.addEventListener('mouseup', () => {
-    if (isDragging && totalMovement < 6) autoTuneRandom();
+    if (isDragging && totalMovement < 6) {
+      // 点击 → 自动随机选台
+      if (stations.length === 0) {
+        setStatus('歌单为空，请检查 playlist.js');
+        return;
+      }
+      if (!isPowered) {
+        isPowered = true;
+        powerSwitch.classList.add('on');
+        ledPower.classList.add('on');
+      }
+      const randomStation = stations[Math.floor(Math.random() * stations.length)];
+      tuneToStation(randomStation);
+    }
     isDragging = false;
   });
 
@@ -854,7 +1011,16 @@
   }, { passive: true });
 
   document.addEventListener('touchend', () => {
-    if (isDragging && totalMovement < 8) autoTuneRandom();
+    if (isDragging && totalMovement < 8) {
+      if (stations.length === 0) return;
+      if (!isPowered) {
+        isPowered = true;
+        powerSwitch.classList.add('on');
+        ledPower.classList.add('on');
+      }
+      const randomStation = stations[Math.floor(Math.random() * stations.length)];
+      tuneToStation(randomStation);
+    }
     isDragging = false;
   });
 
@@ -862,17 +1028,25 @@
     if (isPowered && lockedStation) nextSong();
   });
 
+  audio.addEventListener('error', (e) => {
+    setStatus('音频加载失败：' + getFileName(audio.src));
+    updateTrackDisplay('加载失败');
+  });
+
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 文件中配置\n· POWER 开关控制电源\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 频率旁显示电台栏目名\n· 右侧显示当前播放的文件名');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· 点击 PLAY 按钮播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台');
   });
 
   // ============ 初始化 ============
   if (stations.length === 0) {
+    setStatus('未检测到歌单，请检查 playlist.js');
     updateTrackDisplay('歌单未加载');
-    console.warn('未检测到电台配置，请检查 playlist.js 是否存在且路径正确。');
+    statusCount.textContent = '歌单: 0 个电台';
   } else {
-    // 用第一个电台的位置作为初始指针位置
+    const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
+    statusCount.textContent = `歌单: ${stations.length} 个电台 / ${totalSongs} 首歌`;
+    setStatus('就绪，点击 PLAY 开始');
     updateTuning(stations[0].pos);
   }
   audio.volume = volumeLevel;
