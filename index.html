@@ -22,19 +22,16 @@
   /* ============ 主体机箱 ============ */
   .tuner {
     width: 100%;
-    max-width: 860px;
+    max-width: 1120px;
     background: #d8d8d8;
     background-image: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
     border-radius: 4px;
     box-shadow:
-      0 30px 60px rgba(0,0,0,0.8),
+      0 40px 80px rgba(0,0,0,0.85),
       inset 0 1px 0 rgba(255,255,255,0.8),
       inset 0 -1px 0 rgba(0,0,0,0.2);
-    padding: 22px 28px;
+    padding: 28px 36px;
     position: relative;
-    /* 拉丝金属纹理 */
-    background-size: 100% 100%, 2px 100%;
-    background-blend-mode: normal, overlay;
   }
 
   .tuner::before {
@@ -57,27 +54,26 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 1px solid #b0b0b0;
   }
 
   .brand-left {
     display: flex;
     align-items: baseline;
-    gap: 16px;
+    gap: 20px;
   }
 
   .brand-name {
-    font-size: 1.4rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: #111;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
 
   .brand-model {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     letter-spacing: 2px;
     color: #555;
     text-transform: uppercase;
@@ -85,21 +81,22 @@
 
   .brand-indicators {
     display: flex;
-    gap: 18px;
+    gap: 24px;
     align-items: center;
-    font-size: 0.6rem;
-    letter-spacing: 1px;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
     color: #555;
+    font-weight: 600;
   }
 
   .indicator {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
   }
 
   .led {
-    width: 7px; height: 7px;
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: #333;
     transition: all 0.2s;
@@ -107,12 +104,12 @@
 
   .led.on {
     background: #e33;
-    box-shadow: 0 0 8px #e33, inset 0 0 2px rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px #e33, inset 0 0 2px rgba(255,255,255,0.6);
   }
 
   .led.green.on {
     background: #2a2;
-    box-shadow: 0 0 8px #2a2, inset 0 0 2px rgba(255,255,255,0.6);
+    box-shadow: 0 0 10px #2a2, inset 0 0 2px rgba(255,255,255,0.6);
   }
 
   /* ============ 频率刻度盘 ============ */
@@ -120,9 +117,9 @@
     background: #f4f4f0;
     border: 1px solid #a0a0a0;
     border-radius: 3px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+    padding: 14px 20px;
+    margin-bottom: 22px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
     position: relative;
   }
 
@@ -130,46 +127,47 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
   }
 
   .dial-frequency {
     font-family: 'Courier New', monospace;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #111;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     background: #e8e8e4;
-    padding: 2px 12px;
+    padding: 4px 18px;
     border-radius: 2px;
     border: 1px solid #b0b0b0;
-    min-width: 110px;
+    min-width: 170px;
     text-align: center;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
   }
 
   .dial-station-name {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
+    font-size: 0.95rem;
+    letter-spacing: 3px;
     color: #c0392b;
     text-transform: uppercase;
-    font-weight: 600;
-    min-height: 1.1em;
+    font-weight: 700;
+    min-height: 1.2em;
   }
 
   .dial-band-labels {
     display: flex;
     justify-content: space-between;
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     color: #666;
-    letter-spacing: 1px;
-    margin-bottom: 2px;
+    letter-spacing: 1.5px;
+    margin-bottom: 3px;
+    font-weight: 600;
   }
 
-  /* FM 刻度 */
   .fm-scale {
     position: relative;
-    height: 28px;
-    margin-bottom: 4px;
+    height: 38px;
+    margin-bottom: 6px;
     background: #fafaf8;
     border-top: 1px solid #999;
     border-bottom: 1px solid #ccc;
@@ -180,7 +178,7 @@
     inset: 0;
     display: flex;
     justify-content: space-between;
-    padding: 0 2px;
+    padding: 0 6px;
   }
 
   .fm-tick {
@@ -193,31 +191,27 @@
 
   .fm-tick .line {
     width: 1px;
-    height: 8px;
-    background: #444;
+    height: 10px;
+    background: #555;
   }
 
   .fm-tick.major .line {
-    height: 14px;
+    height: 18px;
     background: #111;
     width: 1.5px;
   }
 
   .fm-tick .num {
-    font-size: 0.5rem;
+    font-size: 0.6rem;
     color: #333;
-    margin-top: 2px;
+    margin-top: 3px;
     font-family: 'Courier New', monospace;
+    font-weight: 600;
   }
 
-  .fm-tick.red .line {
-    background: #c0392b;
-  }
-
-  /* AM 刻度 */
   .am-scale {
     position: relative;
-    height: 24px;
+    height: 32px;
     background: #fafaf8;
     border-top: 1px solid #999;
     border-bottom: 1px solid #ccc;
@@ -228,7 +222,7 @@
     inset: 0;
     display: flex;
     justify-content: space-between;
-    padding: 0 2px;
+    padding: 0 6px;
   }
 
   .am-tick {
@@ -241,30 +235,30 @@
 
   .am-tick .line {
     width: 1px;
-    height: 6px;
-    background: #444;
+    height: 8px;
+    background: #555;
   }
 
   .am-tick.major .line {
-    height: 12px;
+    height: 15px;
     background: #111;
     width: 1.5px;
   }
 
   .am-tick .num {
-    font-size: 0.45rem;
+    font-size: 0.55rem;
     color: #333;
-    margin-top: 1px;
+    margin-top: 2px;
     font-family: 'Courier New', monospace;
+    font-weight: 600;
   }
 
-  /* 指针 */
   .needle {
     position: absolute;
     top: 0; bottom: 0;
     width: 2px;
     background: #c0392b;
-    box-shadow: 0 0 4px rgba(192,57,43,0.6);
+    box-shadow: 0 0 5px rgba(192,57,43,0.7);
     transition: left 0.05s linear;
     z-index: 5;
   }
@@ -272,8 +266,8 @@
   .needle::before {
     content: '';
     position: absolute;
-    top: -2px; left: -3px;
-    width: 8px; height: 8px;
+    top: -2px; left: -4px;
+    width: 10px; height: 10px;
     background: #c0392b;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
@@ -283,8 +277,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 16px;
+    gap: 24px;
     padding: 0 4px;
   }
 
@@ -292,21 +285,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .control-label {
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     letter-spacing: 2px;
     color: #555;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* 电源开关 */
   .switch {
-    width: 34px;
-    height: 18px;
+    width: 42px;
+    height: 22px;
     background: #b0b0b0;
     border-radius: 2px;
     position: relative;
@@ -319,7 +312,7 @@
     content: '';
     position: absolute;
     top: 1px; left: 1px;
-    width: 14px; height: 14px;
+    width: 18px; height: 18px;
     background: linear-gradient(180deg, #eee, #999);
     border-radius: 2px;
     transition: transform 0.15s;
@@ -327,13 +320,13 @@
   }
 
   .switch.on::after {
-    transform: translateX(16px);
+    transform: translateX(20px);
     background: linear-gradient(180deg, #fff, #bbb);
   }
 
   /* 输出电平旋钮 */
   .small-knob {
-    width: 44px; height: 44px;
+    width: 52px; height: 52px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f0f0f0, #999 60%, #666);
     border: 2px solid #888;
@@ -345,17 +338,17 @@
   .small-knob::after {
     content: '';
     position: absolute;
-    top: 3px; left: 50%;
+    top: 4px; left: 50%;
     transform: translateX(-50%);
-    width: 2px; height: 12px;
+    width: 2px; height: 14px;
     background: #111;
     border-radius: 1px;
   }
 
   /* 功能拨动开关 */
   .toggle-switch {
-    width: 30px;
-    height: 22px;
+    width: 36px;
+    height: 26px;
     background: #b0b0b0;
     border-radius: 2px;
     position: relative;
@@ -368,7 +361,7 @@
     content: '';
     position: absolute;
     top: 2px; left: 2px;
-    width: 12px; height: 16px;
+    width: 14px; height: 20px;
     background: linear-gradient(180deg, #eee, #999);
     border-radius: 2px;
     transition: transform 0.15s;
@@ -376,33 +369,33 @@
   }
 
   .toggle-switch.on::after {
-    transform: translateX(14px);
+    transform: translateX(16px);
   }
 
   /* ============ 表头 ============ */
   .meters-group {
     display: flex;
-    gap: 10px;
+    gap: 16px;
     flex: 1;
     justify-content: center;
   }
 
   .meter {
-    width: 110px;
+    width: 220px;
     background: #f4f4f0;
     border: 1px solid #999;
     border-radius: 3px;
-    padding: 4px 6px;
+    padding: 5px 8px 3px;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
   }
 
   .meter-label {
-    font-size: 0.5rem;
-    letter-spacing: 1px;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
     color: #555;
     text-align: center;
-    margin-bottom: 2px;
-    font-weight: 600;
+    margin-bottom: 1px;
+    font-weight: 700;
   }
 
   .meter-svg {
@@ -416,20 +409,29 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .big-knob {
-    width: 90px; height: 90px;
+    width: 118px; height: 118px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
     border: 2px solid #999;
     position: relative;
-    cursor: grab;
+    cursor: pointer;
     box-shadow:
-      0 8px 16px rgba(0,0,0,0.5),
-      inset 0 -4px 8px rgba(0,0,0,0.3),
-      inset 0 4px 8px rgba(255,255,255,0.6);
+      0 10px 20px rgba(0,0,0,0.5),
+      inset 0 -5px 10px rgba(0,0,0,0.3),
+      inset 0 5px 10px rgba(255,255,255,0.6);
+    transition: box-shadow 0.2s;
+  }
+
+  .big-knob:hover {
+    box-shadow:
+      0 12px 24px rgba(0,0,0,0.6),
+      0 0 0 3px rgba(192,57,43,0.15),
+      inset 0 -5px 10px rgba(0,0,0,0.3),
+      inset 0 5px 10px rgba(255,255,255,0.6);
   }
 
   .big-knob:active { cursor: grabbing; }
@@ -437,19 +439,18 @@
   .big-knob::after {
     content: '';
     position: absolute;
-    top: 6px; left: 50%;
+    top: 8px; left: 50%;
     transform: translateX(-50%);
-    width: 3px; height: 26px;
+    width: 4px; height: 32px;
     background: #111;
     border-radius: 2px;
-    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
   }
 
-  /* 旋钮防滑纹 */
   .big-knob::before {
     content: '';
     position: absolute;
-    inset: 4px;
+    inset: 5px;
     border-radius: 50%;
     background: repeating-conic-gradient(
       from 0deg,
@@ -460,49 +461,57 @@
   }
 
   .knob-hint {
-    font-size: 0.5rem;
+    font-size: 0.55rem;
     color: #777;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .knob-hint strong {
+    color: #c0392b;
+    display: block;
+    font-size: 0.6rem;
   }
 
   /* ============ 底部信息 ============ */
   footer {
-    margin-top: 24px;
+    margin-top: 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 860px;
+    max-width: 1120px;
     padding: 0 8px;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     color: #666;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     flex-wrap: wrap;
     gap: 10px;
   }
 
   footer a { color: #888; text-decoration: none; transition: color 0.2s; }
   footer a:hover { color: #c0392b; }
-  .footer-links { display: flex; gap: 18px; }
+  .footer-links { display: flex; gap: 22px; }
 
   /* ============ 响应式 ============ */
-  @media (max-width: 700px) {
-    .tuner { padding: 14px 16px; }
-    .brand-name { font-size: 1rem; }
+  @media (max-width: 900px) {
+    .tuner { padding: 20px 20px; }
+    .brand-name { font-size: 1.3rem; }
     .brand-model { display: none; }
-    .control-row { flex-wrap: wrap; gap: 12px; }
+    .control-row { flex-wrap: wrap; gap: 16px; }
     .meters-group { order: -1; width: 100%; justify-content: space-around; }
-    .meter { width: 45%; }
-    .big-knob { width: 70px; height: 70px; }
-    .big-knob::after { height: 20px; }
-    .fm-tick .num, .am-tick .num { font-size: 0.4rem; }
+    .meter { width: 46%; }
+    .big-knob { width: 90px; height: 90px; }
+    .big-knob::after { height: 24px; }
+    .fm-tick .num, .am-tick .num { font-size: 0.5rem; }
   }
 </style>
 </head>
 <body>
 
 <div class="tuner">
-  <!-- 顶部品牌 -->
   <div class="brand-row">
     <div class="brand-left">
       <div class="brand-name">YAMAHA</div>
@@ -518,7 +527,6 @@
     </div>
   </div>
 
-  <!-- 频率刻度盘 -->
   <div class="dial-section">
     <div class="dial-display">
       <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
@@ -534,7 +542,7 @@
       <div class="needle" id="needle"></div>
     </div>
 
-    <div class="dial-band-labels" style="margin-top:4px;">
+    <div class="dial-band-labels" style="margin-top:6px;">
       <span>AM</span>
       <span>kHz</span>
     </div>
@@ -543,42 +551,39 @@
     </div>
   </div>
 
-  <!-- 控制区 + 表头 + 大旋钮 -->
   <div class="control-row">
-    <!-- 电源 -->
     <div class="control-group">
       <div class="control-label">POWER</div>
       <div class="switch" id="powerSwitch"></div>
     </div>
 
-    <!-- 输出电平 -->
     <div class="control-group">
       <div class="control-label">OUTPUT</div>
       <div class="small-knob" id="volumeKnob"></div>
     </div>
 
-    <!-- 功能开关 -->
     <div class="control-group">
       <div class="control-label">FUNCTION</div>
       <div class="toggle-switch" id="funcSwitch"></div>
     </div>
 
-    <!-- 双表头 -->
     <div class="meters-group">
       <div class="meter">
         <div class="meter-label">SIGNAL</div>
-        <svg class="meter-svg" id="signalMeter" viewBox="0 0 100 55"></svg>
+        <svg class="meter-svg" id="signalMeter" viewBox="0 0 160 45"></svg>
       </div>
       <div class="meter">
         <div class="meter-label">FM TUNING</div>
-        <svg class="meter-svg" id="tuningMeter" viewBox="0 0 100 55"></svg>
+        <svg class="meter-svg" id="tuningMeter" viewBox="0 0 160 45"></svg>
       </div>
     </div>
 
-    <!-- 大调谐旋钮 -->
     <div class="big-knob-container">
-      <div class="big-knob" id="tuningKnob"></div>
-      <div class="knob-hint">TUNING</div>
+      <div class="big-knob" id="tuningKnob" title="拖动 / 滚轮调节频率，点击自动选台"></div>
+      <div class="knob-hint">
+        TUNING
+        <strong>点击自动选台</strong>
+      </div>
     </div>
   </div>
 </div>
@@ -596,8 +601,6 @@
 <script>
 (function() {
   // ==================== 电台配置 ====================
-  // 频率范围: FM 76.0 - 108.0 MHz
-  // 每个电台代表一个"文件夹"，包含该文件夹下的歌曲列表
   const stations = [
     {
       freq: 88.1,
@@ -640,6 +643,7 @@
   let isPowered = false;
   let currentFreq = 88.1;
   let currentStation = null;
+  let lockedStation = null;
   let isPlaying = false;
   let currentSongIndex = 0;
   let audioContext = null;
@@ -648,61 +652,85 @@
   let signalNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  // ============ 构建表头 ============
+  // ============ 构建表头（扁平版） ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
+  const CX = 80, CY = 42;
+  const START_DEG = -155, END_DEG = -25;
+  const R_ARC = 30;
+  const R_TICK_IN = 25;
+  const R_TICK_OUT = 30;
+  const NEEDLE_LEN = 32;
 
-  function buildMeter(svg, color, label) {
-    // 背景
+  function polar(deg, r) {
+    const rad = deg * Math.PI / 180;
+    return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
+  }
+
+  function buildMeter(svg, color) {
+    // 表盘底
     const bg = document.createElementNS(SVG_NS, 'rect');
     bg.setAttribute('x', 0); bg.setAttribute('y', 0);
-    bg.setAttribute('width', 100); bg.setAttribute('height', 55);
+    bg.setAttribute('width', 160); bg.setAttribute('height', 45);
     bg.setAttribute('rx', 2);
     bg.setAttribute('fill', '#fafaf5');
     svg.appendChild(bg);
 
-    // 弧线
+    // 主弧线
+    const [ax1, ay1] = polar(START_DEG, R_ARC);
+    const [ax2, ay2] = polar(END_DEG, R_ARC);
     const arc = document.createElementNS(SVG_NS, 'path');
-    arc.setAttribute('d', 'M 10 45 A 40 40 0 0 1 90 45');
+    arc.setAttribute('d', `M ${ax1} ${ay1} A ${R_ARC} ${R_ARC} 0 0 1 ${ax2} ${ay2}`);
     arc.setAttribute('fill', 'none');
-    arc.setAttribute('stroke', '#444');
-    arc.setAttribute('stroke-width', '1');
+    arc.setAttribute('stroke', '#333');
+    arc.setAttribute('stroke-width', '1.2');
     svg.appendChild(arc);
 
-    // 刻度线
+    // 刻度
     for (let i = 0; i <= 8; i++) {
-      const angle = -45 + i * (90 / 8);
-      const rad = angle * Math.PI / 180;
-      const r1 = 36, r2 = 40;
-      const cx = 50, cy = 45;
-      const x1 = cx + r1 * Math.sin(rad);
-      const y1 = cy - r1 * Math.cos(rad);
-      const x2 = cx + r2 * Math.sin(rad);
-      const y2 = cy - r2 * Math.cos(rad);
-      const line = document.createElementNS(SVG_NS, 'line');
-      line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-      line.setAttribute('stroke', '#444');
-      line.setAttribute('stroke-width', i % 4 === 0 ? '1.2' : '0.6');
-      svg.appendChild(line);
+      const t = i / 8;
+      const angle = START_DEG + (END_DEG - START_DEG) * t;
+      const rIn = (i % 4 === 0) ? R_TICK_IN - 3 : R_TICK_IN;
+      const p1 = polar(angle, rIn);
+      const p2 = polar(angle, R_TICK_OUT);
+
+      const tick = document.createElementNS(SVG_NS, 'line');
+      tick.setAttribute('x1', p1[0]); tick.setAttribute('y1', p1[1]);
+      tick.setAttribute('x2', p2[0]); tick.setAttribute('y2', p2[1]);
+      tick.setAttribute('stroke', '#333');
+      tick.setAttribute('stroke-width', (i % 4 === 0) ? '1.3' : '0.6');
+      svg.appendChild(tick);
     }
 
-    // 指针
+    // 红色过载区（右侧 1/4）
+    const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.75;
+    const rp1 = polar(degRedStart, R_ARC);
+    const rp2 = polar(END_DEG, R_ARC);
+    const redArc = document.createElementNS(SVG_NS, 'path');
+    redArc.setAttribute('d', `M ${rp1[0]} ${rp1[1]} A ${R_ARC} ${R_ARC} 0 0 1 ${rp2[0]} ${rp2[1]}`);
+    redArc.setAttribute('fill', 'none');
+    redArc.setAttribute('stroke', '#c0392b');
+    redArc.setAttribute('stroke-width', '2');
+    redArc.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(redArc);
+
+    // 指针（初始朝上）
     const needleEl = document.createElementNS(SVG_NS, 'line');
-    needleEl.setAttribute('x1', 50);
-    needleEl.setAttribute('y1', 45);
-    needleEl.setAttribute('x2', 50);
-    needleEl.setAttribute('y2', 12);
+    needleEl.setAttribute('x1', CX);
+    needleEl.setAttribute('y1', CY);
+    needleEl.setAttribute('x2', CX);
+    needleEl.setAttribute('y2', CY - NEEDLE_LEN);
     needleEl.setAttribute('stroke', color);
-    needleEl.setAttribute('stroke-width', '1.5');
+    needleEl.setAttribute('stroke-width', '1.6');
     needleEl.setAttribute('stroke-linecap', 'round');
-    needleEl.setAttribute('transform', 'rotate(-45 50 45)');
+    needleEl.setAttribute('transform', `rotate(${START_DEG + 90} ${CX} ${CY})`);
     svg.appendChild(needleEl);
 
     // 轴心
     const pivot = document.createElementNS(SVG_NS, 'circle');
-    pivot.setAttribute('cx', 50); pivot.setAttribute('cy', 45);
+    pivot.setAttribute('cx', CX);
+    pivot.setAttribute('cy', CY);
     pivot.setAttribute('r', 3);
-    pivot.setAttribute('fill', '#333');
+    pivot.setAttribute('fill', '#222');
     svg.appendChild(pivot);
 
     return needleEl;
@@ -714,11 +742,11 @@
   // ============ 构建刻度 ============
   function buildFMScale() {
     const container = document.getElementById('fmTicks');
-    const total = 32; // 76-108 共 32 个 MHz
+    const total = 32;
     for (let i = 0; i <= total; i++) {
       const freq = FM_MIN + i;
       const tick = document.createElement('div');
-      tick.className = 'fm-tick' + (i % 5 === 0 ? ' major' : '') + (freq >= 88 && freq <= 108 ? '' : '');
+      tick.className = 'fm-tick' + (i % 5 === 0 ? ' major' : '');
       const line = document.createElement('div');
       line.className = 'line';
       tick.appendChild(line);
@@ -738,7 +766,7 @@
     for (let i = 0; i <= total; i++) {
       const freq = AM_MIN + i * (AM_MAX - AM_MIN) / total;
       const tick = document.createElement('div');
-      tick.className = 'am-tick' + (i % 1 === 0 ? ' major' : '');
+      tick.className = 'am-tick major';
       const line = document.createElement('div');
       line.className = 'line';
       tick.appendChild(line);
@@ -783,8 +811,9 @@
       let t = (db + 35) / 35;
       if (t < 0) t = 0;
       if (t > 1) t = 1;
-      const angle = -45 + t * 90;
-      signalNeedle.setAttribute('transform', 'rotate(' + angle + ' 50 45)');
+      // 表针旋转范围：-65° ~ +65°
+      const angle = -65 + t * 130;
+      signalNeedle.setAttribute('transform', `rotate(${angle} ${CX} ${CY})`);
     }
     requestAnimationFrame(animateMeters);
   }
@@ -795,18 +824,13 @@
   }
 
   function updateTuning(freq) {
-    // 限制范围
     if (freq < FM_MIN) freq = FM_MIN;
     if (freq > FM_MAX) freq = FM_MAX;
     currentFreq = freq;
 
-    // 更新数字显示
     freqDisplay.textContent = freq.toFixed(1) + ' MHz';
-
-    // 更新指针位置
     needle.style.left = freqToNeedlePercent(freq) + '%';
 
-    // 检查是否命中电台
     let found = null;
     for (const st of stations) {
       if (Math.abs(freq - st.freq) < 0.5) {
@@ -816,27 +840,31 @@
     }
 
     if (found) {
-      currentStation = found;
       stationName.textContent = found.name;
       stationName.style.color = '#c0392b';
       ledStereo.classList.add('on');
 
       // 调谐表指针居中
-      const offset = (freq - found.freq) / 0.5; // -1 到 1
-      tuningNeedle.setAttribute('transform', 'rotate(' + (offset * 15) + ' 50 45)');
+      const offset = (freq - found.freq) / 0.5;
+      const angle = offset * 15;
+      tuningNeedle.setAttribute('transform', `rotate(${angle} ${CX} ${CY})`);
 
-      // 如果已开机且换台了，播放新电台
-      if (isPowered) {
-        if (!isPlaying || audio.src.indexOf(found.songs[0]) === -1) {
+      // 换台了
+      if (found !== lockedStation) {
+        lockedStation = found;
+        if (isPowered) {
           playStation(found);
         }
+      } else if (isPowered && !isPlaying) {
+        // 电源刚开，之前已锁定的电台
+        playStation(found);
       }
     } else {
-      currentStation = null;
+      lockedStation = null;
       stationName.textContent = 'NO SIGNAL';
       stationName.style.color = '#999';
       ledStereo.classList.remove('on');
-      tuningNeedle.setAttribute('transform', 'rotate(0 50 45)');
+      tuningNeedle.setAttribute('transform', `rotate(0 ${CX} ${CY})`);
 
       if (isPowered && isPlaying) {
         audio.pause();
@@ -857,24 +885,70 @@
     audio.volume = volumeLevel;
     const promise = audio.play();
     if (promise !== undefined) {
-      promise.then(() => {
-        isPlaying = true;
-      }).catch(err => {
-        console.warn('播放失败:', err);
-        isPlaying = false;
-      });
+      promise.then(() => { isPlaying = true; })
+             .catch(err => {
+               console.warn('播放失败:', err);
+               isPlaying = false;
+             });
     }
   }
 
   function nextSong() {
-    if (currentStation && currentStation.songs.length > 0) {
-      currentSongIndex = (currentSongIndex + 1) % currentStation.songs.length;
-      playSong(currentStation.songs[currentSongIndex]);
+    if (lockedStation && lockedStation.songs.length > 0) {
+      currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
+      playSong(lockedStation.songs[currentSongIndex]);
     }
   }
 
+  // ============ 平滑调谐到目标频率 ============
+  function tuneToStation(station) {
+    // 临时加长 transition，让表针平滑滑动
+    needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
+    tuningNeedle.style.transition = 'transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
+
+    // 使用中间动画，让指针慢慢滑过
+    const startFreq = currentFreq;
+    const endFreq = station.freq;
+    const duration = 900;
+    const startTime = performance.now();
+
+    // 立即切到目标状态
+    updateTuning(endFreq);
+
+    function animate(now) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const freq = startFreq + (endFreq - startFreq) * eased;
+      needle.style.left = freqToNeedlePercent(freq) + '%';
+      if (t < 1) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    setTimeout(() => {
+      needle.style.transition = 'left 0.05s linear';
+      tuningNeedle.style.transition = 'transform 0.1s ease';
+    }, 950);
+  }
+
+  function autoTuneRandom() {
+    if (!isPowered) {
+      // 未开机时点击，自动开机
+      isPowered = true;
+      powerSwitch.classList.add('on');
+      ledPower.classList.add('on');
+    }
+
+    // 随机选一个电台（尽量避开当前锁定的）
+    let pool = stations;
+    if (lockedStation && stations.length > 1) {
+      pool = stations.filter(s => s !== lockedStation);
+    }
+    const randomStation = pool[Math.floor(Math.random() * pool.length)];
+    tuneToStation(randomStation);
+  }
+
   // ============ 交互事件 ============
-  // 电源开关
   powerSwitch.addEventListener('click', () => {
     isPowered = !isPowered;
     powerSwitch.classList.toggle('on', isPowered);
@@ -891,80 +965,93 @@
     }
   });
 
-  // 音量旋钮（简化为点击循环调节）
   volumeKnob.addEventListener('click', () => {
     volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
     audio.volume = volumeLevel;
   });
 
-  // 功能开关（切换下一首）
   funcSwitch.addEventListener('click', () => {
     funcSwitch.classList.toggle('on');
     nextSong();
   });
 
-  // 大旋钮拖动调谐
+  // 大旋钮：拖动调谐 / 点击自动选台 / 滚轮微调
   let isDragging = false;
   let startY = 0;
   let startFreq = 0;
+  let totalMovement = 0;
+  let lastY = 0;
 
   tuningKnob.addEventListener('mousedown', (e) => {
-    if (!isPowered) return;
     isDragging = true;
     startY = e.clientY;
+    lastY = e.clientY;
+    totalMovement = 0;
     startFreq = currentFreq;
     e.preventDefault();
   });
 
   document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
+    totalMovement += Math.abs(e.clientY - lastY);
+    lastY = e.clientY;
     const deltaY = startY - e.clientY;
-    const freqDelta = deltaY * 0.05; // 灵敏度
-    updateTuning(startFreq + freqDelta);
+    updateTuning(startFreq + deltaY * 0.05);
   });
 
   document.addEventListener('mouseup', () => {
+    if (isDragging && totalMovement < 6) {
+      // 视为点击 → 自动随机选台
+      autoTuneRandom();
+    }
     isDragging = false;
   });
 
-  // 鼠标滚轮调谐
   tuningKnob.addEventListener('wheel', (e) => {
-    if (!isPowered) return;
     e.preventDefault();
+    if (!isPowered) {
+      isPowered = true;
+      powerSwitch.classList.add('on');
+      ledPower.classList.add('on');
+    }
     const delta = e.deltaY > 0 ? -0.2 : 0.2;
     updateTuning(currentFreq + delta);
   }, { passive: false });
 
   // 触摸支持
   tuningKnob.addEventListener('touchstart', (e) => {
-    if (!isPowered) return;
     isDragging = true;
     startY = e.touches[0].clientY;
+    lastY = e.touches[0].clientY;
+    totalMovement = 0;
     startFreq = currentFreq;
-    e.preventDefault();
-  }, { passive: false });
+  }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
+    totalMovement += Math.abs(e.touches[0].clientY - lastY);
+    lastY = e.touches[0].clientY;
     const deltaY = startY - e.touches[0].clientY;
     updateTuning(startFreq + deltaY * 0.05);
-  }, { passive: false });
+  }, { passive: true });
 
   document.addEventListener('touchend', () => {
+    if (isDragging && totalMovement < 8) {
+      autoTuneRandom();
+    }
     isDragging = false;
   });
 
   // 播放结束 → 自动下一首
   audio.addEventListener('ended', () => {
-    if (isPowered && currentStation) {
+    if (isPowered && lockedStation) {
       nextSong();
     }
   });
 
-  // 页脚关于
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 打开 POWER 开关\n· 拖动右侧大旋钮或滚动滚轮调节频率\n· 当频率对准电台时，自动播放对应文件夹的歌曲\n· 点击 FUNCTION 开关可切换下一首');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 打开 POWER 开关\n· 拖动右侧大旋钮或滚轮调节频率\n· 点击大旋钮可自动随机匹配一个电台\n· 频率对准电台时自动播放对应文件夹歌曲\n· 点击 FUNCTION 开关切换下一首');
   });
 
   // 初始化
