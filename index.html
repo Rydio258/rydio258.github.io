@@ -80,7 +80,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    gap: 16px;
+    gap: 12px;
   }
 
   .dial-frequency {
@@ -95,6 +95,30 @@
     border: 1px solid #b0b0b0;
     min-width: 170px;
     text-align: center;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+
+  /* ===== 电台栏目小栏 ===== */
+  .station-tag {
+    font-family: '宋体', SimSun, 'Songti SC', STSong, serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #111;
+    background: #dedede;
+    border: 1px solid #b0b0b0;
+    border-radius: 2px;
+    padding: 4px 12px;
+    min-width: 100px;
+    max-width: 180px;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
     flex-shrink: 0;
   }
@@ -318,8 +342,9 @@
     .meter { width: 46%; }
     .big-knob { width: 90px; height: 90px; }
     .big-knob::after { height: 24px; }
-    .track-display { max-width: 180px; }
+    .track-display { max-width: 160px; }
     .track-display-inner { font-size: 0.85rem; }
+    .station-tag { display: none; }
   }
 </style>
 </head>
@@ -344,6 +369,7 @@
   <div class="dial-section">
     <div class="dial-display">
       <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
+      <div class="station-tag" id="stationTag">—</div>
       <div class="track-display" id="trackDisplay">
         <div class="track-display-inner" id="trackDisplayInner">未播放</div>
       </div>
@@ -412,40 +438,38 @@
 <script>
 (function() {
   // ==================== 电台配置 ====================
-  // 每首歌格式：{ title, album, artist, file }
-  // 显示格式：歌曲名 - 专辑名 - 歌手名
   const stations = [
     {
       pos: 20,
-      name: 'JAY CHOU',
+      name: 'JAY',
       songs: [
-        { title: '晴天', album: '叶惠美', artist: '周杰伦', file: 'music/jay/晴天.mp3' },
-        { title: '七里香', album: '七里香', artist: '周杰伦', file: 'music/jay/七里香.mp3' },
-        { title: '稻香', album: '魔杰座', artist: '周杰伦', file: 'music/jay/稻香.mp3' }
+        { file: 'music/jay/晴天.mp3' },
+        { file: 'music/jay/七里香.mp3' },
+        { file: 'music/jay/稻香.mp3' }
       ]
     },
     {
       pos: 40,
-      name: 'JJ LIN',
+      name: 'JJ',
       songs: [
-        { title: '江南', album: '第二天堂', artist: '林俊杰', file: 'music/jj/江南.mp3' },
-        { title: '曹操', album: '曹操', artist: '林俊杰', file: 'music/jj/曹操.mp3' }
+        { file: 'music/jj/江南.mp3' },
+        { file: 'music/jj/曹操.mp3' }
       ]
     },
     {
       pos: 60,
-      name: 'EASON CHAN',
+      name: 'EASON',
       songs: [
-        { title: '十年', album: '黑白灰', artist: '陈奕迅', file: 'music/eason/十年.mp3' },
-        { title: '浮夸', album: 'U87', artist: '陈奕迅', file: 'music/eason/浮夸.mp3' }
+        { file: 'music/eason/十年.mp3' },
+        { file: 'music/eason/浮夸.mp3' }
       ]
     },
     {
       pos: 85,
       name: 'CLASSICAL',
       songs: [
-        { title: '卡农', album: '古典精选', artist: '帕赫贝尔', file: 'music/classical/卡农.mp3' },
-        { title: '月光', album: '贝多芬奏鸣曲', artist: '贝多芬', file: 'music/classical/月光.mp3' }
+        { file: 'music/classical/卡农.mp3' },
+        { file: 'music/classical/月光.mp3' }
       ]
     }
   ];
@@ -456,6 +480,7 @@
 
   const audio = document.getElementById('bgMusic');
   const freqDisplay = document.getElementById('freqDisplay');
+  const stationTag = document.getElementById('stationTag');
   const trackDisplay = document.getElementById('trackDisplay');
   const trackDisplayInner = document.getElementById('trackDisplayInner');
   const needle = document.getElementById('needle');
@@ -477,7 +502,7 @@
   let signalNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  // ============ 表头构建（扁平版） ============
+  // ============ 表头构建 ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const CX = 80, CY = 42;
   const START_DEG = -155, END_DEG = -25;
@@ -635,6 +660,14 @@
     requestAnimationFrame(animateMeters);
   }
 
+  // ============ 从文件路径提取文件名（不含后缀） ============
+  function getFileName(path) {
+    if (!path) return '';
+    const decoded = decodeURIComponent(path);
+    const filename = decoded.split('/').pop() || '';
+    return filename.replace(/\.[^/.]+$/, '');
+  }
+
   // ============ 滚动曲目显示 ============
   function updateTrackDisplay(text) {
     trackDisplayInner.textContent = text;
@@ -691,23 +724,27 @@
       const offset = (pos - found.pos) / 1.2;
       tuningNeedle.setAttribute('transform', `rotate(${offset * 15} ${CX} ${CY})`);
 
+      // 更新电台栏目小栏
+      stationTag.textContent = found.name;
+
       if (found !== lockedStation) {
         lockedStation = found;
         if (isPowered) {
           playStation(found);
         } else {
-          updateTrackDisplay(found.name);
+          updateTrackDisplay('待机');
         }
       } else if (isPowered && !isPlaying) {
         playStation(found);
       } else if (!isPowered) {
-        updateTrackDisplay(found.name);
+        updateTrackDisplay('待机');
       }
     } else {
       lockedStation = null;
       ledStereo.classList.remove('on');
       tuningNeedle.setAttribute('transform', `rotate(0 ${CX} ${CY})`);
-      updateTrackDisplay(isPowered ? 'NO SIGNAL' : 'POWER OFF');
+      stationTag.textContent = '—';
+      updateTrackDisplay(isPowered ? '无信号' : '关机');
 
       if (isPowered && isPlaying) {
         audio.pause();
@@ -730,7 +767,8 @@
     if (promise !== undefined) {
       promise.then(() => {
         isPlaying = true;
-        updateTrackDisplay(`${song.title} - ${song.album} - ${song.artist}`);
+        // 显示文件名（不含后缀）
+        updateTrackDisplay(getFileName(song.file));
       }).catch(err => {
         console.warn('播放失败:', err);
         isPlaying = false;
@@ -780,7 +818,8 @@
       audio.pause();
       isPlaying = false;
       ledStereo.classList.remove('on');
-      updateTrackDisplay('POWER OFF');
+      stationTag.textContent = '—';
+      updateTrackDisplay('关机');
     }
   });
 
@@ -856,7 +895,7 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· POWER 开关控制电源\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 曲目显示：歌曲名 - 专辑名 - 歌手名\n· 超长曲目名会自动滚动显示');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· POWER 开关控制电源\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 频率旁显示电台栏目名\n· 右侧显示当前播放的文件名');
   });
 
   // 初始化
