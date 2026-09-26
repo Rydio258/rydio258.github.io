@@ -99,7 +99,6 @@
     flex-shrink: 0;
   }
 
-  /* ===== 电台栏目小栏 ===== */
   .station-tag {
     font-family: '宋体', SimSun, 'Songti SC', STSong, serif;
     font-size: 0.85rem;
@@ -123,7 +122,6 @@
     flex-shrink: 0;
   }
 
-  /* ===== 滚动曲目显示 ===== */
   .track-display {
     flex: 1;
     max-width: 33.33%;
@@ -435,44 +433,14 @@
 
 <audio id="bgMusic" preload="auto"></audio>
 
+<!-- ★ 歌单配置：单独文件，先于主脚本加载 -->
+<script src="playlist.js"></script>
+
 <script>
 (function() {
-  // ==================== 电台配置 ====================
-  const stations = [
-    {
-      pos: 20,
-      name: 'JAY',
-      songs: [
-        { file: 'music/jay/晴天.mp3' },
-        { file: 'music/jay/七里香.mp3' },
-        { file: 'music/jay/稻香.mp3' }
-      ]
-    },
-    {
-      pos: 40,
-      name: 'JJ',
-      songs: [
-        { file: 'music/jj/江南.mp3' },
-        { file: 'music/jj/曹操.mp3' }
-      ]
-    },
-    {
-      pos: 60,
-      name: 'EASON',
-      songs: [
-        { file: 'music/eason/十年.mp3' },
-        { file: 'music/eason/浮夸.mp3' }
-      ]
-    },
-    {
-      pos: 85,
-      name: 'CLASSICAL',
-      songs: [
-        { file: 'music/classical/卡农.mp3' },
-        { file: 'music/classical/月光.mp3' }
-      ]
-    }
-  ];
+  // ==================== 从 playlist.js 读取电台配置 ====================
+  const config = window.PLAYLIST || { stations: [] };
+  const stations = Array.isArray(config.stations) ? config.stations : [];
 
   const FM_MIN = 76.0, FM_MAX = 108.0;
   const AM_MIN = 520, AM_MAX = 1600;
@@ -724,8 +692,7 @@
       const offset = (pos - found.pos) / 1.2;
       tuningNeedle.setAttribute('transform', `rotate(${offset * 15} ${CX} ${CY})`);
 
-      // 更新电台栏目小栏
-      stationTag.textContent = found.name;
+      stationTag.textContent = found.name || '—';
 
       if (found !== lockedStation) {
         lockedStation = found;
@@ -754,21 +721,20 @@
   }
 
   function playStation(station) {
-    if (!station || station.songs.length === 0) return;
+    if (!station || !station.songs || station.songs.length === 0) return;
     currentSongIndex = Math.floor(Math.random() * station.songs.length);
     playSong(station.songs[currentSongIndex]);
   }
 
-  function playSong(song) {
+  function playSong(file) {
     initAudioContext();
-    audio.src = song.file;
+    audio.src = file;
     audio.volume = volumeLevel;
     const promise = audio.play();
     if (promise !== undefined) {
       promise.then(() => {
         isPlaying = true;
-        // 显示文件名（不含后缀）
-        updateTrackDisplay(getFileName(song.file));
+        updateTrackDisplay(getFileName(file));
       }).catch(err => {
         console.warn('播放失败:', err);
         isPlaying = false;
@@ -777,7 +743,7 @@
   }
 
   function nextSong() {
-    if (lockedStation && lockedStation.songs.length > 0) {
+    if (lockedStation && lockedStation.songs && lockedStation.songs.length > 0) {
       currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
       playSong(lockedStation.songs[currentSongIndex]);
     }
@@ -793,6 +759,10 @@
   }
 
   function autoTuneRandom() {
+    if (stations.length === 0) {
+      updateTrackDisplay('歌单为空');
+      return;
+    }
     if (!isPowered) {
       isPowered = true;
       powerSwitch.classList.add('on');
@@ -828,7 +798,6 @@
     audio.volume = volumeLevel;
   });
 
-  // 大旋钮：拖动 / 点击 / 滚轮
   let isDragging = false;
   let startY = 0;
   let startPos = 0;
@@ -895,11 +864,17 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· POWER 开关控制电源\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 频率旁显示电台栏目名\n· 右侧显示当前播放的文件名');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 文件中配置\n· POWER 开关控制电源\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 频率旁显示电台栏目名\n· 右侧显示当前播放的文件名');
   });
 
-  // 初始化
-  updateTuning(20);
+  // ============ 初始化 ============
+  if (stations.length === 0) {
+    updateTrackDisplay('歌单未加载');
+    console.warn('未检测到电台配置，请检查 playlist.js 是否存在且路径正确。');
+  } else {
+    // 用第一个电台的位置作为初始指针位置
+    updateTuning(stations[0].pos);
+  }
   audio.volume = volumeLevel;
 })();
 </script>
