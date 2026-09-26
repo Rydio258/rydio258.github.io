@@ -19,7 +19,6 @@
     padding: 2rem 1rem;
   }
 
-  /* ============ 主体机箱 ============ */
   .tuner {
     width: 100%;
     max-width: 1120px;
@@ -40,16 +39,13 @@
     top: 0; left: 0; right: 0; bottom: 0;
     background: repeating-linear-gradient(
       90deg,
-      transparent,
-      transparent 1px,
-      rgba(0,0,0,0.03) 1px,
-      rgba(0,0,0,0.03) 2px
+      transparent, transparent 1px,
+      rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px
     );
     border-radius: 4px;
     pointer-events: none;
   }
 
-  /* ============ 顶部品牌栏 ============ */
   .brand-row {
     display: flex;
     justify-content: space-between;
@@ -59,60 +55,16 @@
     border-bottom: 1px solid #b0b0b0;
   }
 
-  .brand-left {
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-  }
+  .brand-left { display: flex; align-items: baseline; gap: 20px; }
+  .brand-name { font-size: 1.75rem; font-weight: 700; letter-spacing: 3px; color: #111; }
+  .brand-model { font-size: 0.75rem; letter-spacing: 2px; color: #555; text-transform: uppercase; }
 
-  .brand-name {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #111;
-  }
+  .brand-indicators { display: flex; gap: 24px; align-items: center; font-size: 0.7rem; letter-spacing: 1.5px; color: #555; font-weight: 600; }
+  .indicator { display: flex; align-items: center; gap: 6px; }
+  .led { width: 8px; height: 8px; border-radius: 50%; background: #333; transition: all 0.2s; }
+  .led.on { background: #e33; box-shadow: 0 0 10px #e33, inset 0 0 2px rgba(255,255,255,0.6); }
+  .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2, inset 0 0 2px rgba(255,255,255,0.6); }
 
-  .brand-model {
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    color: #555;
-    text-transform: uppercase;
-  }
-
-  .brand-indicators {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
-    color: #555;
-    font-weight: 600;
-  }
-
-  .indicator {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .led {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #333;
-    transition: all 0.2s;
-  }
-
-  .led.on {
-    background: #e33;
-    box-shadow: 0 0 10px #e33, inset 0 0 2px rgba(255,255,255,0.6);
-  }
-
-  .led.green.on {
-    background: #2a2;
-    box-shadow: 0 0 10px #2a2, inset 0 0 2px rgba(255,255,255,0.6);
-  }
-
-  /* ============ 频率刻度盘 ============ */
   .dial-section {
     background: #f4f4f0;
     border: 1px solid #a0a0a0;
@@ -128,6 +80,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    gap: 16px;
   }
 
   .dial-frequency {
@@ -143,15 +96,40 @@
     min-width: 170px;
     text-align: center;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    flex-shrink: 0;
   }
 
-  .dial-station-name {
-    font-size: 0.95rem;
-    letter-spacing: 3px;
+  /* ===== 滚动曲目显示 ===== */
+  .track-display {
+    flex: 1;
+    max-width: 33.33%;
+    height: 2.2rem;
+    overflow: hidden;
+    position: relative;
+    background: #e8e8e4;
+    border: 1px solid #b0b0b0;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-family: '宋体', SimSun, 'Songti SC', STSong, serif;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    margin-left: auto;
+  }
+
+  .track-display-inner {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 1rem;
     color: #c0392b;
-    text-transform: uppercase;
-    font-weight: 700;
-    min-height: 1.2em;
+    letter-spacing: 1px;
+    font-weight: 600;
+    will-change: transform;
+  }
+
+  @keyframes marqueeMove {
+    from { transform: translateX(var(--from-x)); }
+    to   { transform: translateX(var(--to-x)); }
   }
 
   .dial-band-labels {
@@ -164,94 +142,19 @@
     font-weight: 600;
   }
 
-  .fm-scale {
-    position: relative;
-    height: 38px;
-    margin-bottom: 6px;
-    background: #fafaf8;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #ccc;
-  }
+  .fm-scale { position: relative; height: 38px; margin-bottom: 6px; background: #fafaf8; border-top: 1px solid #999; border-bottom: 1px solid #ccc; }
+  .fm-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; }
+  .fm-tick { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; }
+  .fm-tick .line { width: 1px; height: 10px; background: #555; }
+  .fm-tick.major .line { height: 18px; background: #111; width: 1.5px; }
+  .fm-tick .num { font-size: 0.6rem; color: #333; margin-top: 3px; font-family: 'Courier New', monospace; font-weight: 600; }
 
-  .fm-ticks {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 6px;
-  }
-
-  .fm-tick {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100%;
-  }
-
-  .fm-tick .line {
-    width: 1px;
-    height: 10px;
-    background: #555;
-  }
-
-  .fm-tick.major .line {
-    height: 18px;
-    background: #111;
-    width: 1.5px;
-  }
-
-  .fm-tick .num {
-    font-size: 0.6rem;
-    color: #333;
-    margin-top: 3px;
-    font-family: 'Courier New', monospace;
-    font-weight: 600;
-  }
-
-  .am-scale {
-    position: relative;
-    height: 32px;
-    background: #fafaf8;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .am-ticks {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 6px;
-  }
-
-  .am-tick {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100%;
-  }
-
-  .am-tick .line {
-    width: 1px;
-    height: 8px;
-    background: #555;
-  }
-
-  .am-tick.major .line {
-    height: 15px;
-    background: #111;
-    width: 1.5px;
-  }
-
-  .am-tick .num {
-    font-size: 0.55rem;
-    color: #333;
-    margin-top: 2px;
-    font-family: 'Courier New', monospace;
-    font-weight: 600;
-  }
+  .am-scale { position: relative; height: 32px; background: #fafaf8; border-top: 1px solid #999; border-bottom: 1px solid #ccc; }
+  .am-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; }
+  .am-tick { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; }
+  .am-tick .line { width: 1px; height: 8px; background: #555; }
+  .am-tick.major .line { height: 15px; background: #111; width: 1.5px; }
+  .am-tick .num { font-size: 0.55rem; color: #333; margin-top: 2px; font-family: 'Courier New', monospace; font-weight: 600; }
 
   .needle {
     position: absolute;
@@ -262,7 +165,6 @@
     transition: left 0.05s linear;
     z-index: 5;
   }
-
   .needle::before {
     content: '';
     position: absolute;
@@ -272,7 +174,6 @@
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
 
-  /* ============ 中间控制区 ============ */
   .control-row {
     display: flex;
     justify-content: space-between;
@@ -281,25 +182,11 @@
     padding: 0 4px;
   }
 
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
+  .control-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .control-label { font-size: 0.6rem; letter-spacing: 2px; color: #555; text-transform: uppercase; font-weight: 700; }
 
-  .control-label {
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    color: #555;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-
-  /* 电源开关 */
   .switch {
-    width: 42px;
-    height: 22px;
+    width: 42px; height: 22px;
     background: #b0b0b0;
     border-radius: 2px;
     position: relative;
@@ -307,7 +194,6 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
     border: 1px solid #888;
   }
-
   .switch::after {
     content: '';
     position: absolute;
@@ -318,13 +204,8 @@
     transition: transform 0.15s;
     box-shadow: 0 1px 2px rgba(0,0,0,0.4);
   }
+  .switch.on::after { transform: translateX(20px); background: linear-gradient(180deg, #fff, #bbb); }
 
-  .switch.on::after {
-    transform: translateX(20px);
-    background: linear-gradient(180deg, #fff, #bbb);
-  }
-
-  /* 输出电平旋钮 */
   .small-knob {
     width: 52px; height: 52px;
     border-radius: 50%;
@@ -334,7 +215,6 @@
     cursor: pointer;
     box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
   }
-
   .small-knob::after {
     content: '';
     position: absolute;
@@ -345,10 +225,9 @@
     border-radius: 1px;
   }
 
-  /* 功能拨动开关 */
+  /* LANG 切换开关 */
   .toggle-switch {
-    width: 36px;
-    height: 26px;
+    width: 50px; height: 26px;
     background: #b0b0b0;
     border-radius: 2px;
     position: relative;
@@ -356,30 +235,41 @@
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
     border: 1px solid #888;
   }
-
   .toggle-switch::after {
     content: '';
     position: absolute;
     top: 2px; left: 2px;
-    width: 14px; height: 20px;
+    width: 20px; height: 20px;
     background: linear-gradient(180deg, #eee, #999);
     border-radius: 2px;
-    transition: transform 0.15s;
+    transition: transform 0.2s;
     box-shadow: 0 1px 2px rgba(0,0,0,0.4);
   }
+  .toggle-switch.on::after { transform: translateX(24px); }
 
-  .toggle-switch.on::after {
-    transform: translateX(16px);
-  }
-
-  /* ============ 表头 ============ */
-  .meters-group {
+  .lang-label {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: #555;
+    font-weight: 700;
     display: flex;
-    gap: 16px;
-    flex: 1;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .lang-mode-display {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #c0392b;
+    font-weight: 700;
+    background: #e8e8e4;
+    padding: 2px 10px;
+    border: 1px solid #b0b0b0;
+    border-radius: 2px;
+    letter-spacing: 2px;
   }
 
+  .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
   .meter {
     width: 220px;
     background: #f4f4f0;
@@ -388,30 +278,10 @@
     padding: 5px 8px 3px;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
   }
+  .meter-label { font-size: 0.55rem; letter-spacing: 2px; color: #555; text-align: center; margin-bottom: 1px; font-weight: 700; }
+  .meter-svg { display: block; width: 100%; height: auto; }
 
-  .meter-label {
-    font-size: 0.55rem;
-    letter-spacing: 2px;
-    color: #555;
-    text-align: center;
-    margin-bottom: 1px;
-    font-weight: 700;
-  }
-
-  .meter-svg {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  /* ============ 大调谐旋钮 ============ */
-  .big-knob-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
+  .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .big-knob {
     width: 118px; height: 118px;
     border-radius: 50%;
@@ -425,7 +295,6 @@
       inset 0 5px 10px rgba(255,255,255,0.6);
     transition: box-shadow 0.2s;
   }
-
   .big-knob:hover {
     box-shadow:
       0 12px 24px rgba(0,0,0,0.6),
@@ -433,9 +302,6 @@
       inset 0 -5px 10px rgba(0,0,0,0.3),
       inset 0 5px 10px rgba(255,255,255,0.6);
   }
-
-  .big-knob:active { cursor: grabbing; }
-
   .big-knob::after {
     content: '';
     position: absolute;
@@ -446,7 +312,6 @@
     border-radius: 2px;
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
   }
-
   .big-knob::before {
     content: '';
     position: absolute;
@@ -468,14 +333,8 @@
     text-align: center;
     line-height: 1.4;
   }
+  .knob-hint strong { color: #c0392b; display: block; font-size: 0.6rem; }
 
-  .knob-hint strong {
-    color: #c0392b;
-    display: block;
-    font-size: 0.6rem;
-  }
-
-  /* ============ 底部信息 ============ */
   footer {
     margin-top: 28px;
     display: flex;
@@ -490,14 +349,12 @@
     flex-wrap: wrap;
     gap: 10px;
   }
-
   footer a { color: #888; text-decoration: none; transition: color 0.2s; }
   footer a:hover { color: #c0392b; }
   .footer-links { display: flex; gap: 22px; }
 
-  /* ============ 响应式 ============ */
   @media (max-width: 900px) {
-    .tuner { padding: 20px 20px; }
+    .tuner { padding: 20px; }
     .brand-name { font-size: 1.3rem; }
     .brand-model { display: none; }
     .control-row { flex-wrap: wrap; gap: 16px; }
@@ -505,7 +362,8 @@
     .meter { width: 46%; }
     .big-knob { width: 90px; height: 90px; }
     .big-knob::after { height: 24px; }
-    .fm-tick .num, .am-tick .num { font-size: 0.5rem; }
+    .track-display { max-width: 180px; }
+    .track-display-inner { font-size: 0.85rem; }
   }
 </style>
 </head>
@@ -530,7 +388,9 @@
   <div class="dial-section">
     <div class="dial-display">
       <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
-      <div class="dial-station-name" id="stationName">NO SIGNAL</div>
+      <div class="track-display" id="trackDisplay">
+        <div class="track-display-inner" id="trackDisplayInner">未播放</div>
+      </div>
     </div>
 
     <div class="dial-band-labels">
@@ -563,8 +423,11 @@
     </div>
 
     <div class="control-group">
-      <div class="control-label">FUNCTION</div>
-      <div class="toggle-switch" id="funcSwitch"></div>
+      <div class="lang-label">
+        LANG
+        <div class="lang-mode-display" id="langMode">FM</div>
+      </div>
+      <div class="toggle-switch" id="langSwitch"></div>
     </div>
 
     <div class="meters-group">
@@ -601,26 +464,78 @@
 <script>
 (function() {
   // ==================== 电台配置 ====================
-  const stations = [
+  // 每首歌格式：{ title, album, artist, file }
+  // 显示格式：歌曲名 - 专辑名 - 歌手名
+
+  // FM 模式 — 中文歌曲
+  const stationsFM = [
     {
-      freq: 88.1,
-      name: 'JAY CHOU',
-      songs: ['music/jay/晴天.mp3', 'music/jay/七里香.mp3', 'music/jay/稻香.mp3']
+      pos: 38,
+      name: '中文电台 · JAY',
+      songs: [
+        { title: '晴天', album: '叶惠美', artist: '周杰伦', file: 'music/jay/晴天.mp3' },
+        { title: '七里香', album: '七里香', artist: '周杰伦', file: 'music/jay/七里香.mp3' },
+        { title: '稻香', album: '魔杰座', artist: '周杰伦', file: 'music/jay/稻香.mp3' }
+      ]
     },
     {
-      freq: 92.4,
-      name: 'JJ LIN',
-      songs: ['music/jj/江南.mp3', 'music/jj/曹操.mp3', 'music/jj/不为谁而作的歌.mp3']
+      pos: 51,
+      name: '中文电台 · JJ',
+      songs: [
+        { title: '江南', album: '第二天堂', artist: '林俊杰', file: 'music/jj/江南.mp3' },
+        { title: '曹操', album: '曹操', artist: '林俊杰', file: 'music/jj/曹操.mp3' }
+      ]
     },
     {
-      freq: 98.7,
-      name: 'EASON CHAN',
-      songs: ['music/eason/十年.mp3', 'music/eason/浮夸.mp3', 'music/eason/富士山下.mp3']
+      pos: 71,
+      name: '中文电台 · EASON',
+      songs: [
+        { title: '十年', album: '黑白灰', artist: '陈奕迅', file: 'music/eason/十年.mp3' },
+        { title: '浮夸', album: 'U87', artist: '陈奕迅', file: 'music/eason/浮夸.mp3' }
+      ]
     },
     {
-      freq: 104.2,
-      name: 'CLASSICAL',
-      songs: ['music/classical/卡农.mp3', 'music/classical/月光.mp3', 'music/classical/致爱丽丝.mp3']
+      pos: 88,
+      name: '中文电台 · 古典',
+      songs: [
+        { title: '卡农', album: '古典精选', artist: '帕赫贝尔', file: 'music/classical/卡农.mp3' },
+        { title: '月光', album: '贝多芬奏鸣曲', artist: '贝多芬', file: 'music/classical/月光.mp3' }
+      ]
+    }
+  ];
+
+  // AM 模式 — 英文歌曲
+  const stationsAM = [
+    {
+      pos: 22,
+      name: 'AM · THE BEATLES',
+      songs: [
+        { title: 'Hey Jude', album: 'Hey Jude', artist: 'The Beatles', file: 'music/beatles/hey-jude.mp3' },
+        { title: 'Let It Be', album: 'Let It Be', artist: 'The Beatles', file: 'music/beatles/let-it-be.mp3' }
+      ]
+    },
+    {
+      pos: 46,
+      name: 'AM · QUEEN',
+      songs: [
+        { title: 'Bohemian Rhapsody', album: 'A Night at the Opera', artist: 'Queen', file: 'music/queen/bohemian.mp3' },
+        { title: 'We Will Rock You', album: 'News of the World', artist: 'Queen', file: 'music/queen/rock-you.mp3' }
+      ]
+    },
+    {
+      pos: 68,
+      name: 'AM · COLDPLAY',
+      songs: [
+        { title: 'Yellow', album: 'Parachutes', artist: 'Coldplay', file: 'music/coldplay/yellow.mp3' },
+        { title: 'Viva La Vida', album: 'Viva la Vida', artist: 'Coldplay', file: 'music/coldplay/viva.mp3' }
+      ]
+    },
+    {
+      pos: 85,
+      name: 'AM · JAZZ',
+      songs: [
+        { title: 'Autumn Leaves', album: "Somethin' Else", artist: 'Cannonball Adderley', file: 'music/jazz/autumn.mp3' }
+      ]
     }
   ];
 
@@ -630,19 +545,21 @@
 
   const audio = document.getElementById('bgMusic');
   const freqDisplay = document.getElementById('freqDisplay');
-  const stationName = document.getElementById('stationName');
+  const trackDisplay = document.getElementById('trackDisplay');
+  const trackDisplayInner = document.getElementById('trackDisplayInner');
   const needle = document.getElementById('needle');
   const powerSwitch = document.getElementById('powerSwitch');
   const ledPower = document.getElementById('ledPower');
   const ledStereo = document.getElementById('ledStereo');
   const volumeKnob = document.getElementById('volumeKnob');
-  const funcSwitch = document.getElementById('funcSwitch');
+  const langSwitch = document.getElementById('langSwitch');
+  const langMode = document.getElementById('langMode');
   const tuningKnob = document.getElementById('tuningKnob');
   const footerInfoLink = document.getElementById('footerInfoLink');
 
   let isPowered = false;
-  let currentFreq = 88.1;
-  let currentStation = null;
+  let mode = 'FM';
+  let currentPos = 38;
   let lockedStation = null;
   let isPlaying = false;
   let currentSongIndex = 0;
@@ -652,7 +569,11 @@
   let signalNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  // ============ 构建表头（扁平版） ============
+  function getStations() {
+    return mode === 'FM' ? stationsFM : stationsAM;
+  }
+
+  // ============ 表头构建（扁平版） ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const CX = 80, CY = 42;
   const START_DEG = -155, END_DEG = -25;
@@ -667,7 +588,6 @@
   }
 
   function buildMeter(svg, color) {
-    // 表盘底
     const bg = document.createElementNS(SVG_NS, 'rect');
     bg.setAttribute('x', 0); bg.setAttribute('y', 0);
     bg.setAttribute('width', 160); bg.setAttribute('height', 45);
@@ -675,7 +595,6 @@
     bg.setAttribute('fill', '#fafaf5');
     svg.appendChild(bg);
 
-    // 主弧线
     const [ax1, ay1] = polar(START_DEG, R_ARC);
     const [ax2, ay2] = polar(END_DEG, R_ARC);
     const arc = document.createElementNS(SVG_NS, 'path');
@@ -685,14 +604,12 @@
     arc.setAttribute('stroke-width', '1.2');
     svg.appendChild(arc);
 
-    // 刻度
     for (let i = 0; i <= 8; i++) {
       const t = i / 8;
       const angle = START_DEG + (END_DEG - START_DEG) * t;
       const rIn = (i % 4 === 0) ? R_TICK_IN - 3 : R_TICK_IN;
       const p1 = polar(angle, rIn);
       const p2 = polar(angle, R_TICK_OUT);
-
       const tick = document.createElementNS(SVG_NS, 'line');
       tick.setAttribute('x1', p1[0]); tick.setAttribute('y1', p1[1]);
       tick.setAttribute('x2', p2[0]); tick.setAttribute('y2', p2[1]);
@@ -701,7 +618,6 @@
       svg.appendChild(tick);
     }
 
-    // 红色过载区（右侧 1/4）
     const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.75;
     const rp1 = polar(degRedStart, R_ARC);
     const rp2 = polar(END_DEG, R_ARC);
@@ -713,7 +629,6 @@
     redArc.setAttribute('stroke-linecap', 'round');
     svg.appendChild(redArc);
 
-    // 指针（初始朝上）
     const needleEl = document.createElementNS(SVG_NS, 'line');
     needleEl.setAttribute('x1', CX);
     needleEl.setAttribute('y1', CY);
@@ -725,7 +640,6 @@
     needleEl.setAttribute('transform', `rotate(${START_DEG + 90} ${CX} ${CY})`);
     svg.appendChild(needleEl);
 
-    // 轴心
     const pivot = document.createElementNS(SVG_NS, 'circle');
     pivot.setAttribute('cx', CX);
     pivot.setAttribute('cy', CY);
@@ -739,7 +653,7 @@
   signalNeedle = buildMeter(document.getElementById('signalMeter'), '#111');
   tuningNeedle = buildMeter(document.getElementById('tuningMeter'), '#c0392b');
 
-  // ============ 构建刻度 ============
+  // ============ 刻度构建 ============
   function buildFMScale() {
     const container = document.getElementById('fmTicks');
     const total = 32;
@@ -811,60 +725,89 @@
       let t = (db + 35) / 35;
       if (t < 0) t = 0;
       if (t > 1) t = 1;
-      // 表针旋转范围：-65° ~ +65°
       const angle = -65 + t * 130;
       signalNeedle.setAttribute('transform', `rotate(${angle} ${CX} ${CY})`);
     }
     requestAnimationFrame(animateMeters);
   }
 
-  // ============ 调谐逻辑 ============
-  function freqToNeedlePercent(freq) {
-    return ((freq - FM_MIN) / (FM_MAX - FM_MIN)) * 100;
+  // ============ 滚动曲目显示 ============
+  function updateTrackDisplay(text) {
+    trackDisplayInner.textContent = text;
+    trackDisplayInner.style.animation = 'none';
+    trackDisplayInner.style.transform = 'translateX(0)';
+
+    // 强制重排，让 scrollWidth 反映最新文本
+    void trackDisplayInner.offsetWidth;
+
+    const tunerEl = document.querySelector('.tuner');
+    const panelWidth = tunerEl.clientWidth - 72;
+    const threshold = panelWidth / 3;
+
+    const cw = trackDisplay.clientWidth - 24;
+    const tw = trackDisplayInner.scrollWidth;
+
+    if (tw > threshold) {
+      const totalDist = cw + tw;
+      const speed = 60;
+      const dur = Math.max(totalDist / speed, 4);
+      trackDisplayInner.style.setProperty('--from-x', cw + 'px');
+      trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
+      trackDisplayInner.style.setProperty('--dur', dur + 's');
+      trackDisplayInner.style.animation = 'marqueeMove var(--dur) linear infinite';
+    }
   }
 
-  function updateTuning(freq) {
-    if (freq < FM_MIN) freq = FM_MIN;
-    if (freq > FM_MAX) freq = FM_MAX;
-    currentFreq = freq;
+  // ============ 调谐逻辑 ============
+  function posToFreq(pos) {
+    if (mode === 'FM') return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
+    return AM_MIN + (pos / 100) * (AM_MAX - AM_MIN);
+  }
 
-    freqDisplay.textContent = freq.toFixed(1) + ' MHz';
-    needle.style.left = freqToNeedlePercent(freq) + '%';
+  function formatFreq(pos) {
+    if (mode === 'FM') return posToFreq(pos).toFixed(1) + ' MHz';
+    return Math.round(posToFreq(pos)) + ' kHz';
+  }
 
+  function updateTuning(pos) {
+    if (pos < 0) pos = 0;
+    if (pos > 100) pos = 100;
+    currentPos = pos;
+
+    freqDisplay.textContent = formatFreq(pos);
+    needle.style.left = pos + '%';
+
+    const stations = getStations();
     let found = null;
     for (const st of stations) {
-      if (Math.abs(freq - st.freq) < 0.5) {
+      if (Math.abs(pos - st.pos) < 1.2) {
         found = st;
         break;
       }
     }
 
     if (found) {
-      stationName.textContent = found.name;
-      stationName.style.color = '#c0392b';
       ledStereo.classList.add('on');
+      const offset = (pos - found.pos) / 1.2;
+      tuningNeedle.setAttribute('transform', `rotate(${offset * 15} ${CX} ${CY})`);
 
-      // 调谐表指针居中
-      const offset = (freq - found.freq) / 0.5;
-      const angle = offset * 15;
-      tuningNeedle.setAttribute('transform', `rotate(${angle} ${CX} ${CY})`);
-
-      // 换台了
       if (found !== lockedStation) {
         lockedStation = found;
         if (isPowered) {
           playStation(found);
+        } else {
+          updateTrackDisplay(found.name);
         }
       } else if (isPowered && !isPlaying) {
-        // 电源刚开，之前已锁定的电台
         playStation(found);
+      } else if (!isPowered) {
+        updateTrackDisplay(found.name);
       }
     } else {
       lockedStation = null;
-      stationName.textContent = 'NO SIGNAL';
-      stationName.style.color = '#999';
       ledStereo.classList.remove('on');
       tuningNeedle.setAttribute('transform', `rotate(0 ${CX} ${CY})`);
+      updateTrackDisplay(isPowered ? 'NO SIGNAL' : 'POWER OFF');
 
       if (isPowered && isPlaying) {
         audio.pause();
@@ -879,17 +822,19 @@
     playSong(station.songs[currentSongIndex]);
   }
 
-  function playSong(path) {
+  function playSong(song) {
     initAudioContext();
-    audio.src = path;
+    audio.src = song.file;
     audio.volume = volumeLevel;
     const promise = audio.play();
     if (promise !== undefined) {
-      promise.then(() => { isPlaying = true; })
-             .catch(err => {
-               console.warn('播放失败:', err);
-               isPlaying = false;
-             });
+      promise.then(() => {
+        isPlaying = true;
+        updateTrackDisplay(`${song.title} - ${song.album} - ${song.artist}`);
+      }).catch(err => {
+        console.warn('播放失败:', err);
+        isPlaying = false;
+      });
     }
   }
 
@@ -900,52 +845,44 @@
     }
   }
 
-  // ============ 平滑调谐到目标频率 ============
+  // ============ 平滑调谐 ============
   function tuneToStation(station) {
-    // 临时加长 transition，让表针平滑滑动
     needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
-    tuningNeedle.style.transition = 'transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
-
-    // 使用中间动画，让指针慢慢滑过
-    const startFreq = currentFreq;
-    const endFreq = station.freq;
-    const duration = 900;
-    const startTime = performance.now();
-
-    // 立即切到目标状态
-    updateTuning(endFreq);
-
-    function animate(now) {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      const freq = startFreq + (endFreq - startFreq) * eased;
-      needle.style.left = freqToNeedlePercent(freq) + '%';
-      if (t < 1) requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-
+    updateTuning(station.pos);
     setTimeout(() => {
       needle.style.transition = 'left 0.05s linear';
-      tuningNeedle.style.transition = 'transform 0.1s ease';
     }, 950);
   }
 
   function autoTuneRandom() {
     if (!isPowered) {
-      // 未开机时点击，自动开机
       isPowered = true;
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-
-    // 随机选一个电台（尽量避开当前锁定的）
+    const stations = getStations();
     let pool = stations;
     if (lockedStation && stations.length > 1) {
       pool = stations.filter(s => s !== lockedStation);
     }
     const randomStation = pool[Math.floor(Math.random() * pool.length)];
     tuneToStation(randomStation);
+  }
+
+  // ============ LANG 模式切换 ============
+  function switchMode() {
+    mode = mode === 'FM' ? 'AM' : 'FM';
+    langMode.textContent = mode;
+    langSwitch.classList.toggle('on', mode === 'AM');
+
+    audio.pause();
+    isPlaying = false;
+    lockedStation = null;
+
+    const stations = getStations();
+    if (stations.length > 0) {
+      tuneToStation(stations[0]);
+    }
   }
 
   // ============ 交互事件 ============
@@ -955,13 +892,12 @@
     ledPower.classList.toggle('on', isPowered);
 
     if (isPowered) {
-      updateTuning(currentFreq);
+      updateTuning(currentPos);
     } else {
       audio.pause();
       isPlaying = false;
-      stationName.textContent = 'POWER OFF';
-      stationName.style.color = '#999';
       ledStereo.classList.remove('on');
+      updateTrackDisplay('POWER OFF');
     }
   });
 
@@ -970,15 +906,12 @@
     audio.volume = volumeLevel;
   });
 
-  funcSwitch.addEventListener('click', () => {
-    funcSwitch.classList.toggle('on');
-    nextSong();
-  });
+  langSwitch.addEventListener('click', switchMode);
 
-  // 大旋钮：拖动调谐 / 点击自动选台 / 滚轮微调
+  // 大旋钮：拖动 / 点击 / 滚轮
   let isDragging = false;
   let startY = 0;
-  let startFreq = 0;
+  let startPos = 0;
   let totalMovement = 0;
   let lastY = 0;
 
@@ -987,7 +920,7 @@
     startY = e.clientY;
     lastY = e.clientY;
     totalMovement = 0;
-    startFreq = currentFreq;
+    startPos = currentPos;
     e.preventDefault();
   });
 
@@ -996,14 +929,11 @@
     totalMovement += Math.abs(e.clientY - lastY);
     lastY = e.clientY;
     const deltaY = startY - e.clientY;
-    updateTuning(startFreq + deltaY * 0.05);
+    updateTuning(startPos + deltaY * 0.15);
   });
 
   document.addEventListener('mouseup', () => {
-    if (isDragging && totalMovement < 6) {
-      // 视为点击 → 自动随机选台
-      autoTuneRandom();
-    }
+    if (isDragging && totalMovement < 6) autoTuneRandom();
     isDragging = false;
   });
 
@@ -1014,17 +944,16 @@
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-    const delta = e.deltaY > 0 ? -0.2 : 0.2;
-    updateTuning(currentFreq + delta);
+    const delta = e.deltaY > 0 ? -0.5 : 0.5;
+    updateTuning(currentPos + delta);
   }, { passive: false });
 
-  // 触摸支持
   tuningKnob.addEventListener('touchstart', (e) => {
     isDragging = true;
     startY = e.touches[0].clientY;
     lastY = e.touches[0].clientY;
     totalMovement = 0;
-    startFreq = currentFreq;
+    startPos = currentPos;
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
@@ -1032,30 +961,25 @@
     totalMovement += Math.abs(e.touches[0].clientY - lastY);
     lastY = e.touches[0].clientY;
     const deltaY = startY - e.touches[0].clientY;
-    updateTuning(startFreq + deltaY * 0.05);
+    updateTuning(startPos + deltaY * 0.15);
   }, { passive: true });
 
   document.addEventListener('touchend', () => {
-    if (isDragging && totalMovement < 8) {
-      autoTuneRandom();
-    }
+    if (isDragging && totalMovement < 8) autoTuneRandom();
     isDragging = false;
   });
 
-  // 播放结束 → 自动下一首
   audio.addEventListener('ended', () => {
-    if (isPowered && lockedStation) {
-      nextSong();
-    }
+    if (isPowered && lockedStation) nextSong();
   });
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 打开 POWER 开关\n· 拖动右侧大旋钮或滚轮调节频率\n· 点击大旋钮可自动随机匹配一个电台\n· 频率对准电台时自动播放对应文件夹歌曲\n· 点击 FUNCTION 开关切换下一首');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· POWER 开关控制电源\n· LANG 按钮切换 FM（中文）/ AM（英文）\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 曲目显示：歌曲名 - 专辑名 - 歌手名\n· 超长曲目名会自动滚动显示');
   });
 
   // 初始化
-  updateTuning(88.1);
+  updateTuning(38);
   audio.volume = volumeLevel;
 })();
 </script>
