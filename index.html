@@ -1,427 +1,684 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的音乐主页 · 随机播放</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复古卡座 · 随机音乐</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
-            padding: 1.5rem;
-            padding-bottom: 0;
-        }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #0f0d0b;
+    background-image: radial-gradient(ellipse at 50% 0%, #2a2018 0%, #0f0d0b 70%);
+    font-family: 'Courier New', monospace;
+    color: #d4c4a8;
+    padding: 2rem 1rem;
+  }
 
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-            text-align: center;
-        }
+  /* ============ 机箱主体 ============ */
+  .deck {
+    position: relative;
+    width: 100%;
+    max-width: 680px;
+    background: linear-gradient(180deg, #3d2a1f 0%, #2a1d14 50%, #1a1209 100%);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,0.8),
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      inset 0 -1px 0 rgba(0,0,0,0.5);
+  }
 
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #a5f3fc, #c084fc);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+  .deck::before, .deck::after {
+    content: '';
+    position: absolute;
+    top: 20px; bottom: 20px;
+    width: 8px;
+    background: linear-gradient(90deg, #4a3528, #2a1d14);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .deck::before { left: 6px; }
+  .deck::after  { right: 6px; background: linear-gradient(90deg, #2a1d14, #4a3528); }
 
-        .subhead {
-            font-size: 1rem;
-            color: #94a3b8;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px dashed #334155;
-            padding-bottom: 1rem;
-            width: 100%;
-        }
+  .panel {
+    background: linear-gradient(180deg, #2a2520 0%, #1a1614 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #0a0806;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), inset 0 -1px 0 rgba(255,255,255,0.05);
+  }
 
-        .music-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid #334155;
-            border-radius: 2rem;
-            padding: 2rem 1.8rem;
-            box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.6);
-            width: 100%;
-            transition: transform 0.2s;
-        }
+  /* ============ 顶栏 ============ */
+  .panel-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #0a0806;
+  }
 
-        .now-playing {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            background: #0b1120;
-            padding: 0.9rem 1.5rem;
-            border-radius: 3rem;
-            margin-bottom: 2rem;
-            border: 1px solid #2d3a4f;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
+  .brand {
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    color: #8a8078;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-        .disc-icon {
-            font-size: 1.5rem;
-            animation: spin 3s linear infinite;
-            animation-play-state: paused;
-            display: inline-block;
-        }
+  .brand-led {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ff3b30;
+    box-shadow: 0 0 8px #ff3b30, inset 0 0 2px rgba(255,255,255,0.5);
+    animation: pulse 2s ease-in-out infinite;
+  }
 
-        .disc-icon.playing {
-            animation-play-state: running;
-        }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+  .counter {
+    background: #0a0806;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    color: #ffb347;
+    text-shadow: 0 0 6px #ff8c00;
+    border: 1px solid #000;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.9);
+  }
 
-        .track-title {
-            font-weight: 500;
-            font-size: 1.15rem;
-            color: #f1f5f9;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 200px;
-        }
+  /* ============ 磁带窗口 ============ */
+  .cassette-window {
+    background: #0a0806;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 3px 12px rgba(0,0,0,1), 0 1px 0 rgba(255,255,255,0.05);
+    border: 1px solid #000;
+  }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
+  .cassette {
+    background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 50%, #3a3a3a 100%);
+    border-radius: 4px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0.9rem 2rem;
-            border: none;
-            border-radius: 3rem;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #1e293b;
-            color: #e2e8f0;
-            border: 1px solid #3b4a5e;
-            box-shadow: 0 6px 0 #0b1120;
-            transform: translateY(0);
-        }
+  .cassette::before {
+    content: 'TYPE II · HIGH BIAS · NR [ ON ]';
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+    color: #8a8078;
+    white-space: nowrap;
+  }
 
-        .btn:active {
-            box-shadow: 0 2px 0 #0b1120;
-            transform: translateY(4px);
-        }
+  .reel {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1a1a1a 30%, #333 31%, #1a1a1a 60%);
+    border: 2px solid #555;
+    position: relative;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.9);
+    flex-shrink: 0;
+  }
 
-        .btn-play {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-color: #3b82f6;
-            box-shadow: 0 6px 0 #0e1a2b;
-            color: white;
-        }
+  .reel::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 2px dashed #666;
+  }
 
-        .btn-play:hover {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
+  .reel::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #111;
+    border: 1px solid #444;
+  }
 
-        .btn-stop {
-            background: linear-gradient(135deg, #b91c1c, #991b1b);
-            border-color: #ef4444;
-            box-shadow: 0 6px 0 #2b0e0e;
-            color: white;
-        }
+  .reel.spinning { animation: spin 4s linear infinite; }
 
-        .btn-stop:hover {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-        }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: 0 4px 0 #0b1120;
-            transform: translateY(2px);
-        }
+  .tape-label {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.72rem;
+    color: #d4c4a8;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 190px;
+    text-align: center;
+    z-index: 2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+  }
 
-        .hint {
-            margin-top: 1.8rem;
-            font-size: 0.85rem;
-            color: #64748b;
-            background: #0f172a;
-            padding: 0.7rem 1.2rem;
-            border-radius: 3rem;
-            border: 1px solid #1e293b;
-            display: inline-block;
-            max-width: 100%;
-        }
+  /* ============ VU 表 ============ */
+  .vu-section {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
 
-        footer {
-            margin-top: 3rem;
-            padding: 1.2rem 0 1.5rem;
-            border-top: 1px solid #1e293b;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            color: #64748b;
-            font-size: 0.85rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-            gap: 1rem;
-        }
+  .vu-meter {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(180deg, #1a1614, #0a0806);
+    border-radius: 6px;
+    padding: 6px;
+    border: 1px solid #000;
+    box-shadow: inset 0 0 20px rgba(255,180,80,0.08), 0 1px 0 rgba(255,255,255,0.05);
+  }
 
-        .footer-links {
-            display: flex;
-            gap: 1.5rem;
-        }
+  .vu-svg { display: block; width: 100%; height: auto; }
 
-        .footer-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            transition: color 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
+  .vu-tag {
+    position: absolute;
+    bottom: 8px; right: 12px;
+    font-size: 0.6rem;
+    color: #8a8078;
+    letter-spacing: 2px;
+  }
 
-        .footer-links a:hover {
-            color: #c084fc;
-        }
+  /* ============ 控制按键 ============ */
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding-top: 4px;
+  }
 
-        .copyright {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+  .key {
+    flex: 1;
+    max-width: 150px;
+    background: linear-gradient(180deg, #3a3530 0%, #1a1614 100%);
+    border: 1px solid #0a0806;
+    border-radius: 4px;
+    padding: 12px 20px;
+    color: #d4c4a8;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #0a0806, inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.05s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 
-        @media (max-width: 480px) {
-            body { padding: 1rem; }
-            h1 { font-size: 1.8rem; }
-            .music-card { padding: 1.5rem 1.2rem; }
-            .btn { padding: 0.75rem 1.4rem; font-size: 0.95rem; }
-            .controls { gap: 1rem; }
-            .track-title { max-width: 150px; }
-            footer { flex-direction: column; text-align: center; gap: 0.8rem; }
-        }
-    </style>
+  .key:hover:not(:disabled) {
+    background: linear-gradient(180deg, #4a453f 0%, #2a2520 100%);
+  }
+
+  .key:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0a0806, inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .key:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .key-led {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #3a3530;
+    transition: all 0.2s;
+  }
+
+  .key.play.active .key-led {
+    background: #4cd964;
+    box-shadow: 0 0 8px #4cd964;
+  }
+
+  .key.stop.active .key-led {
+    background: #ff3b30;
+    box-shadow: 0 0 8px #ff3b30;
+  }
+
+  /* ============ 底部信息 ============ */
+  footer {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 680px;
+    padding: 0 8px;
+    font-size: 0.7rem;
+    color: #5a5048;
+    letter-spacing: 1px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  footer a { color: #8a8078; text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: #ffb347; }
+  .footer-links { display: flex; gap: 18px; }
+
+  @media (max-width: 520px) {
+    .deck { padding: 12px; }
+    .panel { padding: 12px; }
+    .cassette { height: 70px; padding: 0 14px; }
+    .reel { width: 40px; height: 40px; }
+    .reel::before { inset: 6px; }
+    .tape-label { font-size: 0.6rem; max-width: 140px; }
+    .vu-section { gap: 8px; }
+    .key { padding: 10px 12px; font-size: 0.7rem; }
+  }
+</style>
 </head>
 <body>
-    <div class="main">
-        <h1>🎧 我的音乐主页</h1>
-        <div class="subhead">随机播放目录中的音乐</div>
 
-        <div class="music-card">
-            <div class="now-playing">
-                <span class="disc-icon" id="discIcon">💿</span>
-                <span class="track-title" id="trackTitle">未播放</span>
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-play" id="playBtn">
-                    <span>▶</span> 播放
-                </button>
-                <button class="btn btn-stop" id="stopBtn" disabled>
-                    <span>⏹</span> 停止
-                </button>
-            </div>
-
-            <div class="hint" id="statusMessage">
-                👆 点击「播放」开始随机音乐
-            </div>
-        </div>
+<div class="deck">
+  <div class="panel">
+    <div class="panel-top">
+      <div class="brand">
+        <span class="brand-led"></span>
+        RETRO · CASSEIVER
+      </div>
+      <div class="counter" id="counter">0000</div>
     </div>
 
-    <footer>
-        <div class="copyright">
-            <span>©</span> 2025 我的 GitHub 主页
-        </div>
-        <div class="footer-links">
-            <a href="https://github.com/" target="_blank" rel="noopener">
-                <span>🐙</span> GitHub
-            </a>
-            <a href="#" id="footerInfoLink">
-                <span>ℹ️</span> 关于
-            </a>
-        </div>
-    </footer>
+    <div class="cassette-window">
+      <div class="cassette">
+        <div class="reel" id="reelL"></div>
+        <div class="tape-label" id="trackTitle">未播放</div>
+        <div class="reel" id="reelR"></div>
+      </div>
+    </div>
 
-    <!-- 音频元素，src 由 JavaScript 动态设置 -->
-    <audio id="bgMusic" preload="auto"></audio>
+    <div class="vu-section">
+      <div class="vu-meter">
+        <svg class="vu-svg" id="vuL" viewBox="0 0 200 130"></svg>
+        <div class="vu-tag">L</div>
+      </div>
+      <div class="vu-meter">
+        <svg class="vu-svg" id="vuR" viewBox="0 0 200 130"></svg>
+        <div class="vu-tag">R</div>
+      </div>
+    </div>
 
-    <script>
-        (function() {
-            // ==================== 音乐列表 ====================
-            // 请把下面的路径改成你实际上传的音乐文件路径
-            // 例如文件放在仓库的 music/ 文件夹下，就写 'music/歌曲名.mp3'
-            const playlist = [
-                'music/song1.mp3',
-                'music/song2.mp3',
-                'music/song3.mp3'
-                // 可以继续添加...
-            ];
-            // =================================================
+    <div class="controls">
+      <button class="key play" id="playBtn">
+        <span class="key-led"></span>
+        ▶ PLAY
+      </button>
+      <button class="key stop" id="stopBtn">
+        <span class="key-led"></span>
+        ⏹ STOP
+      </button>
+    </div>
+  </div>
+</div>
 
-            const audio = document.getElementById('bgMusic');
-            const playBtn = document.getElementById('playBtn');
-            const stopBtn = document.getElementById('stopBtn');
-            const trackTitle = document.getElementById('trackTitle');
-            const discIcon = document.getElementById('discIcon');
-            const statusMessage = document.getElementById('statusMessage');
-            const footerInfoLink = document.getElementById('footerInfoLink');
+<footer>
+  <div>© 2025 我的 GitHub 主页</div>
+  <div class="footer-links">
+    <a href="https://github.com/" target="_blank" rel="noopener">GITHUB</a>
+    <a href="#" id="footerInfoLink">ABOUT</a>
+  </div>
+</footer>
 
-            let isPlaying = false;
-            let isUserTriggered = false; // 标记是否为用户点击触发
+<audio id="bgMusic" preload="auto"></audio>
 
-            // 从文件路径提取曲目名
-            function getTrackName(path) {
-                if (!path) return '未知曲目';
-                const decoded = decodeURIComponent(path);
-                const filename = decoded.split('/').pop() || '';
-                const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-                return nameWithoutExt.replace(/[_-]/g, ' ') || '未命名曲目';
-            }
+<script>
+(function() {
+  // ==================== 音乐列表 ====================
+  const playlist = [
+    'music/song1.mp3',
+    'music/song2.mp3',
+    'music/song3.mp3'
+  ];
+  // ==================================================
 
-            // 更新界面状态
-            function updateUIForPlaying(playing) {
-                isPlaying = playing;
-                if (playing) {
-                    discIcon.classList.add('playing');
-                    playBtn.disabled = true;
-                    stopBtn.disabled = false;
-                } else {
-                    discIcon.classList.remove('playing');
-                    playBtn.disabled = false;
-                    stopBtn.disabled = true;
-                }
-            }
+  const audio = document.getElementById('bgMusic');
+  const playBtn = document.getElementById('playBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const trackTitle = document.getElementById('trackTitle');
+  const reelL = document.getElementById('reelL');
+  const reelR = document.getElementById('reelR');
+  const counter = document.getElementById('counter');
+  const footerInfoLink = document.getElementById('footerInfoLink');
 
-            // 设置状态提示
-            function setStatus(text, isError = false) {
-                statusMessage.innerHTML = text;
-                statusMessage.style.color = isError ? '#f87171' : '#64748b';
-            }
+  let isPlaying = false;
+  let audioContext = null;
+  let analyser = null;
+  let dataArray = null;
+  let needleAngleL = -45;
+  let needleAngleR = -45;
+  let needleL, needleR;
+  let lastCounterSec = -1;
 
-            // 随机获取一首曲目路径
-            function getRandomTrack() {
-                if (playlist.length === 0) return null;
-                const randomIndex = Math.floor(Math.random() * playlist.length);
-                return playlist[randomIndex];
-            }
+  // ============ 构建 VU 表 ============
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const CX = 100, CY = 115;
+  const START_DEG = -135, END_DEG = -45;
 
-            // 播放随机音乐
-            function playRandom(fromUser = false) {
-                if (playlist.length === 0) {
-                    setStatus('⚠️ 播放列表为空，请添加音乐文件', true);
-                    return;
-                }
+  const VU_MARKS = [
+    ['-20', 0.00, true],
+    ['',    0.07, false],
+    ['-10', 0.15, true],
+    ['',    0.22, false],
+    ['-7',  0.28, true],
+    ['',    0.34, false],
+    ['-5',  0.40, true],
+    ['',    0.46, false],
+    ['-3',  0.52, true],
+    ['-2',  0.62, true],
+    ['-1',  0.72, true],
+    ['0',   0.82, true],
+    ['+1',  0.89, true],
+    ['+2',  0.95, true],
+    ['+3',  1.00, true]
+  ];
 
-                const track = getRandomTrack();
-                if (!track) return;
+  function polar(deg, r) {
+    const rad = deg * Math.PI / 180;
+    return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
+  }
 
-                audio.src = track;
-                const playPromise = audio.play();
+  function buildVUMeter(svg, gradientId) {
+    // 表盘渐层
+    const defs = document.createElementNS(SVG_NS, 'defs');
+    const grad = document.createElementNS(SVG_NS, 'radialGradient');
+    grad.setAttribute('id', gradientId);
+    grad.setAttribute('cx', '50%');
+    grad.setAttribute('cy', '75%');
+    grad.setAttribute('r', '75%');
 
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // 播放成功
-                        trackTitle.textContent = getTrackName(track);
-                        updateUIForPlaying(true);
-                        setStatus('🎵 正在播放：' + getTrackName(track), false);
-                        isUserTriggered = false;
-                    }).catch(error => {
-                        // 播放失败
-                        console.warn('播放失败:', error);
-                        updateUIForPlaying(false);
-                        if (fromUser) {
-                            setStatus('❌ 播放失败，请检查文件路径或格式', true);
-                        } else {
-                            setStatus('👆 点击「播放」按钮开始随机音乐', false);
-                        }
-                    });
-                } else {
-                    // 老式浏览器
-                    updateUIForPlaying(!audio.paused);
-                    if (!audio.paused) {
-                        trackTitle.textContent = getTrackName(track);
-                        setStatus('🎵 正在播放', false);
-                    }
-                }
-            }
+    const s1 = document.createElementNS(SVG_NS, 'stop');
+    s1.setAttribute('offset', '0%');
+    s1.setAttribute('stop-color', '#fff2d0');
+    const s2 = document.createElementNS(SVG_NS, 'stop');
+    s2.setAttribute('offset', '100%');
+    s2.setAttribute('stop-color', '#e8d4a0');
+    grad.appendChild(s1); grad.appendChild(s2);
+    defs.appendChild(grad);
+    svg.appendChild(defs);
 
-            // 停止播放
-            function stopAudio() {
-                audio.pause();
-                audio.currentTime = 0;
-                updateUIForPlaying(false);
-                trackTitle.textContent = '未播放';
-                setStatus('⏸️ 已停止', false);
-                isUserTriggered = false;
-            }
+    // 表盘底
+    const bg = document.createElementNS(SVG_NS, 'rect');
+    bg.setAttribute('x', 0);
+    bg.setAttribute('y', 0);
+    bg.setAttribute('width', 200);
+    bg.setAttribute('height', 130);
+    bg.setAttribute('rx', 6);
+    bg.setAttribute('fill', `url(#${gradientId})`);
+    svg.appendChild(bg);
 
-            // 播放结束 → 自动随机下一首
-            audio.addEventListener('ended', () => {
-                // 只有当前是播放状态才继续随机（防止停止后触发）
-                if (isPlaying) {
-                    playRandom(false);
-                }
-            });
+    // 主弧线
+    const [ax1, ay1] = polar(START_DEG, 82);
+    const [ax2, ay2] = polar(END_DEG, 82);
+    const arc = document.createElementNS(SVG_NS, 'path');
+    arc.setAttribute('d', `M ${ax1} ${ay1} A 82 82 0 0 1 ${ax2} ${ay2}`);
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke', '#3a2a1a');
+    arc.setAttribute('stroke-width', '1.5');
+    svg.appendChild(arc);
 
-            // 监听音频错误
-            audio.addEventListener('error', (e) => {
-                console.error('音频加载错误:', e);
-                setStatus('❌ 音频加载失败，请检查文件是否存在', true);
-                updateUIForPlaying(false);
-            });
+    // 刻度 + 数字
+    VU_MARKS.forEach(function(mark) {
+      const label = mark[0], t = mark[1], major = mark[2];
+      const deg = START_DEG + (END_DEG - START_DEG) * t;
+      const rIn = major ? 68 : 74;
+      const rOut = 80;
+      const p1 = polar(deg, rIn);
+      const p2 = polar(deg, rOut);
 
-            // 按钮事件
-            playBtn.addEventListener('click', () => {
-                isUserTriggered = true;
-                playRandom(true);
-            });
+      const tick = document.createElementNS(SVG_NS, 'line');
+      tick.setAttribute('x1', p1[0]);
+      tick.setAttribute('y1', p1[1]);
+      tick.setAttribute('x2', p2[0]);
+      tick.setAttribute('y2', p2[1]);
+      tick.setAttribute('stroke', '#3a2a1a');
+      tick.setAttribute('stroke-width', major ? 1.8 : 1);
+      tick.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(tick);
 
-            stopBtn.addEventListener('click', stopAudio);
+      if (label) {
+        const lp = polar(deg, 58);
+        const text = document.createElementNS(SVG_NS, 'text');
+        text.setAttribute('x', lp[0]);
+        text.setAttribute('y', lp[1]);
+        text.setAttribute('font-size', '10');
+        text.setAttribute('font-family', 'Courier New, monospace');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('fill', '#3a2a1a');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.textContent = label;
+        svg.appendChild(text);
+      }
+    });
 
-            // 页脚关于
-            footerInfoLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('这是一个随机播放本地音乐的主页。\n请把音乐文件放在 music/ 文件夹，并在代码的 playlist 数组中添加文件名。');
-            });
+    // 红色过载区 (+1 ~ +3)
+    const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.82;
+    const rp1 = polar(degRedStart, 82);
+    const rp2 = polar(END_DEG, 82);
+    const redArc = document.createElementNS(SVG_NS, 'path');
+    redArc.setAttribute('d', `M ${rp1[0]} ${rp1[1]} A 82 82 0 0 1 ${rp2[0]} ${rp2[1]}`);
+    redArc.setAttribute('fill', 'none');
+    redArc.setAttribute('stroke', '#c0392b');
+    redArc.setAttribute('stroke-width', '3');
+    redArc.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(redArc);
 
-            // 页面加载时尝试自动播放（通常会被浏览器阻止）
-            window.addEventListener('load', () => {
-                if (playlist.length === 0) {
-                    setStatus('⚠️ 请先在 playlist 数组中添加音乐文件', true);
-                    return;
-                }
-                // 尝试自动播放随机一首
-                playRandom(false);
-            });
-        })();
-    </script>
+    // 指针
+    const needle = document.createElementNS(SVG_NS, 'line');
+    needle.setAttribute('x1', CX);
+    needle.setAttribute('y1', CY);
+    needle.setAttribute('x2', CX);
+    needle.setAttribute('y2', CY - 62);
+    needle.setAttribute('stroke', '#1a1a1a');
+    needle.setAttribute('stroke-width', '2');
+    needle.setAttribute('stroke-linecap', 'round');
+    needle.setAttribute('transform', 'rotate(-45 ' + CX + ' ' + CY + ')');
+    svg.appendChild(needle);
+
+    // 轴心
+    const pivot = document.createElementNS(SVG_NS, 'circle');
+    pivot.setAttribute('cx', CX);
+    pivot.setAttribute('cy', CY);
+    pivot.setAttribute('r', 5);
+    pivot.setAttribute('fill', '#1a1a1a');
+    svg.appendChild(pivot);
+
+    return needle;
+  }
+
+  needleL = buildVUMeter(document.getElementById('vuL'), 'vuGradL');
+  needleR = buildVUMeter(document.getElementById('vuR'), 'vuGradR');
+
+  // ============ 音频分析 ============
+  function initAudioContext() {
+    if (audioContext) {
+      if (audioContext.state === 'suspended') audioContext.resume();
+      return;
+    }
+
+    const AC = window.AudioContext || window.webkitAudioContext;
+    audioContext = new AC();
+
+    const source = audioContext.createMediaElementSource(audio);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 1024;
+
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    dataArray = new Uint8Array(analyser.fftSize);
+
+    requestAnimationFrame(animateNeedles);
+  }
+
+  function dbToAngle(db) {
+    // -35dB → -45°；0dB → +45°
+    let t = (db + 35) / 35;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return -45 + t * 90;
+  }
+
+  function animateNeedles() {
+    if (analyser && dataArray) {
+      analyser.getByteTimeDomainData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const v = (dataArray[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / dataArray.length);
+      const db = 20 * Math.log10(rms + 0.0001);
+      const target = dbToAngle(db);
+
+      // 左右表略有差异，模拟真实 VU 表的机械感
+      const targetL = target;
+      const targetR = target * 0.97 + (Math.random() - 0.5) * 1.5;
+
+      needleAngleL += (targetL - needleAngleL) * 0.35;
+      needleAngleR += (targetR - needleAngleR) * 0.30;
+
+      needleL.setAttribute('transform', 'rotate(' + needleAngleL + ' ' + CX + ' ' + CY + ')');
+      needleR.setAttribute('transform', 'rotate(' + needleAngleR + ' ' + CX + ' ' + CY + ')');
+    }
+    requestAnimationFrame(animateNeedles);
+  }
+
+  // ============ 播放逻辑 ============
+  function getTrackName(path) {
+    if (!path) return '未知曲目';
+    const decoded = decodeURIComponent(path);
+    const filename = decoded.split('/').pop() || '';
+    const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
+    return nameWithoutExt.replace(/[_-]/g, ' ') || '未命名曲目';
+  }
+
+  function updateUIForPlaying(playing) {
+    isPlaying = playing;
+    if (playing) {
+      reelL.classList.add('spinning');
+      reelR.classList.add('spinning');
+      playBtn.disabled = true;
+      playBtn.classList.add('active');
+      stopBtn.disabled = false;
+      stopBtn.classList.remove('active');
+    } else {
+      reelL.classList.remove('spinning');
+      reelR.classList.remove('spinning');
+      playBtn.disabled = false;
+      playBtn.classList.remove('active');
+      stopBtn.disabled = true;
+      stopBtn.classList.add('active');
+    }
+  }
+
+  function getRandomTrack() {
+    if (playlist.length === 0) return null;
+    return playlist[Math.floor(Math.random() * playlist.length)];
+  }
+
+  function playRandom() {
+    if (playlist.length === 0) {
+      trackTitle.textContent = '列表为空';
+      return;
+    }
+
+    initAudioContext();
+
+    const track = getRandomTrack();
+    if (!track) return;
+
+    audio.src = track;
+    const promise = audio.play();
+
+    if (promise !== undefined) {
+      promise.then(function() {
+        trackTitle.textContent = getTrackName(track);
+        updateUIForPlaying(true);
+      }).catch(function(err) {
+        console.warn('播放失败:', err);
+        updateUIForPlaying(false);
+        trackTitle.textContent = '播放失败';
+      });
+    } else {
+      updateUIForPlaying(!audio.paused);
+    }
+  }
+
+  function stopAudio() {
+    audio.pause();
+    audio.currentTime = 0;
+    updateUIForPlaying(false);
+    trackTitle.textContent = '未播放';
+    counter.textContent = '0000';
+    lastCounterSec = -1;
+  }
+
+  // 走带计数器
+  audio.addEventListener('timeupdate', function() {
+    const t = Math.floor(audio.currentTime);
+    if (t !== lastCounterSec) {
+      lastCounterSec = t;
+      const m = String(Math.floor(t / 60)).padStart(2, '0');
+      const s = String(t % 60).padStart(2, '0');
+      counter.textContent = m + s;
+    }
+  });
+
+  // 播放结束 → 自动随机下一首
+  audio.addEventListener('ended', function() {
+    if (isPlaying) playRandom();
+  });
+
+  audio.addEventListener('error', function() {
+    trackTitle.textContent = '文件错误';
+    updateUIForPlaying(false);
+  });
+
+  playBtn.addEventListener('click', playRandom);
+  stopBtn.addEventListener('click', stopAudio);
+
+  footerInfoLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    alert('复古卡座磁带机风格的音乐播放器\n\n· 随机播放 music/ 目录下的音乐\n· 两个 VU 表实时显示音量\n· 请把音乐文件放在 music/ 文件夹，并在 playlist 数组中添加路径');
+  });
+
+  // 初始化
+  updateUIForPlaying(false);
+  if (playlist.length === 0) {
+    trackTitle.textContent = '请添加音乐';
+  }
+})();
+</script>
+
 </body>
 </html>
