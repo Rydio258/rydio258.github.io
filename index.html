@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的 Apple Music 主页</title>
+    <title>我的音乐主页 · 随机播放</title>
     <style>
         * {
             margin: 0;
@@ -232,17 +232,17 @@
 </head>
 <body>
     <div class="main">
-        <h1>🎧 我的 Apple Music 主页</h1>
-        <div class="subhead">授权后即可播放你账户中的音乐</div>
+        <h1>🎧 我的音乐主页</h1>
+        <div class="subhead">随机播放目录中的音乐</div>
 
         <div class="music-card">
             <div class="now-playing">
                 <span class="disc-icon" id="discIcon">💿</span>
-                <span class="track-title" id="trackTitle">等待授权</span>
+                <span class="track-title" id="trackTitle">未播放</span>
             </div>
 
             <div class="controls">
-                <button class="btn btn-play" id="playBtn" disabled>
+                <button class="btn btn-play" id="playBtn">
                     <span>▶</span> 播放
                 </button>
                 <button class="btn btn-stop" id="stopBtn" disabled>
@@ -251,7 +251,7 @@
             </div>
 
             <div class="hint" id="statusMessage">
-                ⏳ 正在加载 MusicKit...
+                👆 点击「播放」开始随机音乐
             </div>
         </div>
     </div>
@@ -270,11 +270,23 @@
         </div>
     </footer>
 
-    <!-- MusicKit JS v3，注意不要加 async 属性 -->
-    <script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js"></script>
+    <!-- 音频元素，src 由 JavaScript 动态设置 -->
+    <audio id="bgMusic" preload="auto"></audio>
 
     <script>
         (function() {
+            // ==================== 音乐列表 ====================
+            // 请把下面的路径改成你实际上传的音乐文件路径
+            // 例如文件放在仓库的 music/ 文件夹下，就写 'music/歌曲名.mp3'
+            const playlist = [
+                'music/song1.mp3',
+                'music/song2.mp3',
+                'music/song3.mp3'
+                // 可以继续添加...
+            ];
+            // =================================================
+
+            const audio = document.getElementById('bgMusic');
             const playBtn = document.getElementById('playBtn');
             const stopBtn = document.getElementById('stopBtn');
             const trackTitle = document.getElementById('trackTitle');
@@ -282,116 +294,132 @@
             const statusMessage = document.getElementById('statusMessage');
             const footerInfoLink = document.getElementById('footerInfoLink');
 
-            let music = null;
-            let isAuthorized = false;
+            let isPlaying = false;
+            let isUserTriggered = false; // 标记是否为用户点击触发
 
-            function setStatus(text, isError = false) {
-                statusMessage.innerHTML = text;
-                statusMessage.style.color = isError ? '#f87171' : '#64748b';
+            // 从文件路径提取曲目名
+            function getTrackName(path) {
+                if (!path) return '未知曲目';
+                const decoded = decodeURIComponent(path);
+                const filename = decoded.split('/').pop() || '';
+                const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
+                return nameWithoutExt.replace(/[_-]/g, ' ') || '未命名曲目';
             }
 
-            function updateUIForPlaying(isPlaying) {
-                if (isPlaying) {
+            // 更新界面状态
+            function updateUIForPlaying(playing) {
+                isPlaying = playing;
+                if (playing) {
                     discIcon.classList.add('playing');
                     playBtn.disabled = true;
                     stopBtn.disabled = false;
                 } else {
                     discIcon.classList.remove('playing');
-                    playBtn.disabled = !isAuthorized;
+                    playBtn.disabled = false;
                     stopBtn.disabled = true;
                 }
             }
 
-            function getTrackName() {
-                if (!music || !music.nowPlayingItem) return '未知曲目';
-                const item = music.nowPlayingItem;
-                return item.attributes?.name || item.attributes?.albumName || '正在播放';
+            // 设置状态提示
+            function setStatus(text, isError = false) {
+                statusMessage.innerHTML = text;
+                statusMessage.style.color = isError ? '#f87171' : '#64748b';
             }
 
-            function playAppleMusic() {
-                if (!music) return;
-
-                // 第一步：授权
-                music.authorize().then(() => {
-                    isAuthorized = true;
-                    setStatus('🔑 授权成功，正在准备播放...');
-
-                    // 第二步：设置播放队列（替换成你的 Apple Music 链接）
-                    return music.setQueue({
-                        url: 'https://music.apple.com/cn/album/hello-hi-single/1787174372'
-                    });
-                }).then(() => {
-                    // 第三步：播放
-                    return music.play();
-                }).then(() => {
-                    setStatus('🎵 正在播放');
-                    updateUIForPlaying(true);
-                }).catch(error => {
-                    console.error('播放失败:', error);
-                    setStatus('⚠️ 播放失败，请检查 Token 或链接', true);
-                    updateUIForPlaying(false);
-                });
+            // 随机获取一首曲目路径
+            function getRandomTrack() {
+                if (playlist.length === 0) return null;
+                const randomIndex = Math.floor(Math.random() * playlist.length);
+                return playlist[randomIndex];
             }
 
-            function stopAppleMusic() {
-                if (!music) return;
-                music.pause();
-                music.player.seekToTime(0);
-                updateUIForPlaying(false);
-                setStatus('⏸️ 已停止', false);
-            }
+            // 播放随机音乐
+            function playRandom(fromUser = false) {
+                if (playlist.length === 0) {
+                    setStatus('⚠️ 播放列表为空，请添加音乐文件', true);
+                    return;
+                }
 
-            // 监听 MusicKit 加载完成
-            document.addEventListener('musickitloaded', function() {
-                // ⚠️ 替换成你的 Developer Token
-                MusicKit.configure({
-                    developerToken: 'YOUR_DEVELOPER_TOKEN_HERE',
-                    app: {
-                        name: 'My GitHub Music Page',
-                        build: '1.0.0'
-                    }
-                });
+                const track = getRandomTrack();
+                if (!track) return;
 
-                music = MusicKit.getInstance();
+                audio.src = track;
+                const playPromise = audio.play();
 
-                // 启用播放按钮
-                playBtn.disabled = false;
-                setStatus('👆 点击「播放」授权并开始音乐', false);
-
-                // 监听播放状态变化，同步 UI
-                music.addEventListener('playbackStateDidChange', () => {
-                    const state = music.playbackState;
-                    // 2 = playing, 3 = paused
-                    if (state === 2) {
-                        trackTitle.textContent = getTrackName();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // 播放成功
+                        trackTitle.textContent = getTrackName(track);
                         updateUIForPlaying(true);
-                    } else if (state === 3) {
+                        setStatus('🎵 正在播放：' + getTrackName(track), false);
+                        isUserTriggered = false;
+                    }).catch(error => {
+                        // 播放失败
+                        console.warn('播放失败:', error);
                         updateUIForPlaying(false);
+                        if (fromUser) {
+                            setStatus('❌ 播放失败，请检查文件路径或格式', true);
+                        } else {
+                            setStatus('👆 点击「播放」按钮开始随机音乐', false);
+                        }
+                    });
+                } else {
+                    // 老式浏览器
+                    updateUIForPlaying(!audio.paused);
+                    if (!audio.paused) {
+                        trackTitle.textContent = getTrackName(track);
+                        setStatus('🎵 正在播放', false);
                     }
-                });
+                }
+            }
 
-                // 监听曲目变化，更新显示
-                music.addEventListener('nowPlayingItemDidChange', () => {
-                    if (music.playbackState === 2) {
-                        trackTitle.textContent = getTrackName();
-                    }
-                });
+            // 停止播放
+            function stopAudio() {
+                audio.pause();
+                audio.currentTime = 0;
+                updateUIForPlaying(false);
+                trackTitle.textContent = '未播放';
+                setStatus('⏸️ 已停止', false);
+                isUserTriggered = false;
+            }
 
-                // 监听播放错误
-                music.addEventListener('mediaPlaybackError', (error) => {
-                    console.error('播放错误:', error);
-                    setStatus('❌ 播放出错，请检查控制台', true);
-                    updateUIForPlaying(false);
-                });
+            // 播放结束 → 自动随机下一首
+            audio.addEventListener('ended', () => {
+                // 只有当前是播放状态才继续随机（防止停止后触发）
+                if (isPlaying) {
+                    playRandom(false);
+                }
+            });
+
+            // 监听音频错误
+            audio.addEventListener('error', (e) => {
+                console.error('音频加载错误:', e);
+                setStatus('❌ 音频加载失败，请检查文件是否存在', true);
+                updateUIForPlaying(false);
             });
 
             // 按钮事件
-            playBtn.addEventListener('click', playAppleMusic);
-            stopBtn.addEventListener('click', stopAppleMusic);
+            playBtn.addEventListener('click', () => {
+                isUserTriggered = true;
+                playRandom(true);
+            });
 
+            stopBtn.addEventListener('click', stopAudio);
+
+            // 页脚关于
             footerInfoLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('这是一个演示页面，使用 MusicKit JS 播放 Apple Music。\n请确保已配置有效的 Developer Token 和音乐链接。');
+                alert('这是一个随机播放本地音乐的主页。\n请把音乐文件放在 music/ 文件夹，并在代码的 playlist 数组中添加文件名。');
+            });
+
+            // 页面加载时尝试自动播放（通常会被浏览器阻止）
+            window.addEventListener('load', () => {
+                if (playlist.length === 0) {
+                    setStatus('⚠️ 请先在 playlist 数组中添加音乐文件', true);
+                    return;
+                }
+                // 尝试自动播放随机一首
+                playRandom(false);
             });
         })();
     </script>
