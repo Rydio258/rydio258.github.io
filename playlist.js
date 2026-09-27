@@ -1,42 +1,22 @@
-// ==================== 电台歌单配置 ====================
-// 每个电台包含：
-//   pos   — 指针在刻度盘上的位置，0（最左）到 100（最右）
-//   name  — 电台栏目名，会显示在频率旁的小栏里
-//   songs — 歌曲文件路径数组，只写路径，显示时会自动去掉后缀
-//
-// 提示：每个电台的 pos 间隔最好大于 10，避免互相干扰。
+// 此文件由脚本自动生成，请勿手动修改
+// 生成时间：2026-09-27 10:22:12
 
 window.PLAYLIST = {
     stations: [
         {
-            pos: 10,
+            pos: 50,
             name: 'C-POP',
             songs: [
-                'music/C-POP/djt.mp3'
-            ]
-        },
-        {
-            pos: 40,
-            name: 'CLASSICAL',
-            songs: [
-                'music/jj/江南.mp3',
-                'music/jj/曹操.mp3'
-            ]
-        },
-        {
-            pos: 60,
-            name: 'ROCK',
-            songs: [
-                'music/eason/十年.mp3',
-                'music/eason/浮夸.mp3'
-            ]
-        },
-        {
-            pos: 85,
-            name: 'R&B',
-            songs: [
-                'music/classical/卡农.mp3',
-                'music/classical/月光.mp3'
+                'music/C-POP/Pussy - 陈绮贞.mp3',
+                'music/C-POP/The Moment - 孙燕姿.mp3',
+                'music/C-POP/你不是真正的快乐 - 五月天.mp3',
+                'music/C-POP/喔伊细 - 徐佳莹.mp3',
+                'music/C-POP/心的距离 - 陈奕迅.mp3',
+                'music/C-POP/爱爱爱 - 方大同.mp3',
+                'music/C-POP/空中飞人 - 窦靖童.mp3',
+                'music/C-POP/米兰的小铁匠 - 周杰伦.mp3',
+                'music/C-POP/频率 - 苏打绿.mp3',
+                'music/C-POP/飞咯 - 窦靖童.mp3',
             ]
         }
     ]
