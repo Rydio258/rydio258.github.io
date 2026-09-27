@@ -223,6 +223,7 @@
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
 
+  /* ============ info 面板 ============ */
   .work-info {
     display: none;
     background: linear-gradient(180deg, #f5edd4 0%, #ece0b8 100%);
@@ -235,7 +236,7 @@
     font-size: 0.68rem;
     line-height: 1.7;
     color: #4a3a1a;
-    max-height: 130px;
+    max-height: 150px;
     overflow-y: auto;
     position: relative;
     image-rendering: pixelated;
@@ -295,6 +296,24 @@
 
   .work-info-desc .work-info-base {
     display: block;
+    white-space: pre-wrap;
+  }
+
+  .work-info-desc .work-info-bg {
+    display: block;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed #b8a888;
+    color: #6a4a1c;
+    white-space: pre-wrap;
+  }
+
+  .work-info-desc .work-info-review {
+    display: block;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed #b8a888;
+    color: #8a2b1c;
     white-space: pre-wrap;
   }
 
@@ -601,7 +620,7 @@
     .track-display { max-width: 160px; }
     .track-display-inner { font-size: 0.65rem; }
     .station-tag { display: none; }
-    .work-info { max-height: 110px; font-size: 0.62rem; }
+    .work-info { max-height: 120px; font-size: 0.62rem; }
   }
 </style>
 </head>
@@ -705,7 +724,7 @@
     </div>
 
     <div class="big-knob-container">
-      <div class="big-knob" id="tuningKnob"></div>
+      <div class="big-knob" id="tuningKnob" title="拖动 / 滚轮调节频率，点击自动选台"></div>
       <div class="knob-hint">
         TUNING
         <strong>点击自动选台</strong>
@@ -779,25 +798,14 @@
   let vuNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  let vuCurrentAngle = -65;
-  let vuTargetAngle = -65;
-  let tunCurrentAngle = -65;
-  let tunTargetAngle = -65;
+  let vuCurrentAngle = -65, vuTargetAngle = -65;
+  let tunCurrentAngle = -65, tunTargetAngle = -65;
 
-  function setStatus(text) {
-    statusText.textContent = text;
-    console.log('[状态]', text);
-  }
+  function setStatus(text) { statusText.textContent = text; }
 
   // ============ 工具函数 ============
-  function isWork(item) {
-    return item && typeof item === 'object' && Array.isArray(item.movements);
-  }
-
-  function getMovements(item) {
-    if (isWork(item)) return item.movements;
-    return [item];
-  }
+  function isWork(item) { return item && typeof item === 'object' && Array.isArray(item.movements); }
+  function getMovements(item) { return isWork(item) ? item.movements : [item]; }
 
   function getFileName(path) {
     if (!path) return '';
@@ -820,23 +828,16 @@
   }
 
   // ============ 虚拟电台时钟 ============
-  // 每条目占用的"时间槽"（估算值，秒）
-  const SLOT_SONG = 240;   // 普通歌曲 4 分钟
-  const SLOT_WORK = 480;   // 古典作品 8 分钟
-
-  function estimateDuration(item) {
-    return isWork(item) ? SLOT_WORK : SLOT_SONG;
-  }
+  const SLOT_SONG = 240;
+  const SLOT_WORK = 480;
+  function estimateDuration(item) { return isWork(item) ? SLOT_WORK : SLOT_SONG; }
 
   function getVirtualPlayhead(station) {
     const songs = station.songs;
     if (!songs || songs.length === 0) return { index: 0, movementIndex: 0, offset: 0 };
-
     const durations = songs.map(estimateDuration);
     const totalCycle = durations.reduce((a, b) => a + b, 0);
     if (totalCycle === 0) return { index: 0, movementIndex: 0, offset: 0 };
-
-    // 用真实时间推算播放头位置，跨设备一致
     const elapsed = Math.floor(Date.now() / 1000) % totalCycle;
     let acc = 0;
     for (let i = 0; i < songs.length; i++) {
@@ -848,8 +849,7 @@
           const moveDur = durations[i] / moveCount;
           let mi = Math.floor(inItem / moveDur);
           if (mi >= item.movements.length) mi = item.movements.length - 1;
-          const moveOffset = inItem - mi * moveDur;
-          return { index: i, movementIndex: mi, offset: moveOffset };
+          return { index: i, movementIndex: mi, offset: inItem - mi * moveDur };
         }
         return { index: i, movementIndex: 0, offset: inItem };
       }
@@ -858,7 +858,7 @@
     return { index: 0, movementIndex: 0, offset: 0 };
   }
 
-  // ============ info.txt 加载（电台级 + 作品级） ============
+  // ============ info.txt 加载 ============
   const infoCache = new Map();
 
   function parseTimelineSection(section) {
@@ -869,9 +869,7 @@
       const m = line.match(/^\[?(\d+:\d{2}(?::\d{2})?)\]?\s+(.+)$/);
       if (m) {
         const parts = m[1].split(':').map(Number);
-        let sec = parts.length === 3
-          ? parts[0] * 3600 + parts[1] * 60 + parts[2]
-          : parts[0] * 60 + parts[1];
+        const sec = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + parts[1];
         notes.push({ time: sec, text: m[2].trim() });
       }
     }
@@ -893,22 +891,20 @@
   function parseInfoTxt(content) {
     const sections = content.split(/\n\s*[-=]{3,}\s*\n/).map(s => s.trim()).filter(Boolean);
     if (sections.length === 0) return null;
-
     const description = sections[0];
     const timeline = [];
     const tags = {};
 
-    // 判断后续段落是时间轴还是标签
     for (let i = 1; i < sections.length; i++) {
       const section = sections[i];
       const firstLine = section.split('\n')[0].trim();
       if (/^\[?\d+:\d{2}/.test(firstLine)) {
         timeline.push(parseTimelineSection(section));
-      } else {
+      } else if (/^\[[^\]]+\]/.test(firstLine)) {
         Object.assign(tags, parseTagSection(section));
       }
     }
-    return { description, timeline, tags };
+    return { description, sections, timeline, tags };
   }
 
   async function loadInfo(path) {
@@ -921,7 +917,6 @@
       infoCache.set(path, parsed);
       return parsed;
     } catch (err) {
-      console.warn('读取 info.txt 失败:', path, err);
       infoCache.set(path, null);
       return null;
     }
@@ -929,9 +924,8 @@
 
   function getStationInfoPath(station) {
     if (!station || !station.songs || station.songs.length === 0) return null;
-    const firstItem = station.songs[0];
-    const firstFile = isWork(firstItem) ? firstItem.movements[0] : firstItem;
-    // music/C-POP/djt.mp3 → music/C-POP/
+    const first = station.songs[0];
+    const firstFile = isWork(first) ? first.movements[0] : first;
     const parts = firstFile.split('/');
     parts.pop();
     return parts.join('/') + '/info.txt';
@@ -945,7 +939,14 @@
     return first.substring(0, lastSlash) + '/info.txt';
   }
 
-  // ============ 主持人文字生成 ============
+  // 从 mp3 路径推导单曲 info 路径
+  function getSongInfoPath(file) {
+    if (!file) return null;
+    // music/C-POP/djt.mp3 → music/C-POP/djt.info.txt
+    return file.replace(/\.[^/.]+$/, '') + '.info.txt';
+  }
+
+  // ============ 主持人文字 ============
   function getTimeSlot(date) {
     const h = date.getHours();
     if (h >= 5 && h < 11) return 'morning';
@@ -971,15 +972,11 @@
     const fileName = getFileName(file);
     const songKey = ('song:' + fileName).toLowerCase();
     if (tags[songKey]) return fillPlaceholders(tags[songKey], item, file);
-
-    const now = new Date();
-    const timeKey = getTimeSlot(now);
+    const timeKey = getTimeSlot(new Date());
     if (tags[timeKey]) return fillPlaceholders(tags[timeKey], item, file);
-
-    const day = now.getDay();
+    const day = new Date().getDay();
     if ((day === 0 || day === 6) && tags['weekend']) return fillPlaceholders(tags['weekend'], item, file);
     if (day >= 1 && day <= 5 && tags['weekday']) return fillPlaceholders(tags['weekday'], item, file);
-
     if (tags['default']) return fillPlaceholders(tags['default'], item, file);
     return null;
   }
@@ -988,65 +985,80 @@
   let lastRenderedInfo = '';
 
   async function renderInfo(item, movementIndex, currentTime, file) {
-    // 无电台，隐藏
     if (!lockedStation) {
       workInfo.style.display = 'none';
       lastRenderedInfo = '';
       return;
     }
 
-    // 并行加载电台 info 和作品 info
     const stationPath = getStationInfoPath(lockedStation);
     const workPath = isWork(item) ? getWorkInfoPath(item) : null;
+    const songPath = (!isWork(item) && file) ? getSongInfoPath(file) : null;
 
-    const [stationInfo, workInfoData] = await Promise.all([
+    const [stationInfo, workData, songData] = await Promise.all([
       stationPath ? loadInfo(stationPath) : Promise.resolve(null),
-      workPath ? loadInfo(workPath) : Promise.resolve(null)
+      workPath ? loadInfo(workPath) : Promise.resolve(null),
+      songPath ? loadInfo(songPath) : Promise.resolve(null)
     ]);
 
-    // 隐藏条件：两者都没有
-    if (!stationInfo && !workInfoData) {
+    if (!stationInfo && !workData && !songData) {
       workInfo.style.display = 'none';
       lastRenderedInfo = '';
       return;
     }
 
-    // 决定标题
+    // 标题
     let title = '';
     if (item && isWork(item)) title = item.work;
     else if (file) title = getFileName(file);
     else title = lockedStation.name;
 
-    // 主持人文字：优先电台 tags
-    let hostMessage = null;
-    if (stationInfo && stationInfo.tags) {
-      hostMessage = pickHostMessage(stationInfo.tags, item, file);
-    }
+    // 主持人文字
+    let hostMessage = stationInfo && stationInfo.tags
+      ? pickHostMessage(stationInfo.tags, item, file)
+      : null;
 
-    // 描述：优先作品描述，其次电台描述
+    // 描述与正文
     let description = '';
-    if (workInfoData && workInfoData.description) {
-      description = workInfoData.description;
+    let songBg = '';
+    let songReview = '';
+
+    if (workData && workData.description) {
+      // 古典作品：描述 + 时间轴
+      description = workData.description;
+    } else if (songData) {
+      // 单曲：三段式
+      const secs = songData.sections || [];
+      description = secs[0] || '';
+      songBg = secs[1] || '';
+      songReview = secs[2] || '';
     } else if (stationInfo && stationInfo.description) {
+      // 只命中电台级
       description = stationInfo.description;
     }
 
-    // 时间轴：作品专属
+    // 时间轴（古典作品）
     let nowNote = null;
-    if (workInfoData && workInfoData.timeline && workInfoData.timeline[movementIndex]) {
-      const notes = workInfoData.timeline[movementIndex];
-      for (const n of notes) {
+    if (workData && workData.timeline && workData.timeline[movementIndex]) {
+      for (const n of workData.timeline[movementIndex]) {
         if (currentTime >= n.time) nowNote = n;
         else break;
       }
     }
 
+    // 拼 HTML
     let html = '';
     if (hostMessage) {
       html += '<span class="work-info-host">▸ ' + escapeHtml(hostMessage) + '</span>';
     }
     if (description) {
       html += '<span class="work-info-base">' + escapeHtml(description) + '</span>';
+    }
+    if (songBg) {
+      html += '<span class="work-info-bg">▸ ' + escapeHtml(songBg) + '</span>';
+    }
+    if (songReview) {
+      html += '<span class="work-info-review">♪ ' + escapeHtml(songReview) + '</span>';
     }
     if (nowNote) {
       html += '<span class="work-info-now">♪ ' + escapeHtml(nowNote.text) + '</span>';
@@ -1070,7 +1082,6 @@
   const CX = 80, CY = 42;
   const START_DEG = -155, END_DEG = -25;
   const R_ARC = 30, R_TICK_IN = 25, R_TICK_OUT = 30, NEEDLE_LEN = 32;
-
   const VU_MARKS = [
     { t: 0.00, major: true }, { t: 0.05, major: false }, { t: 0.10, major: false },
     { t: 0.16, major: true }, { t: 0.22, major: false }, { t: 0.28, major: true },
@@ -1089,9 +1100,7 @@
     const defs = document.createElementNS(SVG_NS, 'defs');
     const radial = document.createElementNS(SVG_NS, 'radialGradient');
     radial.setAttribute('id', gradientId);
-    radial.setAttribute('cx', '50%');
-    radial.setAttribute('cy', '0%');
-    radial.setAttribute('r', '110%');
+    radial.setAttribute('cx', '50%'); radial.setAttribute('cy', '0%'); radial.setAttribute('r', '110%');
     ['#fffbe8', '#fdf4d0', '#ecdfb0'].forEach((c, i) => {
       const s = document.createElementNS(SVG_NS, 'stop');
       s.setAttribute('offset', (i * 50) + '%');
@@ -1152,9 +1161,9 @@
 
     const pivot = document.createElementNS(SVG_NS, 'circle');
     pivot.setAttribute('cx', CX); pivot.setAttribute('cy', CY);
-    pivot.setAttribute('r', 3); pivot.setAttribute('fill', '#2a1a0a');
+    pivot.setAttribute('r', 3);
+    pivot.setAttribute('fill', '#2a1a0a');
     svg.appendChild(pivot);
-
     return needleEl;
   }
 
@@ -1236,8 +1245,7 @@
     }
     const rms = Math.sqrt(sum / timeDataArray.length);
     const db = 20 * Math.log10(rms + 0.0001);
-    let vuT = (db + 40) / 43;
-    vuT = Math.max(0, Math.min(1, vuT));
+    let vuT = Math.max(0, Math.min(1, (db + 40) / 43));
     vuTargetAngle = -65 + vuT * 130;
     vuCurrentAngle += (vuTargetAngle - vuCurrentAngle) * 0.18;
     vuNeedle.setAttribute('transform', `rotate(${vuCurrentAngle} ${CX} ${CY})`);
@@ -1250,9 +1258,7 @@
     const bandAvg = bandSum / (binEnd - binStart);
     let tunT = Math.max(0, Math.min(1, bandAvg / 130));
     const jitter = (Math.random() - 0.5) * 0.05;
-    let tunTarget = -65 + (tunT + jitter) * 130;
-    tunTarget = Math.max(-65, Math.min(65, tunTarget));
-    tunTargetAngle = tunTarget;
+    tunTargetAngle = Math.max(-65, Math.min(65, -65 + (tunT + jitter) * 130));
     tunCurrentAngle += (tunTargetAngle - tunCurrentAngle) * 0.55;
     tuningNeedle.setAttribute('transform', `rotate(${tunCurrentAngle} ${CX} ${CY})`);
 
@@ -1272,8 +1278,7 @@
     const tw = trackDisplayInner.scrollWidth;
     if (tw > threshold) {
       const totalDist = cw + tw;
-      const speed = 60;
-      const dur = Math.max(totalDist / speed, 4);
+      const dur = Math.max(totalDist / 60, 4);
       trackDisplayInner.style.setProperty('--from-x', cw + 'px');
       trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
       trackDisplayInner.style.setProperty('--dur', dur + 's');
@@ -1354,7 +1359,6 @@
         stopBtn.classList.remove('active');
         renderInfo(item, movementIndex, audio.currentTime || 0, file);
       }).catch(err => {
-        console.warn('播放失败:', err);
         isPlaying = false;
         setStatus('播放失败：' + (err.message || err.name));
         updateTrackDisplay('播放失败');
@@ -1384,8 +1388,7 @@
     }
     currentMovementIndex = 0;
     const nextItem = lockedStation.songs[currentEntryIndex];
-    const nextMovements = getMovements(nextItem);
-    playSong(nextMovements[0], nextItem, 0, 0);
+    playSong(getMovements(nextItem)[0], nextItem, 0, 0);
   }
 
   function prevSong() {
@@ -1425,18 +1428,14 @@
   }
 
   function handlePlay() {
-    if (stations.length === 0) {
-      setStatus('歌单为空');
-      return;
-    }
+    if (stations.length === 0) { setStatus('歌单为空'); return; }
     if (!isPowered) {
       isPowered = true;
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-    if (lockedStation) {
-      playStationVirtual(lockedStation);
-    } else {
+    if (lockedStation) playStationVirtual(lockedStation);
+    else {
       const randomStation = stations[Math.floor(Math.random() * stations.length)];
       tuneToStation(randomStation);
     }
@@ -1449,8 +1448,7 @@
     playBtn.classList.remove('active');
     stopBtn.classList.add('active');
     setTimeout(() => stopBtn.classList.remove('active'), 200);
-    vuTargetAngle = -65;
-    tunTargetAngle = -65;
+    vuTargetAngle = -65; tunTargetAngle = -65;
     statusTime.textContent = '--:-- / --:--';
     setStatus('已停止');
     updateTrackDisplay('已停止');
@@ -1466,20 +1464,16 @@
     isPowered = !isPowered;
     powerSwitch.classList.toggle('on', isPowered);
     ledPower.classList.toggle('on', isPowered);
-    if (isPowered) {
-      setStatus('电源已开');
-      updateTuning(currentPos);
-    } else {
-      audio.pause();
-      isPlaying = false;
+    if (isPowered) { setStatus('电源已开'); updateTuning(currentPos); }
+    else {
+      audio.pause(); isPlaying = false;
       ledStereo.classList.remove('on');
       stationTag.textContent = '—';
       setStatus('电源已关');
       updateTrackDisplay('关机');
       statusTime.textContent = '--:-- / --:--';
       playBtn.classList.remove('active');
-      vuTargetAngle = -65;
-      tunTargetAngle = -65;
+      vuTargetAngle = -65; tunTargetAngle = -65;
       hideWorkInfo();
     }
   });
@@ -1541,10 +1535,7 @@
     isDragging = false;
   });
 
-  audio.addEventListener('ended', () => {
-    if (isPowered && lockedStation) nextSong();
-  });
-
+  audio.addEventListener('ended', () => { if (isPowered && lockedStation) nextSong(); });
   audio.addEventListener('error', () => {
     setStatus('音频加载失败：' + getFileName(audio.src));
     updateTrackDisplay('加载失败');
@@ -1554,12 +1545,10 @@
     const cur = audio.currentTime || 0;
     const dur = audio.duration || 0;
     statusTime.textContent = formatTime(cur) + ' / ' + formatTime(dur);
-
     if (lockedStation && currentEntryIndex >= 0) {
       const item = lockedStation.songs[currentEntryIndex];
       if (item) {
-        const movements = getMovements(item);
-        const file = movements[currentMovementIndex];
+        const file = getMovements(item)[currentMovementIndex];
         renderInfo(item, currentMovementIndex, cur, file);
       }
     }
@@ -1571,7 +1560,7 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 像真实电台一样，时间在流动，不同时间进入听到不同内容\n· 每个电台和作品文件夹可放 info.txt\n· info.txt 里用 [morning]、[afternoon] 等标签写主持人台词\n· 支持 {song}、{work}、{time} 占位符');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 时间自动流动，像真电台一样\n· 每个电台和作品文件夹可放 info.txt\n· 单曲支持 <歌名>.info.txt，三段式展示简介/背景/点评\n· 主持人台词支持 [morning]、[night] 等时间标签');
   });
 
   if (stations.length === 0) {
