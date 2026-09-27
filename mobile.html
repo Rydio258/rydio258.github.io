@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a1a">
+<title>CT-X1 · 复古调谐器</title>
+<style>
+  @font-face {
+    font-family: 'Zpix';
+    src: url('Zpix.ttf') format('truetype');
+    font-display: swap;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    min-height: 100%;
+    background: #1a1a1a;
+    background-image: radial-gradient(ellipse at 50% 0%, #2a2a2a 0%, #111 80%);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #ddd;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+
+  /* ============ 主面板 ============ */
+  .panel {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+    border-radius: 6px;
+    box-shadow:
+      0 10px 30px rgba(0,0,0,0.8),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ============ 品牌行 ============ */
+  .brand-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #b0b0b0;
+  }
+
+  .brand-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #111;
+  }
+  .brand-model {
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+    color: #666;
+    margin-top: 1px;
+  }
+
+  .leds {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.5rem;
+    color: #555;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .indicator { display: flex; align-items: center; gap: 4px; }
+  .led {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #333;
+    transition: all 0.2s;
+  }
+  .led.on { background: #e33; box-shadow: 0 0 8px #e33; }
+  .led.green.on { background: #2a2; box-shadow: 0 0 8px #2a2; }
+
+  /* ============ 显示区 ============ */
+  .display {
+    background: #f4f4f0;
+    border: 1px solid #a0a0a0;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .freq-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dial-frequency {
+    font-family: 'Courier New', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: 2px;
+    background: #e8e8e4;
+    padding: 6px 12px;
+    border: 1px solid #b0b0b0;
+    border-radius: 3px;
+    flex: 1;
+    text-align: center;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .station-tag {
+    font-family: 'Zpix', 'Courier New', monospace;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: #111;
+    background: #dedede;
+    border: 1px solid #b0b0b0;
+    border-radius: 3px;
+    padding: 6px 10px;
+    flex-shrink: 0;
+    max-width: 45%;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+  }
+
+  .track-display {
+    width: 100%;
+    height: 2rem;
+    overflow: hidden;
+    background: #e8e8e4;
+    border: 1px solid #b0b0b0;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-family: 'Zpix', 'Courier New', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  .track-display-inner {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: #c0392b;
+    letter-spacing: 1px;
+    font-weight: 400;
+    font-family: 'Zpix', 'Courier New', monospace;
+    will-change: transform;
+    line-height: 1;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+  }
+
+  @keyframes marqueeMove {
+    from { transform: translateX(var(--from-x)); }
+    to   { transform: translateX(var(--to-x)); }
+  }
+
+  /* ============ 调谐刻度 ============ */
+  .band-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.55rem;
+    color: #666;
+    letter-spacing: 1.5px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    padding: 0 2px;
+  }
+
+  .fm-scale, .am-scale {
+    position: relative;
+    background: #fafaf8;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 6px;
+  }
+  .fm-scale { height: 30px; }
+  .am-scale { height: 24px; }
+
+  .fm-ticks, .am-ticks {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+  }
+  .fm-tick, .am-tick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+  }
+  .fm-tick .line { width: 1px; height: 7px; background: #555; }
+  .fm-tick.major .line { height: 12px; background: #111; width: 1.5px; }
+  .fm-tick .num { font-size: 0.42rem; color: #333; margin-top: 1px; font-family: 'Courier New', monospace; font-weight: 600; }
+  .am-tick .line { width: 1px; height: 6px; background: #555; }
+  .am-tick.major .line { height: 10px; background: #111; width: 1.5px; }
+  .am-tick .num { font-size: 0.4rem; color: #333; margin-top: 1px; font-family: 'Courier New', monospace; font-weight: 600; }
+
+  .needle {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: #c0392b;
+    box-shadow: 0 0 5px rgba(192,57,43,0.7);
+    transition: left 0.05s linear;
+    z-index: 5;
+  }
+  .needle::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -4px;
+    width: 9px; height: 9px;
+    background: #c0392b;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+
+  /* ============ 表头（两栏并排） ============ */
+  .meters-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .meter {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    background: linear-gradient(180deg, #fff5d6 0%, #f7ecc8 45%, #e8dcb0 100%);
+    border: 1px solid #8a8a86;
+    border-radius: 3px;
+    padding: 4px 6px 2px;
+    box-shadow:
+      inset 0 2px 6px rgba(90, 70, 20, 0.25),
+      0 0 16px rgba(255, 220, 120, 0.25),
+      0 2px 3px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  .meter::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% -20%, rgba(255, 248, 200, 0.95) 0%, rgba(255, 235, 160, 0.35) 40%, transparent 75%);
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: screen;
+    animation: lampFlicker 4s ease-in-out infinite;
+  }
+
+  @keyframes lampFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.92; }
+  }
+
+  .meter-lamp {
+    position: absolute;
+    top: -1px; left: 50%;
+    transform: translateX(-50%);
+    width: 60%; height: 2px;
+    background: linear-gradient(90deg, transparent, #ffeb99, #fff8cc, #ffeb99, transparent);
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(255, 220, 120, 0.9);
+    z-index: 3;
+    pointer-events: none;
+    animation: lampFlicker 4s ease-in-out infinite;
+  }
+
+  .meter-label {
+    font-size: 0.5rem;
+    letter-spacing: 1.5px;
+    color: #5a4a20;
+    text-align: center;
+    margin-bottom: 1px;
+    font-weight: 700;
+    position: relative;
+    z-index: 3;
+    text-shadow: 0 0 4px rgba(255, 240, 180, 0.8);
+  }
+
+  .meter-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ 传输按键（2 行 × 2 列） ============ */
+  .transport-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .transport-key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 8px;
+    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
+    border: 1px solid #8a8a86;
+    border-radius: 3px;
+    box-shadow:
+      0 3px 4px rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.06s;
+    position: relative;
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+
+  .transport-key::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #888;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .transport-key.play.active::before { background: #2ecc40; box-shadow: 0 0 6px #2ecc40; }
+  .transport-key.stop.active::before { background: #e33; box-shadow: 0 0 6px #e33; }
+  .transport-key.prev.active::before,
+  .transport-key.next.active::before { background: #ffb347; box-shadow: 0 0 6px #ffb347; }
+
+  .transport-key:active,
+  .transport-key.pressed {
+    background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
+    box-shadow:
+      inset 0 2px 4px rgba(0,0,0,0.35),
+      inset 0 -1px 0 rgba(255,255,255,0.4);
+    transform: translateY(1px);
+  }
+
+  .transport-key .key-icon {
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  /* ============ 底部控制（电源 / 音量 / 大旋钮） ============ */
+  .bottom-controls {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 12px;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #b0b0b0;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .control-label {
+    font-size: 0.5rem;
+    letter-spacing: 1.5px;
+    color: #555;
+    font-weight: 700;
+  }
+
+  .switch {
+    width: 44px; height: 24px;
+    background: #b0b0b0;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    border: 1px solid #888;
+    touch-action: manipulation;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 1px;
+    width: 20px; height: 20px;
+    background: linear-gradient(180deg, #eee, #999);
+    border-radius: 2px;
+    transition: transform 0.15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .switch.on::after { transform: translateX(18px); background: linear-gradient(180deg, #fff, #bbb); }
+
+  .small-knob {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f0f0f0, #999 60%, #666);
+    border: 2px solid #888;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
+    touch-action: manipulation;
+  }
+  .small-knob::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 50%;
+    transform: translateX(-50%);
+    width: 2px; height: 13px;
+    background: #111;
+    border-radius: 1px;
+  }
+
+  .big-knob-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    justify-self: end;
+  }
+
+  .big-knob {
+    width: 78px; height: 78px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
+    border: 2px solid #999;
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 6px 12px rgba(0,0,0,0.5),
+      inset 0 -4px 8px rgba(0,0,0,0.3),
+      inset 0 4px 8px rgba(255,255,255,0.6);
+    touch-action: none;
+  }
+  .big-knob::after {
+    content: '';
+    position: absolute;
+    top: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 3px; height: 20px;
+    background: #111;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+  }
+  .big-knob::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: repeating-conic-gradient(
+      from 0deg,
+      transparent 0deg 4deg,
+      rgba(0,0,0,0.08) 4deg 6deg
+    );
+    pointer-events: none;
+  }
+
+  .knob-hint {
+    font-size: 0.45rem;
+    color: #777;
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .knob-hint strong { color: #c0392b; display: block; font-size: 0.5rem; }
+
+  /* ============ 状态条 ============ */
+  .status-bar {
+    margin-top: 4px;
+    padding: 6px 10px;
+    background: #1a1614;
+    color: #ffb347;
+    font-family: 'Zpix', 'Courier New', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.5px;
+    border-radius: 3px;
+    border: 1px solid #0a0806;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    word-break: break-all;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+  }
+  .status-bar .status-count { color: #8a8078; font-size: 0.55rem; }
+
+  /* ============ 页脚 ============ */
+  footer {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.55rem;
+    color: #666;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  footer a { color: #888; text-decoration: none; }
+  footer a:active { color: #c0392b; }
+
+  .feedback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
+    border: 1px solid #8a8a86;
+    border-radius: 3px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
+    font-size: 0.62rem;
+    letter-spacing: 1px;
+    color: #333;
+    font-weight: 700;
+    text-decoration: none;
+    touch-action: manipulation;
+  }
+  .feedback-btn:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  /* 强制桌面版链接 */
+  .desktop-link {
+    font-size: 0.55rem;
+    color: #666;
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <div class="brand-row">
+    <div>
+      <div class="brand-name">YAMAHA</div>
+      <div class="brand-model">CT-X1 · AM/FM STEREO TUNER</div>
+    </div>
+    <div class="leds">
+      <div class="indicator">
+        <span class="led green" id="ledStereo"></span> FM ST
+      </div>
+      <div class="indicator">
+        <span class="led" id="ledPower"></span> POWER
+      </div>
+    </div>
+  </div>
+
+  <div class="display">
+    <div class="freq-row">
+      <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
+      <div class="station-tag" id="stationTag">—</div>
+    </div>
+    <div class="track-display" id="trackDisplay">
+      <div class="track-display-inner" id="trackDisplayInner">未播放</div>
+    </div>
+
+    <div class="band-labels"><span>FM</span><span>MHz</span></div>
+    <div class="fm-scale">
+      <div class="fm-ticks" id="fmTicks"></div>
+      <div class="needle" id="needle"></div>
+    </div>
+
+    <div class="band-labels"><span>AM</span><span>kHz</span></div>
+    <div class="am-scale">
+      <div class="am-ticks" id="amTicks"></div>
+    </div>
+  </div>
+
+  <div class="meters-group">
+    <div class="meter">
+      <div class="meter-lamp"></div>
+      <div class="meter-label">VU</div>
+      <svg class="meter-svg" id="vuMeter" viewBox="0 0 160 45"></svg>
+    </div>
+    <div class="meter">
+      <div class="meter-lamp"></div>
+      <div class="meter-label">FM TUNING</div>
+      <svg class="meter-svg" id="tuningMeter" viewBox="0 0 160 45"></svg>
+    </div>
+  </div>
+
+  <div class="transport-grid">
+    <div class="transport-key prev" id="prevBtn">
+      <span class="key-icon">◀◀</span> PREV
+    </div>
+    <div class="transport-key next" id="nextBtn">
+      <span class="key-icon">▶▶</span> NEXT
+    </div>
+    <div class="transport-key play" id="playBtn">
+      <span class="key-icon">▶</span> PLAY
+    </div>
+    <div class="transport-key stop" id="stopBtn">
+      <span class="key-icon">■</span> STOP
+    </div>
+  </div>
+
+  <div class="bottom-controls">
+    <div class="control-group">
+      <div class="control-label">POWER</div>
+      <div class="switch" id="powerSwitch"></div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">OUTPUT</div>
+      <div class="small-knob" id="volumeKnob"></div>
+    </div>
+
+    <div class="big-knob-container">
+      <div class="big-knob" id="tuningKnob"></div>
+      <div class="knob-hint">
+        TUNING
+        <strong>点击自动选台</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-text" id="statusText">正在初始化...</span>
+    <span class="status-count" id="statusCount">歌单: —</span>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com/Rydio258/rydio258.github.io/" target="_blank" rel="noopener">GITHUB</a>
+    <a href="https://github.com/Rydio258/rydio258.github.io/issues/new?title=%5B%E5%8F%8D%E9%A6%88%5D%20%E8%AF%B7%E5%A1%AB%E5%86%99%E6%A0%87%E9%A2%98&body=%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%8F%8D%E9%A6%88%EF%BC%81%E8%AF%B7%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%8F%8F%E8%BF%B0%E6%82%A8%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A" target="_blank" rel="noopener" class="feedback-btn">
+      💬 反馈建议
+    </a>
+    <a href="index.html?desktop=1" class="desktop-link">桌面版</a>
+  </div>
+  <div>© 2025 Rydio258</div>
+</footer>
+
+<audio id="bgMusic" preload="auto"></audio>
+
+<script src="playlist.js"></script>
+
+<script>
+(function() {
+  const config = window.PLAYLIST || { stations: [] };
+  const stations = Array.isArray(config.stations) ? config.stations : [];
+
+  const FM_MIN = 76.0, FM_MAX = 108.0;
+  const AM_MIN = 520, AM_MAX = 1600;
+
+  const audio = document.getElementById('bgMusic');
+  const freqDisplay = document.getElementById('freqDisplay');
+  const stationTag = document.getElementById('stationTag');
+  const trackDisplay = document.getElementById('trackDisplay');
+  const trackDisplayInner = document.getElementById('trackDisplayInner');
+  const needle = document.getElementById('needle');
+  const powerSwitch = document.getElementById('powerSwitch');
+  const ledPower = document.getElementById('ledPower');
+  const ledStereo = document.getElementById('ledStereo');
+  const volumeKnob = document.getElementById('volumeKnob');
+  const tuningKnob = document.getElementById('tuningKnob');
+  const playBtn = document.getElementById('playBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const statusText = document.getElementById('statusText');
+  const statusCount = document.getElementById('statusCount');
+
+  let isPowered = false;
+  let currentPos = 20;
+  let lockedStation = null;
+  let isPlaying = false;
+  let currentSongIndex = 0;
+  let audioContext = null;
+  let analyser = null;
+  let timeDataArray = null;
+  let freqDataArray = null;
+  let vuNeedle, tuningNeedle;
+  let volumeLevel = 0.7;
+
+  let vuCurrentAngle = -65;
+  let vuTargetAngle = -65;
+  let tunCurrentAngle = -65;
+  let tunTargetAngle = -65;
+
+  function setStatus(text) {
+    statusText.textContent = text;
+    console.log('[状态]', text);
+  }
+
+  // ============ 表头构建 ============
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const CX = 80, CY = 42;
+  const START_DEG = -155, END_DEG = -25;
+  const R_ARC = 30;
+  const R_TICK_IN = 25;
+  const R_TICK_OUT = 30;
+  const NEEDLE_LEN = 32;
+
+  const VU_MARKS = [
+    { t: 0.00, major: true },
+    { t: 0.05, major: false },
+    { t: 0.10, major: false },
+    { t: 0.16, major: true },
+    { t: 0.22, major: false },
+    { t: 0.28, major: true },
+    { t: 0.33, major: false },
+    { t: 0.38, major: true },
+    { t: 0.44, major: false },
+    { t: 0.50, major: true },
+    { t: 0.57, major: true },
+    { t: 0.64, major: true },
+    { t: 0.72, major: true },
+    { t: 0.80, major: true },
+    { t: 0.87, major: true },
+    { t: 0.94, major: true }
+  ];
+
+  function polar(deg, r) {
+    const rad = deg * Math.PI / 180;
+    return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
+  }
+
+  function buildVUMeter(svg, gradientId, color) {
+    const defs = document.createElementNS(SVG_NS, 'defs');
+    const radial = document.createElementNS(SVG_NS, 'radialGradient');
+    radial.setAttribute('id', gradientId);
+    radial.setAttribute('cx', '50%');
+    radial.setAttribute('cy', '0%');
+    radial.setAttribute('r', '110%');
+    const s1 = document.createElementNS(SVG_NS, 'stop');
+    s1.setAttribute('offset', '0%');
+    s1.setAttribute('stop-color', '#fffbe8');
+    const s2 = document.createElementNS(SVG_NS, 'stop');
+    s2.setAttribute('offset', '45%');
+    s2.setAttribute('stop-color', '#fdf4d0');
+    const s3 = document.createElementNS(SVG_NS, 'stop');
+    s3.setAttribute('offset', '100%');
+    s3.setAttribute('stop-color', '#ecdfb0');
+    radial.appendChild(s1); radial.appendChild(s2); radial.appendChild(s3);
+    defs.appendChild(radial);
+    svg.appendChild(defs);
+
+    const bg = document.createElementNS(SVG_NS, 'rect');
+    bg.setAttribute('x', 0); bg.setAttribute('y', 0);
+    bg.setAttribute('width', 160); bg.setAttribute('height', 45);
+    bg.setAttribute('rx', 2);
+    bg.setAttribute('fill', `url(#${gradientId})`);
+    svg.appendChild(bg);
+
+    const [ax1, ay1] = polar(START_DEG, R_ARC);
+    const [ax2, ay2] = polar(END_DEG, R_ARC);
+    const arc = document.createElementNS(SVG_NS, 'path');
+    arc.setAttribute('d', `M ${ax1} ${ay1} A ${R_ARC} ${R_ARC} 0 0 1 ${ax2} ${ay2}`);
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke', '#4a3a1a');
+    arc.setAttribute('stroke-width', '1.2');
+    svg.appendChild(arc);
+
+    VU_MARKS.forEach(mark => {
+      const angle = START_DEG + (END_DEG - START_DEG) * mark.t;
+      const rIn = mark.major ? R_TICK_IN - 3 : R_TICK_IN;
+      const p1 = polar(angle, rIn);
+      const p2 = polar(angle, R_TICK_OUT);
+      const tick = document.createElementNS(SVG_NS, 'line');
+      tick.setAttribute('x1', p1[0]); tick.setAttribute('y1', p1[1]);
+      tick.setAttribute('x2', p2[0]); tick.setAttribute('y2', p2[1]);
+      tick.setAttribute('stroke', '#4a3a1a');
+      tick.setAttribute('stroke-width', mark.major ? '1.3' : '0.6');
+      svg.appendChild(tick);
+    });
+
+    const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.72;
+    const rp1 = polar(degRedStart, R_ARC);
+    const rp2 = polar(END_DEG, R_ARC);
+    const redArc = document.createElementNS(SVG_NS, 'path');
+    redArc.setAttribute('d', `M ${rp1[0]} ${rp1[1]} A ${R_ARC} ${R_ARC} 0 0 1 ${rp2[0]} ${rp2[1]}`);
+    redArc.setAttribute('fill', 'none');
+    redArc.setAttribute('stroke', '#c0392b');
+    redArc.setAttribute('stroke-width', '2.5');
+    redArc.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(redArc);
+
+    const needleEl = document.createElementNS(SVG_NS, 'line');
+    needleEl.setAttribute('x1', CX);
+    needleEl.setAttribute('y1', CY);
+    needleEl.setAttribute('x2', CX);
+    needleEl.setAttribute('y2', CY - NEEDLE_LEN);
+    needleEl.setAttribute('stroke', color);
+    needleEl.setAttribute('stroke-width', '1.6');
+    needleEl.setAttribute('stroke-linecap', 'round');
+    needleEl.setAttribute('transform', `rotate(-65 ${CX} ${CY})`);
+    svg.appendChild(needleEl);
+
+    const pivot = document.createElementNS(SVG_NS, 'circle');
+    pivot.setAttribute('cx', CX);
+    pivot.setAttribute('cy', CY);
+    pivot.setAttribute('r', 3);
+    pivot.setAttribute('fill', '#2a1a0a');
+    svg.appendChild(pivot);
+
+    return needleEl;
+  }
+
+  vuNeedle = buildVUMeter(document.getElementById('vuMeter'), 'vuGlow', '#1a1a1a');
+  tuningNeedle = buildVUMeter(document.getElementById('tuningMeter'), 'tuningGlow', '#c0392b');
+
+  // ============ 刻度构建 ============
+  function buildFMScale() {
+    const container = document.getElementById('fmTicks');
+    const total = 32;
+    for (let i = 0; i <= total; i++) {
+      const freq = FM_MIN + i;
+      const tick = document.createElement('div');
+      tick.className = 'fm-tick' + (i % 5 === 0 ? ' major' : '');
+      const line = document.createElement('div');
+      line.className = 'line';
+      tick.appendChild(line);
+      if (i % 5 === 0) {
+        const num = document.createElement('div');
+        num.className = 'num';
+        num.textContent = freq;
+        tick.appendChild(num);
+      }
+      container.appendChild(tick);
+    }
+  }
+
+  function buildAMScale() {
+    const container = document.getElementById('amTicks');
+    const total = 10;
+    for (let i = 0; i <= total; i++) {
+      const freq = AM_MIN + i * (AM_MAX - AM_MIN) / total;
+      const tick = document.createElement('div');
+      tick.className = 'am-tick major';
+      const line = document.createElement('div');
+      line.className = 'line';
+      tick.appendChild(line);
+      const num = document.createElement('div');
+      num.className = 'num';
+      num.textContent = Math.round(freq);
+      tick.appendChild(num);
+      container.appendChild(tick);
+    }
+  }
+
+  buildFMScale();
+  buildAMScale();
+
+  // ============ 音频分析 ============
+  function initAudioContext() {
+    if (audioContext) {
+      if (audioContext.state === 'suspended') audioContext.resume();
+      return;
+    }
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioContext = new AC();
+      const source = audioContext.createMediaElementSource(audio);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.3;
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+      timeDataArray = new Uint8Array(analyser.fftSize);
+      freqDataArray = new Uint8Array(analyser.frequencyBinCount);
+      requestAnimationFrame(animateMeters);
+    } catch (err) {
+      console.warn('AudioContext 初始化失败:', err);
+    }
+  }
+
+  function animateMeters() {
+    if (!analyser || !timeDataArray || !freqDataArray) {
+      requestAnimationFrame(animateMeters);
+      return;
+    }
+    analyser.getByteTimeDomainData(timeDataArray);
+    let sum = 0;
+    for (let i = 0; i < timeDataArray.length; i++) {
+      const v = (timeDataArray[i] - 128) / 128;
+      sum += v * v;
+    }
+    const rms = Math.sqrt(sum / timeDataArray.length);
+    const db = 20 * Math.log10(rms + 0.0001);
+    let vuT = (db + 40) / 43;
+    if (vuT < 0) vuT = 0;
+    if (vuT > 1) vuT = 1;
+    vuTargetAngle = -65 + vuT * 130;
+    vuCurrentAngle += (vuTargetAngle - vuCurrentAngle) * 0.18;
+    vuNeedle.setAttribute('transform', `rotate(${vuCurrentAngle} ${CX} ${CY})`);
+
+    analyser.getByteFrequencyData(freqDataArray);
+    const binStart = Math.floor(freqDataArray.length * 0.08);
+    const binEnd = Math.floor(freqDataArray.length * 0.55);
+    let bandSum = 0;
+    for (let i = binStart; i < binEnd; i++) bandSum += freqDataArray[i];
+    const bandAvg = bandSum / (binEnd - binStart);
+    let tunT = bandAvg / 130;
+    if (tunT < 0) tunT = 0;
+    if (tunT > 1) tunT = 1;
+    const jitter = (Math.random() - 0.5) * 0.05;
+    let tunTarget = -65 + (tunT + jitter) * 130;
+    if (tunTarget < -65) tunTarget = -65;
+    if (tunTarget > 65) tunTarget = 65;
+    tunTargetAngle = tunTarget;
+    tunCurrentAngle += (tunTargetAngle - tunCurrentAngle) * 0.55;
+    tuningNeedle.setAttribute('transform', `rotate(${tunCurrentAngle} ${CX} ${CY})`);
+
+    requestAnimationFrame(animateMeters);
+  }
+
+  function getFileName(path) {
+    if (!path) return '';
+    const decoded = decodeURIComponent(path);
+    const filename = decoded.split('/').pop() || '';
+    return filename.replace(/\.[^/.]+$/, '');
+  }
+
+  function updateTrackDisplay(text) {
+    trackDisplayInner.textContent = text;
+    trackDisplayInner.style.animation = 'none';
+    trackDisplayInner.style.transform = 'translateX(0)';
+    void trackDisplayInner.offsetWidth;
+    const panelWidth = document.querySelector('.panel').clientWidth - 40;
+    const threshold = panelWidth / 3;
+    const cw = trackDisplay.clientWidth - 20;
+    const tw = trackDisplayInner.scrollWidth;
+    if (tw > threshold) {
+      const totalDist = cw + tw;
+      const speed = 45;
+      const dur = Math.max(totalDist / speed, 4);
+      trackDisplayInner.style.setProperty('--from-x', cw + 'px');
+      trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
+      trackDisplayInner.style.setProperty('--dur', dur + 's');
+      trackDisplayInner.style.animation = 'marqueeMove var(--dur) linear infinite';
+    }
+  }
+
+  function posToFreq(pos) {
+    return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
+  }
+
+  function formatFreq(pos) {
+    return posToFreq(pos).toFixed(1) + ' MHz';
+  }
+
+  function updateTuning(pos) {
+    if (pos < 0) pos = 0;
+    if (pos > 100) pos = 100;
+    currentPos = pos;
+    freqDisplay.textContent = formatFreq(pos);
+    needle.style.left = pos + '%';
+
+    let found = null;
+    for (const st of stations) {
+      if (Math.abs(pos - st.pos) < 1.2) { found = st; break; }
+    }
+
+    if (found) {
+      ledStereo.classList.add('on');
+      stationTag.textContent = found.name || '—';
+      if (found !== lockedStation) {
+        lockedStation = found;
+        if (isPowered) playStation(found);
+        else setStatus('已锁定电台：' + found.name + '（电源未开）');
+      }
+    } else {
+      lockedStation = null;
+      ledStereo.classList.remove('on');
+      stationTag.textContent = '—';
+      if (isPowered && isPlaying) { audio.pause(); isPlaying = false; }
+    }
+  }
+
+  function playStation(station) {
+    if (!station || !station.songs || station.songs.length === 0) {
+      setStatus('该电台没有歌曲');
+      return;
+    }
+    currentSongIndex = Math.floor(Math.random() * station.songs.length);
+    playSong(station.songs[currentSongIndex]);
+  }
+
+  function playSong(file) {
+    initAudioContext();
+    setStatus('正在加载：' + getFileName(file));
+    audio.src = file;
+    audio.volume = volumeLevel;
+    const promise = audio.play();
+    if (promise !== undefined) {
+      promise.then(() => {
+        isPlaying = true;
+        updateTrackDisplay(getFileName(file));
+        setStatus('正在播放：' + getFileName(file));
+        playBtn.classList.add('active');
+        stopBtn.classList.remove('active');
+      }).catch(err => {
+        console.warn('播放失败:', err);
+        isPlaying = false;
+        setStatus('播放失败：' + (err.message || err.name));
+        updateTrackDisplay('播放失败');
+      });
+    }
+  }
+
+  function nextSong() {
+    if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
+      setStatus('请先选择一个电台');
+      return;
+    }
+    currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
+    playSong(lockedStation.songs[currentSongIndex]);
+  }
+
+  function prevSong() {
+    if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
+      setStatus('请先选择一个电台');
+      return;
+    }
+    if (audio.currentTime > 3) { audio.currentTime = 0; setStatus('回到开头'); return; }
+    currentSongIndex = (currentSongIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
+    playSong(lockedStation.songs[currentSongIndex]);
+  }
+
+  function tuneToStation(station) {
+    needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
+    updateTuning(station.pos);
+    setTimeout(() => { needle.style.transition = 'left 0.05s linear'; }, 950);
+  }
+
+  function handlePlay() {
+    if (stations.length === 0) {
+      setStatus('歌单为空，请检查 playlist.js');
+      updateTrackDisplay('歌单为空');
+      return;
+    }
+    if (!isPowered) {
+      isPowered = true;
+      powerSwitch.classList.add('on');
+      ledPower.classList.add('on');
+    }
+    if (lockedStation) playStation(lockedStation);
+    else {
+      const randomStation = stations[Math.floor(Math.random() * stations.length)];
+      tuneToStation(randomStation);
+    }
+  }
+
+  function handleStop() {
+    audio.pause();
+    audio.currentTime = 0;
+    isPlaying = false;
+    playBtn.classList.remove('active');
+    stopBtn.classList.add('active');
+    setTimeout(() => stopBtn.classList.remove('active'), 200);
+    vuTargetAngle = -65;
+    tunTargetAngle = -65;
+    setStatus('已停止');
+    updateTrackDisplay('已停止');
+  }
+
+  function flashKey(btn) {
+    btn.classList.add('active');
+    setTimeout(() => btn.classList.remove('active'), 200);
+  }
+
+  playBtn.addEventListener('click', handlePlay);
+  stopBtn.addEventListener('click', handleStop);
+  prevBtn.addEventListener('click', () => { flashKey(prevBtn); prevSong(); });
+  nextBtn.addEventListener('click', () => { flashKey(nextBtn); nextSong(); });
+
+  powerSwitch.addEventListener('click', () => {
+    isPowered = !isPowered;
+    powerSwitch.classList.toggle('on', isPowered);
+    ledPower.classList.toggle('on', isPowered);
+    if (isPowered) {
+      setStatus('电源已开');
+      updateTuning(currentPos);
+    } else {
+      audio.pause();
+      isPlaying = false;
+      ledStereo.classList.remove('on');
+      stationTag.textContent = '—';
+      setStatus('电源已关');
+      updateTrackDisplay('关机');
+      playBtn.classList.remove('active');
+      vuTargetAngle = -65;
+      tunTargetAngle = -65;
+    }
+  });
+
+  volumeKnob.addEventListener('click', () => {
+    volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
+    audio.volume = volumeLevel;
+    setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
+  });
+
+  // ============ 大旋钮：点击随机选台，拖动微调 ============
+  let isDragging = false;
+  let startY = 0;
+  let startPos = 0;
+  let totalMovement = 0;
+  let lastY = 0;
+
+  function beginDrag(y) {
+    isDragging = true;
+    startY = y;
+    lastY = y;
+    totalMovement = 0;
+    startPos = currentPos;
+  }
+
+  function moveDrag(y) {
+    if (!isDragging) return;
+    totalMovement += Math.abs(y - lastY);
+    lastY = y;
+    const deltaY = startY - y;
+    updateTuning(startPos + deltaY * 0.4);
+  }
+
+  function endDrag() {
+    if (isDragging && totalMovement < 8) {
+      if (stations.length === 0) {
+        setStatus('歌单为空，请检查 playlist.js');
+      } else {
+        if (!isPowered) {
+          isPowered = true;
+          powerSwitch.classList.add('on');
+          ledPower.classList.add('on');
+        }
+        const randomStation = stations[Math.floor(Math.random() * stations.length)];
+        tuneToStation(randomStation);
+      }
+    }
+    isDragging = false;
+  }
+
+  tuningKnob.addEventListener('mousedown', (e) => { beginDrag(e.clientY); e.preventDefault(); });
+  document.addEventListener('mousemove', (e) => moveDrag(e.clientY));
+  document.addEventListener('mouseup', endDrag);
+
+  tuningKnob.addEventListener('touchstart', (e) => {
+    beginDrag(e.touches[0].clientY);
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    moveDrag(e.touches[0].clientY);
+  }, { passive: true });
+
+  document.addEventListener('touchend', endDrag);
+
+  audio.addEventListener('ended', () => { if (isPowered && lockedStation) nextSong(); });
+  audio.addEventListener('error', () => {
+    setStatus('音频加载失败：' + getFileName(audio.src));
+    updateTrackDisplay('加载失败');
+  });
+
+  if (stations.length === 0) {
+    setStatus('未检测到歌单，请检查 playlist.js');
+    updateTrackDisplay('歌单未加载');
+    statusCount.textContent = '歌单: 0';
+  } else {
+    const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
+    statusCount.textContent = `歌单: ${stations.length}台 / ${totalSongs}首`;
+    setStatus('就绪，点击 PLAY 开始');
+    updateTuning(stations[0].pos);
+  }
+  audio.volume = volumeLevel;
+})();
+</script>
+
+</body>
+</html>
