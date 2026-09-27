@@ -609,7 +609,7 @@ def main():
 
     if not API_KEY and not args.dry_run:
         print('错误：请设置环境变量 DEEPSEEK_API_KEY')
-        print('  Windows:      set DEEPSEEK_API_KEY=sk-a3c30c5620364bbd89ff1e9ac82642b3')
+        print('  Windows:      set DEEPSEEK_API_KEY=sk-xxxxx')
         print('  macOS/Linux:  export DEEPSEEK_API_KEY=sk-xxxxx')
         sys.exit(1)
 
