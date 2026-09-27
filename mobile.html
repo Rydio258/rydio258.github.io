@@ -2,8 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1a1a1a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rydio 258</title>
 <style>
   @font-face {
@@ -14,127 +13,111 @@
     font-style: normal;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    min-height: 100%;
-    background: #1a1a1a;
-    background-image: radial-gradient(ellipse at 50% 0%, #2a2a2a 0%, #111 80%);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #ddd;
-    -webkit-user-select: none;
-    user-select: none;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    display: flex;
-    flex-direction: column;
     min-height: 100vh;
-    padding: 8px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
-    gap: 10px;
-  }
-
-  /* ============ 主面板 ============ */
-  .panel {
-    width: 100%;
-    max-width: 520px;
-    margin: 0 auto;
-    background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
-    border-radius: 6px;
-    box-shadow:
-      0 10px 30px rgba(0,0,0,0.8),
-      inset 0 1px 0 rgba(255,255,255,0.8);
-    padding: 14px 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    background: #1a1a1a;
+    background-image: radial-gradient(ellipse at 50% 0%, #333 0%, #111 70%);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 2rem 1rem;
   }
 
-  /* ============ 品牌行 ============ */
+  .tuner {
+    width: 100%;
+    max-width: 1180px;
+    background: #d8d8d8;
+    background-image: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+    border-radius: 4px;
+    box-shadow:
+      0 40px 80px rgba(0,0,0,0.85),
+      inset 0 1px 0 rgba(255,255,255,0.8),
+      inset 0 -1px 0 rgba(0,0,0,0.2);
+    padding: 28px 32px;
+    position: relative;
+  }
+
+  .tuner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 1px,
+      rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px
+    );
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
   .brand-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-bottom: 8px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 1px solid #b0b0b0;
   }
 
-  .brand-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #111;
-  }
-  .brand-model {
-    font-size: 0.5rem;
-    letter-spacing: 1px;
-    color: #666;
-    margin-top: 1px;
-  }
+  .brand-left { display: flex; align-items: baseline; gap: 20px; }
+  .brand-name { font-size: 1.75rem; font-weight: 700; letter-spacing: 3px; color: #111; }
+  .brand-model { font-size: 0.75rem; letter-spacing: 2px; color: #555; text-transform: uppercase; }
 
-  .leds {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    font-size: 0.5rem;
-    color: #555;
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-  .indicator { display: flex; align-items: center; gap: 4px; }
-  .led {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #333;
-    transition: all 0.2s;
-  }
-  .led.on { background: #e33; box-shadow: 0 0 8px #e33; }
-  .led.green.on { background: #2a2; box-shadow: 0 0 8px #2a2; }
+  .brand-indicators { display: flex; gap: 24px; align-items: center; font-size: 0.7rem; letter-spacing: 1.5px; color: #555; font-weight: 600; }
+  .indicator { display: flex; align-items: center; gap: 6px; }
+  .led { width: 8px; height: 8px; border-radius: 50%; background: #333; transition: all 0.2s; }
+  .led.on { background: #e33; box-shadow: 0 0 10px #e33, inset 0 0 2px rgba(255,255,255,0.6); }
+  .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2, inset 0 0 2px rgba(255,255,255,0.6); }
 
-  /* ============ 显示区 ============ */
-  .display {
+  .dial-section {
     background: #f4f4f0;
     border: 1px solid #a0a0a0;
-    border-radius: 4px;
-    padding: 10px;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    border-radius: 3px;
+    padding: 14px 20px;
+    margin-bottom: 22px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+    position: relative;
   }
 
-  .freq-row {
+  .dial-display {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    margin-bottom: 10px;
+    gap: 12px;
   }
 
   .dial-frequency {
     font-family: 'Courier New', monospace;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #111;
     letter-spacing: 2px;
     background: #e8e8e4;
-    padding: 6px 12px;
+    padding: 4px 18px;
+    border-radius: 2px;
     border: 1px solid #b0b0b0;
-    border-radius: 3px;
-    flex: 1;
+    min-width: 170px;
     text-align: center;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    flex-shrink: 0;
   }
 
   .station-tag {
     font-family: 'Zpix', 'Courier New', monospace;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 400;
     color: #111;
     background: #dedede;
     border: 1px solid #b0b0b0;
-    border-radius: 3px;
-    padding: 6px 10px;
-    flex-shrink: 0;
-    max-width: 45%;
+    border-radius: 2px;
+    padding: 4px 12px;
+    min-width: 100px;
+    max-width: 180px;
     height: 2rem;
     display: flex;
     align-items: center;
@@ -143,27 +126,31 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    flex-shrink: 0;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
   }
 
   .track-display {
-    width: 100%;
-    height: 2rem;
+    flex: 1;
+    max-width: 33.33%;
+    height: 2.2rem;
     overflow: hidden;
+    position: relative;
     background: #e8e8e4;
     border: 1px solid #b0b0b0;
-    border-radius: 3px;
+    border-radius: 2px;
     display: flex;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 12px;
     font-family: 'Zpix', 'Courier New', monospace;
     font-size: 0.75rem;
     letter-spacing: 1px;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    position: relative;
+    margin-left: auto;
   }
 
   .track-display-inner {
@@ -185,48 +172,29 @@
     to   { transform: translateX(var(--to-x)); }
   }
 
-  /* ============ 调谐刻度 ============ */
-  .band-labels {
+  .dial-band-labels {
     display: flex;
     justify-content: space-between;
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     color: #666;
     letter-spacing: 1.5px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     font-weight: 600;
-    padding: 0 2px;
   }
 
-  .fm-scale, .am-scale {
-    position: relative;
-    background: #fafaf8;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 6px;
-  }
-  .fm-scale { height: 30px; }
-  .am-scale { height: 24px; }
+  .fm-scale { position: relative; height: 38px; margin-bottom: 6px; background: #fafaf8; border-top: 1px solid #999; border-bottom: 1px solid #ccc; }
+  .fm-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; }
+  .fm-tick { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; }
+  .fm-tick .line { width: 1px; height: 10px; background: #555; }
+  .fm-tick.major .line { height: 18px; background: #111; width: 1.5px; }
+  .fm-tick .num { font-size: 0.6rem; color: #333; margin-top: 3px; font-family: 'Courier New', monospace; font-weight: 600; }
 
-  .fm-ticks, .am-ticks {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 4px;
-  }
-  .fm-tick, .am-tick {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100%;
-  }
-  .fm-tick .line { width: 1px; height: 7px; background: #555; }
-  .fm-tick.major .line { height: 12px; background: #111; width: 1.5px; }
-  .fm-tick .num { font-size: 0.42rem; color: #333; margin-top: 1px; font-family: 'Courier New', monospace; font-weight: 600; }
-  .am-tick .line { width: 1px; height: 6px; background: #555; }
-  .am-tick.major .line { height: 10px; background: #111; width: 1.5px; }
-  .am-tick .num { font-size: 0.4rem; color: #333; margin-top: 1px; font-family: 'Courier New', monospace; font-weight: 600; }
+  .am-scale { position: relative; height: 32px; background: #fafaf8; border-top: 1px solid #999; border-bottom: 1px solid #ccc; }
+  .am-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; }
+  .am-tick { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; }
+  .am-tick .line { width: 1px; height: 8px; background: #555; }
+  .am-tick.major .line { height: 15px; background: #111; width: 1.5px; }
+  .am-tick .num { font-size: 0.55rem; color: #333; margin-top: 2px; font-family: 'Courier New', monospace; font-weight: 600; }
 
   .needle {
     position: absolute;
@@ -241,30 +209,162 @@
     content: '';
     position: absolute;
     top: -2px; left: -4px;
-    width: 9px; height: 9px;
+    width: 10px; height: 10px;
     background: #c0392b;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
 
-  /* ============ 表头（两栏并排） ============ */
-  .meters-group {
+  .control-row {
     display: flex;
-    gap: 8px;
-    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 0 4px;
   }
 
+  .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  .control-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .control-label { font-size: 0.6rem; letter-spacing: 2px; color: #555; text-transform: uppercase; font-weight: 700; }
+
+  .switch {
+    width: 42px; height: 22px;
+    background: #b0b0b0;
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    border: 1px solid #888;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 1px;
+    width: 18px; height: 18px;
+    background: linear-gradient(180deg, #eee, #999);
+    border-radius: 2px;
+    transition: transform 0.15s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .switch.on::after { transform: translateX(20px); background: linear-gradient(180deg, #fff, #bbb); }
+
+  .small-knob {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f0f0f0, #999 60%, #666);
+    border: 2px solid #888;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
+  }
+  .small-knob::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 50%;
+    transform: translateX(-50%);
+    width: 2px; height: 14px;
+    background: #111;
+    border-radius: 1px;
+  }
+
+  .transport-key {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .transport-key .key-body {
+    width: 58px;
+    height: 34px;
+    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
+    border: 1px solid #8a8a86;
+    border-radius: 2px;
+    box-shadow:
+      0 2px 3px rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    color: #333;
+    font-weight: 700;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    transition: all 0.06s;
+    position: relative;
+  }
+
+  .transport-key .key-body::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #888;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+  }
+
+  .transport-key.play.active .key-body::before {
+    background: #2ecc40;
+    box-shadow: 0 0 6px #2ecc40, inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+
+  .transport-key.stop.active .key-body::before {
+    background: #e33;
+    box-shadow: 0 0 6px #e33, inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+
+  .transport-key.prev.active .key-body::before,
+  .transport-key.next.active .key-body::before {
+    background: #ffb347;
+    box-shadow: 0 0 6px #ffb347, inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+
+  .transport-key:active .key-body,
+  .transport-key.pressed .key-body {
+    background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
+    box-shadow:
+      0 0 0 rgba(0,0,0,0),
+      inset 0 2px 4px rgba(0,0,0,0.35),
+      inset 0 -1px 0 rgba(255,255,255,0.4);
+    transform: translateY(1px);
+  }
+
+  .transport-key .key-label {
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    color: #666;
+    font-weight: 700;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
+
   .meter {
-    flex: 1;
-    min-width: 0;
+    width: 200px;
     position: relative;
     background: linear-gradient(180deg, #fff5d6 0%, #f7ecc8 45%, #e8dcb0 100%);
     border: 1px solid #8a8a86;
     border-radius: 3px;
-    padding: 4px 6px 2px;
+    padding: 5px 8px 3px;
     box-shadow:
       inset 0 2px 6px rgba(90, 70, 20, 0.25),
-      0 0 16px rgba(255, 220, 120, 0.25),
-      0 2px 3px rgba(0,0,0,0.3);
+      inset 0 -1px 2px rgba(255, 240, 200, 0.5),
+      0 0 22px rgba(255, 220, 120, 0.25),
+      0 2px 4px rgba(0,0,0,0.3);
     overflow: hidden;
   }
 
@@ -272,7 +372,8 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% -20%, rgba(255, 248, 200, 0.95) 0%, rgba(255, 235, 160, 0.35) 40%, transparent 75%);
+    background:
+      radial-gradient(ellipse at 50% -20%, rgba(255, 248, 200, 0.95) 0%, rgba(255, 235, 160, 0.35) 40%, transparent 75%);
     pointer-events: none;
     z-index: 2;
     mix-blend-mode: screen;
@@ -286,20 +387,22 @@
 
   .meter-lamp {
     position: absolute;
-    top: -1px; left: 50%;
+    top: -1px;
+    left: 50%;
     transform: translateX(-50%);
-    width: 60%; height: 2px;
+    width: 60%;
+    height: 3px;
     background: linear-gradient(90deg, transparent, #ffeb99, #fff8cc, #ffeb99, transparent);
     border-radius: 2px;
-    box-shadow: 0 0 8px rgba(255, 220, 120, 0.9);
+    box-shadow: 0 0 10px rgba(255, 220, 120, 0.9);
     z-index: 3;
     pointer-events: none;
     animation: lampFlicker 4s ease-in-out infinite;
   }
 
   .meter-label {
-    font-size: 0.5rem;
-    letter-spacing: 1.5px;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
     color: #5a4a20;
     text-align: center;
     margin-bottom: 1px;
@@ -317,160 +420,33 @@
     z-index: 1;
   }
 
-  /* ============ 传输按键（2 行 × 2 列） ============ */
-  .transport-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .transport-key {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 8px;
-    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
-    border: 1px solid #8a8a86;
-    border-radius: 3px;
-    box-shadow:
-      0 3px 4px rgba(0,0,0,0.25),
-      inset 0 1px 0 rgba(255,255,255,0.9),
-      inset 0 -1px 0 rgba(0,0,0,0.15);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.06s;
-    position: relative;
-    min-height: 48px;
-    touch-action: manipulation;
-  }
-
-  .transport-key::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #888;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-
-  .transport-key.play.active::before { background: #2ecc40; box-shadow: 0 0 6px #2ecc40; }
-  .transport-key.stop.active::before { background: #e33; box-shadow: 0 0 6px #e33; }
-  .transport-key.prev.active::before,
-  .transport-key.next.active::before { background: #ffb347; box-shadow: 0 0 6px #ffb347; }
-
-  .transport-key:active,
-  .transport-key.pressed {
-    background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
-    box-shadow:
-      inset 0 2px 4px rgba(0,0,0,0.35),
-      inset 0 -1px 0 rgba(255,255,255,0.4);
-    transform: translateY(1px);
-  }
-
-  .transport-key .key-icon {
-    font-size: 0.85rem;
-    color: #555;
-  }
-
-  /* ============ 底部控制（电源 / 音量 / 大旋钮） ============ */
-  .bottom-controls {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    gap: 12px;
-    align-items: center;
-    padding-top: 8px;
-    border-top: 1px solid #b0b0b0;
-  }
-
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .control-label {
-    font-size: 0.5rem;
-    letter-spacing: 1.5px;
-    color: #555;
-    font-weight: 700;
-  }
-
-  .switch {
-    width: 44px; height: 24px;
-    background: #b0b0b0;
-    border-radius: 3px;
-    position: relative;
-    cursor: pointer;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-    border: 1px solid #888;
-    touch-action: manipulation;
-  }
-  .switch::after {
-    content: '';
-    position: absolute;
-    top: 1px; left: 1px;
-    width: 20px; height: 20px;
-    background: linear-gradient(180deg, #eee, #999);
-    border-radius: 2px;
-    transition: transform 0.15s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-  }
-  .switch.on::after { transform: translateX(18px); background: linear-gradient(180deg, #fff, #bbb); }
-
-  .small-knob {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #f0f0f0, #999 60%, #666);
-    border: 2px solid #888;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
-    touch-action: manipulation;
-  }
-  .small-knob::after {
-    content: '';
-    position: absolute;
-    top: 4px; left: 50%;
-    transform: translateX(-50%);
-    width: 2px; height: 13px;
-    background: #111;
-    border-radius: 1px;
-  }
-
-  .big-knob-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    justify-self: end;
-  }
-
+  .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
   .big-knob {
-    width: 78px; height: 78px;
+    width: 112px; height: 112px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
     border: 2px solid #999;
     position: relative;
     cursor: pointer;
     box-shadow:
-      0 6px 12px rgba(0,0,0,0.5),
-      inset 0 -4px 8px rgba(0,0,0,0.3),
-      inset 0 4px 8px rgba(255,255,255,0.6);
-    touch-action: none;
+      0 10px 20px rgba(0,0,0,0.5),
+      inset 0 -5px 10px rgba(0,0,0,0.3),
+      inset 0 5px 10px rgba(255,255,255,0.6);
+    transition: box-shadow 0.2s;
+  }
+  .big-knob:hover {
+    box-shadow:
+      0 12px 24px rgba(0,0,0,0.6),
+      0 0 0 3px rgba(192,57,43,0.15),
+      inset 0 -5px 10px rgba(0,0,0,0.3),
+      inset 0 5px 10px rgba(255,255,255,0.6);
   }
   .big-knob::after {
     content: '';
     position: absolute;
-    top: 5px; left: 50%;
+    top: 8px; left: 50%;
     transform: translateX(-50%);
-    width: 3px; height: 20px;
+    width: 4px; height: 30px;
     background: #111;
     border-radius: 2px;
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
@@ -478,7 +454,7 @@
   .big-knob::before {
     content: '';
     position: absolute;
-    inset: 4px;
+    inset: 5px;
     border-radius: 50%;
     background: repeating-conic-gradient(
       from 0deg,
@@ -489,102 +465,114 @@
   }
 
   .knob-hint {
-    font-size: 0.45rem;
+    font-size: 0.55rem;
     color: #777;
-    letter-spacing: 1px;
-    font-weight: 700;
+    letter-spacing: 1.5px;
+    font-weight: 600;
     text-align: center;
+    line-height: 1.4;
   }
-  .knob-hint strong { color: #c0392b; display: block; font-size: 0.5rem; }
+  .knob-hint strong { color: #c0392b; display: block; font-size: 0.6rem; }
 
-  /* ============ 状态条 ============ */
   .status-bar {
-    margin-top: 4px;
-    padding: 6px 10px;
+    margin-top: 14px;
+    padding: 6px 14px;
     background: #1a1614;
     color: #ffb347;
     font-family: 'Zpix', 'Courier New', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.5px;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
     border-radius: 3px;
     border: 1px solid #0a0806;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    word-break: break-all;
+    gap: 12px;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
   }
-  .status-bar .status-count { color: #8a8078; font-size: 0.55rem; }
 
-  /* ============ 页脚 ============ */
+  .status-bar .status-text { color: #ffb347; }
+  .status-bar .status-count { color: #8a8078; }
+
   footer {
-    max-width: 520px;
-    width: 100%;
-    margin: 0 auto 6px;
+    margin-top: 28px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    font-size: 0.55rem;
+    width: 100%;
+    max-width: 1180px;
+    padding: 0 8px;
+    font-size: 0.7rem;
     color: #666;
-    letter-spacing: 1px;
-    text-align: center;
-  }
-
-  .footer-links {
-    display: flex;
+    letter-spacing: 1.5px;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 10px;
   }
-
-  footer a { color: #888; text-decoration: none; }
-  footer a:active { color: #c0392b; }
+  footer a { color: #888; text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: #c0392b; }
+  .footer-links { display: flex; gap: 22px; align-items: center; }
 
   .feedback-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 7px 14px;
+    gap: 6px;
+    padding: 6px 16px;
     background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
     border: 1px solid #8a8a86;
-    border-radius: 3px;
+    border-radius: 2px;
     box-shadow: 0 2px 3px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     letter-spacing: 1px;
     color: #333;
     font-weight: 700;
     text-decoration: none;
-    touch-action: manipulation;
+    transition: all 0.1s;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  .feedback-btn:hover {
+    background: linear-gradient(180deg, #f0f0ec 0%, #dbdbd7 45%, #c4c4c0 100%);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9);
+    color: #111;
   }
   .feedback-btn:active {
     transform: translateY(1px);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
   }
+  .feedback-btn .btn-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+  }
 
-  /* 强制桌面版链接 */
-  .desktop-link {
-    font-size: 0.55rem;
-    color: #666;
-    text-decoration: underline;
+  @media (max-width: 1080px) {
+    .tuner { padding: 20px; }
+    .brand-name { font-size: 1.3rem; }
+    .brand-model { display: none; }
+    .control-row { flex-wrap: wrap; gap: 14px; }
+    .left-controls { width: 100%; justify-content: space-around; }
+    .meters-group { order: -1; width: 100%; justify-content: space-around; }
+    .meter { width: 46%; }
+    .big-knob { width: 90px; height: 90px; }
+    .big-knob::after { height: 24px; }
+    .track-display { max-width: 160px; }
+    .track-display-inner { font-size: 0.65rem; }
+    .station-tag { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="panel">
+<div class="tuner">
   <div class="brand-row">
-    <div>
+    <div class="brand-left">
       <div class="brand-name">YAMAHA</div>
-      <div class="brand-model">CT-X1 · AM/FM STEREO TUNER</div>
+      <div class="brand-model">Natural Sound AM/FM Stereo Tuner · CT-X1</div>
     </div>
-    <div class="leds">
+    <div class="brand-indicators">
       <div class="indicator">
-        <span class="led green" id="ledStereo"></span> FM ST
+        <span class="led green" id="ledStereo"></span> FM STEREO
       </div>
       <div class="indicator">
         <span class="led" id="ledPower"></span> POWER
@@ -592,68 +580,81 @@
     </div>
   </div>
 
-  <div class="display">
-    <div class="freq-row">
+  <div class="dial-section">
+    <div class="dial-display">
       <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
       <div class="station-tag" id="stationTag">—</div>
-    </div>
-    <div class="track-display" id="trackDisplay">
-      <div class="track-display-inner" id="trackDisplayInner">未播放</div>
+      <div class="track-display" id="trackDisplay">
+        <div class="track-display-inner" id="trackDisplayInner">未播放</div>
+      </div>
     </div>
 
-    <div class="band-labels"><span>FM</span><span>MHz</span></div>
-    <div class="fm-scale">
+    <div class="dial-band-labels">
+      <span>FM</span>
+      <span>MHz</span>
+    </div>
+    <div class="fm-scale" id="fmScale">
       <div class="fm-ticks" id="fmTicks"></div>
       <div class="needle" id="needle"></div>
     </div>
 
-    <div class="band-labels"><span>AM</span><span>kHz</span></div>
-    <div class="am-scale">
+    <div class="dial-band-labels" style="margin-top:6px;">
+      <span>AM</span>
+      <span>kHz</span>
+    </div>
+    <div class="am-scale" id="amScale">
       <div class="am-ticks" id="amTicks"></div>
     </div>
   </div>
 
-  <div class="meters-group">
-    <div class="meter">
-      <div class="meter-lamp"></div>
-      <div class="meter-label">VU</div>
-      <svg class="meter-svg" id="vuMeter" viewBox="0 0 160 45"></svg>
-    </div>
-    <div class="meter">
-      <div class="meter-lamp"></div>
-      <div class="meter-label">FM TUNING</div>
-      <svg class="meter-svg" id="tuningMeter" viewBox="0 0 160 45"></svg>
-    </div>
-  </div>
+  <div class="control-row">
+    <div class="left-controls">
+      <div class="control-group">
+        <div class="control-label">POWER</div>
+        <div class="switch" id="powerSwitch"></div>
+      </div>
 
-  <div class="transport-grid">
-    <div class="transport-key prev" id="prevBtn">
-      <span class="key-icon">◀◀</span> PREV
-    </div>
-    <div class="transport-key next" id="nextBtn">
-      <span class="key-icon">▶▶</span> NEXT
-    </div>
-    <div class="transport-key play" id="playBtn">
-      <span class="key-icon">▶</span> PLAY
-    </div>
-    <div class="transport-key stop" id="stopBtn">
-      <span class="key-icon">■</span> STOP
-    </div>
-  </div>
+      <div class="control-group">
+        <div class="control-label">OUTPUT</div>
+        <div class="small-knob" id="volumeKnob"></div>
+      </div>
 
-  <div class="bottom-controls">
-    <div class="control-group">
-      <div class="control-label">POWER</div>
-      <div class="switch" id="powerSwitch"></div>
+      <div class="transport-key prev" id="prevBtn" title="上一首">
+        <div class="key-body">PREV</div>
+        <div class="key-label">◀◀</div>
+      </div>
+
+      <div class="transport-key play" id="playBtn" title="播放">
+        <div class="key-body">PLAY</div>
+        <div class="key-label">▶</div>
+      </div>
+
+      <div class="transport-key next" id="nextBtn" title="下一首">
+        <div class="key-body">NEXT</div>
+        <div class="key-label">▶▶</div>
+      </div>
+
+      <div class="transport-key stop" id="stopBtn" title="停止">
+        <div class="key-body">STOP</div>
+        <div class="key-label">■</div>
+      </div>
     </div>
 
-    <div class="control-group">
-      <div class="control-label">OUTPUT</div>
-      <div class="small-knob" id="volumeKnob"></div>
+    <div class="meters-group">
+      <div class="meter">
+        <div class="meter-lamp"></div>
+        <div class="meter-label">VU</div>
+        <svg class="meter-svg" id="vuMeter" viewBox="0 0 160 45"></svg>
+      </div>
+      <div class="meter">
+        <div class="meter-lamp"></div>
+        <div class="meter-label">FM TUNING</div>
+        <svg class="meter-svg" id="tuningMeter" viewBox="0 0 160 45"></svg>
+      </div>
     </div>
 
     <div class="big-knob-container">
-      <div class="big-knob" id="tuningKnob"></div>
+      <div class="big-knob" id="tuningKnob" title="拖动 / 滚轮调节频率，点击自动选台"></div>
       <div class="knob-hint">
         TUNING
         <strong>点击自动选台</strong>
@@ -668,14 +669,14 @@
 </div>
 
 <footer>
+  <div>© 2025 我的 GitHub 主页</div>
   <div class="footer-links">
     <a href="https://github.com/Rydio258/rydio258.github.io/" target="_blank" rel="noopener">GITHUB</a>
     <a href="https://github.com/Rydio258/rydio258.github.io/issues/new?title=%5B%E5%8F%8D%E9%A6%88%5D%20%E8%AF%B7%E5%A1%AB%E5%86%99%E6%A0%87%E9%A2%98&body=%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%8F%8D%E9%A6%88%EF%BC%81%E8%AF%B7%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%8F%8F%E8%BF%B0%E6%82%A8%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A" target="_blank" rel="noopener" class="feedback-btn">
-      💬 反馈建议
+      <span class="btn-icon">💬</span> 反馈建议
     </a>
-    <a href="index.html?desktop=1" class="desktop-link">桌面版</a>
+    <a href="#" id="footerInfoLink">ABOUT</a>
   </div>
-  <div>© 2025 Rydio258</div>
 </footer>
 
 <audio id="bgMusic" preload="auto"></audio>
@@ -707,12 +708,14 @@
   const nextBtn = document.getElementById('nextBtn');
   const statusText = document.getElementById('statusText');
   const statusCount = document.getElementById('statusCount');
+  const footerInfoLink = document.getElementById('footerInfoLink');
 
   let isPowered = false;
   let currentPos = 20;
   let lockedStation = null;
   let isPlaying = false;
-  let currentSongIndex = 0;
+  let currentEntryIndex = 0;
+  let currentMovementIndex = 0;
   let audioContext = null;
   let analyser = null;
   let timeDataArray = null;
@@ -728,6 +731,32 @@
   function setStatus(text) {
     statusText.textContent = text;
     console.log('[状态]', text);
+  }
+
+  // ============ 条目工具函数 ============
+  function isWork(item) {
+    return item && typeof item === 'object' && Array.isArray(item.movements);
+  }
+
+  function getMovements(item) {
+    if (isWork(item)) return item.movements;
+    return [item];
+  }
+
+  function getFileName(path) {
+    if (!path) return '';
+    const decoded = decodeURIComponent(path);
+    const filename = decoded.split('/').pop() || '';
+    return filename.replace(/\.[^/.]+$/, '');
+  }
+
+  function getMovementDisplayName(item, movementIndex) {
+    const movements = getMovements(item);
+    const fileName = getFileName(movements[movementIndex]);
+    if (isWork(item)) {
+      return item.work + ' - ' + fileName;
+    }
+    return fileName;
   }
 
   // ============ 表头构建 ============
@@ -858,7 +887,7 @@
       const line = document.createElement('div');
       line.className = 'line';
       tick.appendChild(line);
-      if (i % 5 === 0) {
+      if (i % 2 === 0) {
         const num = document.createElement('div');
         num.className = 'num';
         num.textContent = freq;
@@ -952,25 +981,24 @@
     requestAnimationFrame(animateMeters);
   }
 
-  function getFileName(path) {
-    if (!path) return '';
-    const decoded = decodeURIComponent(path);
-    const filename = decoded.split('/').pop() || '';
-    return filename.replace(/\.[^/.]+$/, '');
-  }
-
+  // ============ 滚动显示 ============
   function updateTrackDisplay(text) {
     trackDisplayInner.textContent = text;
     trackDisplayInner.style.animation = 'none';
     trackDisplayInner.style.transform = 'translateX(0)';
+
     void trackDisplayInner.offsetWidth;
-    const panelWidth = document.querySelector('.panel').clientWidth - 40;
+
+    const tunerEl = document.querySelector('.tuner');
+    const panelWidth = tunerEl.clientWidth - 72;
     const threshold = panelWidth / 3;
-    const cw = trackDisplay.clientWidth - 20;
+
+    const cw = trackDisplay.clientWidth - 24;
     const tw = trackDisplayInner.scrollWidth;
+
     if (tw > threshold) {
       const totalDist = cw + tw;
-      const speed = 45;
+      const speed = 60;
       const dur = Math.max(totalDist / speed, 4);
       trackDisplayInner.style.setProperty('--from-x', cw + 'px');
       trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
@@ -979,6 +1007,7 @@
     }
   }
 
+  // ============ 调谐逻辑 ============
   function posToFreq(pos) {
     return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
   }
@@ -991,50 +1020,71 @@
     if (pos < 0) pos = 0;
     if (pos > 100) pos = 100;
     currentPos = pos;
+
     freqDisplay.textContent = formatFreq(pos);
     needle.style.left = pos + '%';
 
     let found = null;
     for (const st of stations) {
-      if (Math.abs(pos - st.pos) < 1.2) { found = st; break; }
+      if (Math.abs(pos - st.pos) < 1.2) {
+        found = st;
+        break;
+      }
     }
 
     if (found) {
       ledStereo.classList.add('on');
       stationTag.textContent = found.name || '—';
+
       if (found !== lockedStation) {
         lockedStation = found;
-        if (isPowered) playStation(found);
-        else setStatus('已锁定电台：' + found.name + '（电源未开）');
+        if (isPowered) {
+          playStation(found);
+        } else {
+          setStatus('已锁定电台：' + found.name + '（电源未开）');
+        }
       }
     } else {
       lockedStation = null;
       ledStereo.classList.remove('on');
       stationTag.textContent = '—';
-      if (isPowered && isPlaying) { audio.pause(); isPlaying = false; }
+      if (isPowered && isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      }
     }
   }
 
+  // ============ 播放逻辑 ============
   function playStation(station) {
     if (!station || !station.songs || station.songs.length === 0) {
       setStatus('该电台没有歌曲');
       return;
     }
-    currentSongIndex = Math.floor(Math.random() * station.songs.length);
-    playSong(station.songs[currentSongIndex]);
+    // 随机选一个条目（单曲或多乐章作品）
+    const entryIndex = Math.floor(Math.random() * station.songs.length);
+    currentEntryIndex = entryIndex;
+    currentMovementIndex = 0;
+    const item = station.songs[entryIndex];
+    const movements = getMovements(item);
+    playSong(movements[0], item, 0);
   }
 
-  function playSong(file) {
+  function playSong(file, item, movementIndex) {
     initAudioContext();
-    setStatus('正在加载：' + getFileName(file));
+    const displayName = (item && isWork(item))
+      ? item.work + ' - ' + getFileName(file)
+      : getFileName(file);
+
+    setStatus('正在加载：' + displayName);
     audio.src = file;
     audio.volume = volumeLevel;
     const promise = audio.play();
     if (promise !== undefined) {
       promise.then(() => {
         isPlaying = true;
-        updateTrackDisplay(getFileName(file));
-        setStatus('正在播放：' + getFileName(file));
+        updateTrackDisplay(displayName);
+        setStatus('正在播放：' + displayName);
         playBtn.classList.add('active');
         stopBtn.classList.remove('active');
       }).catch(err => {
@@ -1046,13 +1096,39 @@
     }
   }
 
+  // 判断当前条目是否为多乐章作品
+  function currentItemIsWork() {
+    if (!lockedStation) return false;
+    return isWork(lockedStation.songs[currentEntryIndex]);
+  }
+
   function nextSong() {
     if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
       setStatus('请先选择一个电台');
       return;
     }
-    currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
-    playSong(lockedStation.songs[currentSongIndex]);
+    const item = lockedStation.songs[currentEntryIndex];
+    const movements = getMovements(item);
+
+    // 多乐章作品内：切到下一乐章
+    if (currentMovementIndex < movements.length - 1) {
+      currentMovementIndex++;
+      playSong(movements[currentMovementIndex], item, currentMovementIndex);
+      return;
+    }
+
+    // 作品的最后一个乐章或单曲播放完 → 换一个条目
+    if (isWork(item)) {
+      // 古典作品：顺序下一个作品（循环）
+      currentEntryIndex = (currentEntryIndex + 1) % lockedStation.songs.length;
+    } else {
+      // 普通单曲：随机下一首
+      currentEntryIndex = Math.floor(Math.random() * lockedStation.songs.length);
+    }
+    currentMovementIndex = 0;
+    const nextItem = lockedStation.songs[currentEntryIndex];
+    const nextMovements = getMovements(nextItem);
+    playSong(nextMovements[0], nextItem, 0);
   }
 
   function prevSong() {
@@ -1060,15 +1136,41 @@
       setStatus('请先选择一个电台');
       return;
     }
-    if (audio.currentTime > 3) { audio.currentTime = 0; setStatus('回到开头'); return; }
-    currentSongIndex = (currentSongIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
-    playSong(lockedStation.songs[currentSongIndex]);
+    // 播放超过 3 秒 → 回到当前乐章开头
+    if (audio.currentTime > 3) {
+      audio.currentTime = 0;
+      setStatus('回到开头');
+      return;
+    }
+
+    const item = lockedStation.songs[currentEntryIndex];
+    const movements = getMovements(item);
+
+    // 多乐章作品内：回到上一乐章
+    if (currentMovementIndex > 0) {
+      currentMovementIndex--;
+      playSong(movements[currentMovementIndex], item, currentMovementIndex);
+      return;
+    }
+
+    // 第一个乐章或单曲 → 上一个条目
+    if (isWork(item)) {
+      currentEntryIndex = (currentEntryIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
+    } else {
+      currentEntryIndex = Math.floor(Math.random() * lockedStation.songs.length);
+    }
+    const prevItem = lockedStation.songs[currentEntryIndex];
+    const prevMovements = getMovements(prevItem);
+    currentMovementIndex = prevMovements.length - 1;
+    playSong(prevMovements[currentMovementIndex], prevItem, currentMovementIndex);
   }
 
   function tuneToStation(station) {
     needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
     updateTuning(station.pos);
-    setTimeout(() => { needle.style.transition = 'left 0.05s linear'; }, 950);
+    setTimeout(() => {
+      needle.style.transition = 'left 0.05s linear';
+    }, 950);
   }
 
   function handlePlay() {
@@ -1082,8 +1184,9 @@
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-    if (lockedStation) playStation(lockedStation);
-    else {
+    if (lockedStation) {
+      playStation(lockedStation);
+    } else {
       const randomStation = stations[Math.floor(Math.random() * stations.length)];
       tuneToStation(randomStation);
     }
@@ -1102,20 +1205,28 @@
     updateTrackDisplay('已停止');
   }
 
-  function flashKey(btn) {
-    btn.classList.add('active');
-    setTimeout(() => btn.classList.remove('active'), 200);
+  function handlePrev() {
+    prevBtn.classList.add('active');
+    setTimeout(() => prevBtn.classList.remove('active'), 200);
+    prevSong();
+  }
+
+  function handleNext() {
+    nextBtn.classList.add('active');
+    setTimeout(() => nextBtn.classList.remove('active'), 200);
+    nextSong();
   }
 
   playBtn.addEventListener('click', handlePlay);
   stopBtn.addEventListener('click', handleStop);
-  prevBtn.addEventListener('click', () => { flashKey(prevBtn); prevSong(); });
-  nextBtn.addEventListener('click', () => { flashKey(nextBtn); nextSong(); });
+  prevBtn.addEventListener('click', handlePrev);
+  nextBtn.addEventListener('click', handleNext);
 
   powerSwitch.addEventListener('click', () => {
     isPowered = !isPowered;
     powerSwitch.classList.toggle('on', isPowered);
     ledPower.classList.toggle('on', isPowered);
+
     if (isPowered) {
       setStatus('电源已开');
       updateTuning(currentPos);
@@ -1138,31 +1249,31 @@
     setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
   });
 
-  // ============ 大旋钮：点击随机选台，拖动微调 ============
   let isDragging = false;
   let startY = 0;
   let startPos = 0;
   let totalMovement = 0;
   let lastY = 0;
 
-  function beginDrag(y) {
+  tuningKnob.addEventListener('mousedown', (e) => {
     isDragging = true;
-    startY = y;
-    lastY = y;
+    startY = e.clientY;
+    lastY = e.clientY;
     totalMovement = 0;
     startPos = currentPos;
-  }
+    e.preventDefault();
+  });
 
-  function moveDrag(y) {
+  document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
-    totalMovement += Math.abs(y - lastY);
-    lastY = y;
-    const deltaY = startY - y;
-    updateTuning(startPos + deltaY * 0.4);
-  }
+    totalMovement += Math.abs(e.clientY - lastY);
+    lastY = e.clientY;
+    const deltaY = startY - e.clientY;
+    updateTuning(startPos + deltaY * 0.15);
+  });
 
-  function endDrag() {
-    if (isDragging && totalMovement < 8) {
+  document.addEventListener('mouseup', () => {
+    if (isDragging && totalMovement < 6) {
       if (stations.length === 0) {
         setStatus('歌单为空，请检查 playlist.js');
       } else {
@@ -1176,36 +1287,70 @@
       }
     }
     isDragging = false;
-  }
+  });
 
-  tuningKnob.addEventListener('mousedown', (e) => { beginDrag(e.clientY); e.preventDefault(); });
-  document.addEventListener('mousemove', (e) => moveDrag(e.clientY));
-  document.addEventListener('mouseup', endDrag);
+  tuningKnob.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (!isPowered) {
+      isPowered = true;
+      powerSwitch.classList.add('on');
+      ledPower.classList.add('on');
+    }
+    const delta = e.deltaY > 0 ? -0.5 : 0.5;
+    updateTuning(currentPos + delta);
+  }, { passive: false });
 
   tuningKnob.addEventListener('touchstart', (e) => {
-    beginDrag(e.touches[0].clientY);
+    isDragging = true;
+    startY = e.touches[0].clientY;
+    lastY = e.touches[0].clientY;
+    totalMovement = 0;
+    startPos = currentPos;
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
-    moveDrag(e.touches[0].clientY);
+    totalMovement += Math.abs(e.touches[0].clientY - lastY);
+    lastY = e.touches[0].clientY;
+    const deltaY = startY - e.touches[0].clientY;
+    updateTuning(startPos + deltaY * 0.15);
   }, { passive: true });
 
-  document.addEventListener('touchend', endDrag);
+  document.addEventListener('touchend', () => {
+    if (isDragging && totalMovement < 8) {
+      if (stations.length === 0) return;
+      if (!isPowered) {
+        isPowered = true;
+        powerSwitch.classList.add('on');
+        ledPower.classList.add('on');
+      }
+      const randomStation = stations[Math.floor(Math.random() * stations.length)];
+      tuneToStation(randomStation);
+    }
+    isDragging = false;
+  });
 
-  audio.addEventListener('ended', () => { if (isPowered && lockedStation) nextSong(); });
+  audio.addEventListener('ended', () => {
+    if (isPowered && lockedStation) nextSong();
+  });
+
   audio.addEventListener('error', () => {
     setStatus('音频加载失败：' + getFileName(audio.src));
     updateTrackDisplay('加载失败');
   });
 
+  footerInfoLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 古典电台支持多乐章作品，顺序播放');
+  });
+
   if (stations.length === 0) {
     setStatus('未检测到歌单，请检查 playlist.js');
     updateTrackDisplay('歌单未加载');
-    statusCount.textContent = '歌单: 0';
+    statusCount.textContent = '歌单: 0 个电台';
   } else {
     const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
-    statusCount.textContent = `歌单: ${stations.length}台 / ${totalSongs}首`;
+    statusCount.textContent = `歌单: ${stations.length} 个电台 / ${totalSongs} 个条目`;
     setStatus('就绪，点击 PLAY 开始');
     updateTuning(stations[0].pos);
   }
