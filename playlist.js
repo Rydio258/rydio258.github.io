@@ -7,7 +7,7 @@ window.PLAYLIST = {
             pos: 50,
             name: 'C-POP',
             songs: [
-                'music/C-POP/Pussy - 陈绮贞.mp3',
+                'music/C-POP/我喜欢上你时的内心活动 - 陈绮贞.mp3',
                 'music/C-POP/The Moment - 孙燕姿.mp3',
                 'music/C-POP/你不是真正的快乐 - 五月天.mp3',
                 'music/C-POP/喔伊细 - 徐佳莹.mp3',
