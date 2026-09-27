@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#1a1a1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Rydio 258</title>
+<title>CT-X1 · 复古调谐器</title>
 <style>
   @font-face {
     font-family: 'Zpix';
@@ -43,7 +43,6 @@
     gap: 10px;
   }
 
-  /* ============ 主面板 ============ */
   .panel {
     width: 100%;
     max-width: 520px;
@@ -74,7 +73,6 @@
     pointer-events: none;
   }
 
-  /* ============ 品牌行 ============ */
   .brand-row {
     display: flex;
     justify-content: space-between;
@@ -118,7 +116,6 @@
   .led.on { background: #e33; box-shadow: 0 0 10px #e33, inset 0 1px 2px rgba(255,255,255,0.4); }
   .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2, inset 0 1px 2px rgba(255,255,255,0.4); }
 
-  /* ============ 显示区 ============ */
   .display {
     background: #f4f4f0;
     border: 1px solid #a0a0a0;
@@ -217,7 +214,89 @@
     to   { transform: translateX(var(--to-x)); }
   }
 
-  /* ============ 调谐刻度 ============ */
+  /* ============ 作品解析栏 ============ */
+  .work-info {
+    display: none;
+    background: linear-gradient(180deg, #f5edd4 0%, #ece0b8 100%);
+    border: 1px solid #a89878;
+    border-radius: 4px;
+    padding: 9px 12px;
+    box-shadow:
+      inset 0 1px 3px rgba(90, 70, 20, 0.15),
+      0 1px 2px rgba(0,0,0,0.1);
+    font-family: 'Zpix', 'Courier New', monospace;
+    font-size: 0.62rem;
+    line-height: 1.6;
+    color: #4a3a1a;
+    max-height: 100px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    animation: workInfoSlideIn 0.3s ease-out;
+  }
+
+  @keyframes workInfoSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .work-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+    padding-bottom: 3px;
+    border-bottom: 1px dashed #b8a888;
+    gap: 8px;
+  }
+
+  .work-info-title {
+    font-weight: 700;
+    color: #8a2b1c;
+    font-size: 0.66rem;
+    letter-spacing: 0.5px;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .work-info-tag {
+    font-size: 0.46rem;
+    letter-spacing: 1px;
+    color: #a89878;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  .work-info-desc {
+    color: #4a3a1a;
+    letter-spacing: 0.3px;
+  }
+
+  .work-info-desc .work-info-base {
+    display: block;
+    white-space: pre-wrap;
+  }
+
+  .work-info-desc .work-info-now {
+    display: block;
+    margin-top: 6px;
+    padding-top: 5px;
+    border-top: 1px dashed #b8a888;
+    color: #8a2b1c;
+    font-weight: 700;
+    white-space: pre-wrap;
+    animation: noteFadeIn 0.25s ease-out;
+  }
+
+  @keyframes noteFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
   .band-labels {
     display: flex;
     justify-content: space-between;
@@ -278,7 +357,6 @@
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
 
-  /* ============ 表头 ============ */
   .meters-group {
     display: flex;
     gap: 8px;
@@ -351,7 +429,6 @@
     z-index: 1;
   }
 
-  /* ============ 传输按键 2×2 ============ */
   .transport-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -415,7 +492,6 @@
     transform: translateY(1px);
   }
 
-  /* ============ 底部控制 ============ */
   .bottom-controls {
     display: grid;
     grid-template-columns: auto auto 1fr;
@@ -540,7 +616,6 @@
   }
   .knob-hint strong { color: #c0392b; display: block; font-size: 0.5rem; }
 
-  /* ============ 状态条 ============ */
   .status-bar {
     margin-top: 4px;
     padding: 6px 10px;
@@ -562,10 +637,26 @@
     -webkit-font-smoothing: none;
     position: relative;
     z-index: 1;
+    row-gap: 3px;
   }
-  .status-bar .status-count { color: #8a8078; font-size: 0.55rem; }
+  .status-bar .status-text {
+    flex: 1 1 100%;
+    min-width: 0;
+    word-break: break-all;
+    color: #ffb347;
+  }
+  .status-bar .status-time {
+    color: #a5f3fc;
+    font-size: 0.62rem;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .status-bar .status-count {
+    color: #8a8078;
+    font-size: 0.55rem;
+    flex-shrink: 0;
+  }
 
-  /* ============ 页脚 ============ */
   footer {
     max-width: 520px;
     width: 100%;
@@ -619,7 +710,6 @@
     padding: 4px;
   }
 
-  /* 超小屏适配 */
   @media (max-width: 360px) {
     .brand-name { font-size: 1rem; letter-spacing: 2px; }
     .dial-frequency { font-size: 1rem; }
@@ -627,6 +717,7 @@
     .big-knob { width: 72px; height: 72px; }
     .big-knob::after { height: 18px; }
     .small-knob { width: 42px; height: 42px; }
+    .work-info { font-size: 0.58rem; max-height: 90px; }
   }
 </style>
 </head>
@@ -667,6 +758,14 @@
     <div class="am-scale">
       <div class="am-ticks" id="amTicks"></div>
     </div>
+  </div>
+
+  <div class="work-info" id="workInfo">
+    <div class="work-info-header">
+      <div class="work-info-title" id="workInfoTitle"></div>
+      <div class="work-info-tag">WORK NOTES</div>
+    </div>
+    <div class="work-info-desc" id="workInfoDesc"></div>
   </div>
 
   <div class="meters-group">
@@ -719,6 +818,7 @@
 
   <div class="status-bar">
     <span class="status-text" id="statusText">正在初始化...</span>
+    <span class="status-time" id="statusTime">--:-- / --:--</span>
     <span class="status-count" id="statusCount">歌单: —</span>
   </div>
 </div>
@@ -762,7 +862,11 @@
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const statusText = document.getElementById('statusText');
+  const statusTime = document.getElementById('statusTime');
   const statusCount = document.getElementById('statusCount');
+  const workInfo = document.getElementById('workInfo');
+  const workInfoTitle = document.getElementById('workInfoTitle');
+  const workInfoDesc = document.getElementById('workInfoDesc');
 
   let isPowered = false;
   let currentPos = 20;
@@ -787,7 +891,7 @@
     console.log('[状态]', text);
   }
 
-  // ============ 条目工具函数 ============
+  // ============ 工具函数 ============
   function isWork(item) {
     return item && typeof item === 'object' && Array.isArray(item.movements);
   }
@@ -802,6 +906,140 @@
     const decoded = decodeURIComponent(path);
     const filename = decoded.split('/').pop() || '';
     return filename.replace(/\.[^/.]+$/, '');
+  }
+
+  function formatTime(sec) {
+    if (!isFinite(sec) || sec < 0) return '--:--';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + String(s).padStart(2, '0');
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
+  }
+
+  // ============ info.txt 加载与缓存 ============
+  const workInfoCache = new Map();
+  let currentInfoItem = null;
+  let currentInfoData = null;
+
+  function parseInfoTxt(content) {
+    const sections = content.split(/\n\s*[-=]{3,}\s*\n/).map(s => s.trim()).filter(Boolean);
+    if (sections.length === 0) return null;
+
+    const description = sections[0];
+    const movementNotes = [];
+
+    for (let i = 1; i < sections.length; i++) {
+      const notes = [];
+      for (const rawLine of sections[i].split('\n')) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        const m = line.match(/^\[?(\d+:\d{2}(?::\d{2})?)\]?\s+(.+)$/);
+        if (m) {
+          const parts = m[1].split(':').map(Number);
+          let sec = 0;
+          if (parts.length === 3) sec = parts[0] * 3600 + parts[1] * 60 + parts[2];
+          else sec = parts[0] * 60 + parts[1];
+          notes.push({ time: sec, text: m[2].trim() });
+        }
+      }
+      notes.sort((a, b) => a.time - b.time);
+      movementNotes.push(notes);
+    }
+
+    return { description, movementNotes };
+  }
+
+  async function loadWorkInfo(infoPath) {
+    if (workInfoCache.has(infoPath)) return workInfoCache.get(infoPath);
+    try {
+      const resp = await fetch(infoPath, { cache: 'force-cache' });
+      if (!resp.ok) {
+        workInfoCache.set(infoPath, null);
+        return null;
+      }
+      const text = await resp.text();
+      const parsed = parseInfoTxt(text);
+      workInfoCache.set(infoPath, parsed);
+      return parsed;
+    } catch (err) {
+      console.warn('读取 info.txt 失败:', infoPath, err);
+      workInfoCache.set(infoPath, null);
+      return null;
+    }
+  }
+
+  function getInfoPath(item) {
+    if (!item || !isWork(item) || !item.movements.length) return null;
+    const first = item.movements[0];
+    const lastSlash = first.lastIndexOf('/');
+    if (lastSlash < 0) return null;
+    return first.substring(0, lastSlash) + '/info.txt';
+  }
+
+  function findNoteAt(notes, t) {
+    if (!notes || notes.length === 0) return null;
+    let found = null;
+    for (const n of notes) {
+      if (t >= n.time) found = n;
+      else break;
+    }
+    return found;
+  }
+
+  async function updateWorkInfo(item, movementIndex, currentTime) {
+    if (!item || !isWork(item)) {
+      workInfo.style.display = 'none';
+      currentInfoItem = null;
+      currentInfoData = null;
+      return;
+    }
+
+    if (item !== currentInfoItem) {
+      currentInfoItem = item;
+      currentInfoData = null;
+      const infoPath = getInfoPath(item);
+      if (infoPath) {
+        currentInfoData = await loadWorkInfo(infoPath);
+      }
+    }
+
+    if (item !== currentInfoItem) return;
+
+    if (!currentInfoData) {
+      workInfo.style.display = 'none';
+      return;
+    }
+
+    const { description, movementNotes } = currentInfoData;
+    const notes = movementNotes[movementIndex] || [];
+    const note = findNoteAt(notes, currentTime);
+
+    let html = '';
+    if (description) {
+      html += '<span class="work-info-base">' + escapeHtml(description) + '</span>';
+    }
+    if (note) {
+      html += '<span class="work-info-now">▸ ' + escapeHtml(note.text) + '</span>';
+    }
+
+    if (workInfoDesc.dataset.rendered !== html) {
+      workInfoDesc.innerHTML = html;
+      workInfoDesc.dataset.rendered = html;
+    }
+
+    workInfoTitle.textContent = item.work || '';
+    workInfo.style.display = 'block';
+  }
+
+  function hideWorkInfo() {
+    workInfo.style.display = 'none';
+    currentInfoItem = null;
+    currentInfoData = null;
   }
 
   // ============ 表头构建 ============
@@ -1088,6 +1326,7 @@
   function playStation(station) {
     if (!station || !station.songs || station.songs.length === 0) {
       setStatus('该电台没有歌曲');
+      hideWorkInfo();
       return;
     }
     const entryIndex = Math.floor(Math.random() * station.songs.length);
@@ -1100,6 +1339,8 @@
 
   function playSong(file, item, movementIndex) {
     initAudioContext();
+    updateWorkInfo(item, movementIndex, 0);
+
     const displayName = (item && isWork(item))
       ? item.work + ' - ' + getFileName(file)
       : getFileName(file);
@@ -1213,8 +1454,10 @@
     setTimeout(() => stopBtn.classList.remove('active'), 200);
     vuTargetAngle = -65;
     tunTargetAngle = -65;
+    statusTime.textContent = '--:-- / --:--';
     setStatus('已停止');
     updateTrackDisplay('已停止');
+    hideWorkInfo();
   }
 
   function flashKey(btn) {
@@ -1241,9 +1484,11 @@
       stationTag.textContent = '—';
       setStatus('电源已关');
       updateTrackDisplay('关机');
+      statusTime.textContent = '--:-- / --:--';
       playBtn.classList.remove('active');
       vuTargetAngle = -65;
       tunTargetAngle = -65;
+      hideWorkInfo();
     }
   });
 
@@ -1313,6 +1558,23 @@
   audio.addEventListener('error', () => {
     setStatus('音频加载失败：' + getFileName(audio.src));
     updateTrackDisplay('加载失败');
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    const cur = audio.currentTime || 0;
+    const dur = audio.duration || 0;
+    statusTime.textContent = formatTime(cur) + ' / ' + formatTime(dur);
+
+    if (lockedStation && currentEntryIndex >= 0) {
+      const item = lockedStation.songs[currentEntryIndex];
+      if (item && isWork(item)) {
+        updateWorkInfo(item, currentMovementIndex, cur);
+      }
+    }
+  });
+
+  audio.addEventListener('loadedmetadata', () => {
+    statusTime.textContent = '0:00 / ' + formatTime(audio.duration);
   });
 
   if (stations.length === 0) {
