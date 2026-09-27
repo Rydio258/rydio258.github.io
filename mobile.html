@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a1a">
-<title>CT-X1 · 复古调谐器</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Rydio 258</title>
 <style>
   @font-face {
     font-family: 'Zpix';
@@ -14,7 +16,12 @@
     font-style: normal;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
 
   html, body {
     min-height: 100%;
@@ -24,14 +31,15 @@
     color: #ddd;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-touch-callout: none;
+    overflow-x: hidden;
   }
 
   body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding: 8px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
     gap: 10px;
   }
 
@@ -41,14 +49,29 @@
     max-width: 520px;
     margin: 0 auto;
     background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
-    border-radius: 6px;
+    border-radius: 8px;
     box-shadow:
-      0 10px 30px rgba(0,0,0,0.8),
-      inset 0 1px 0 rgba(255,255,255,0.8);
+      0 12px 32px rgba(0,0,0,0.75),
+      inset 0 1px 0 rgba(255,255,255,0.85),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
     padding: 14px 12px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    position: relative;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 1px,
+      rgba(0,0,0,0.025) 1px, rgba(0,0,0,0.025) 2px
+    );
+    pointer-events: none;
   }
 
   /* ============ 品牌行 ============ */
@@ -56,72 +79,82 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #b0b0b0;
+    position: relative;
+    z-index: 1;
   }
 
   .brand-name {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: 3px;
     color: #111;
+    line-height: 1;
   }
   .brand-model {
     font-size: 0.5rem;
     letter-spacing: 1px;
     color: #666;
-    margin-top: 1px;
+    margin-top: 3px;
   }
 
   .leds {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
     font-size: 0.5rem;
     color: #555;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 1px;
   }
   .indicator { display: flex; align-items: center; gap: 4px; }
   .led {
-    width: 7px; height: 7px; border-radius: 50%;
+    width: 8px; height: 8px; border-radius: 50%;
     background: #333;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
     transition: all 0.2s;
   }
-  .led.on { background: #e33; box-shadow: 0 0 8px #e33; }
-  .led.green.on { background: #2a2; box-shadow: 0 0 8px #2a2; }
+  .led.on { background: #e33; box-shadow: 0 0 10px #e33, inset 0 1px 2px rgba(255,255,255,0.4); }
+  .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2, inset 0 1px 2px rgba(255,255,255,0.4); }
 
   /* ============ 显示区 ============ */
   .display {
     background: #f4f4f0;
     border: 1px solid #a0a0a0;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 10px;
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative;
+    z-index: 1;
   }
 
   .freq-row {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 8px;
+    height: 2.4rem;
   }
 
   .dial-frequency {
     font-family: 'Courier New', monospace;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #111;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     background: #e8e8e4;
-    padding: 6px 12px;
     border: 1px solid #b0b0b0;
     border-radius: 3px;
-    flex: 1;
-    text-align: center;
+    flex: 1 1 55%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    min-width: 0;
+    white-space: nowrap;
   }
 
   .station-tag {
@@ -132,10 +165,8 @@
     background: #dedede;
     border: 1px solid #b0b0b0;
     border-radius: 3px;
-    padding: 6px 10px;
-    flex-shrink: 0;
-    max-width: 45%;
-    height: 2rem;
+    padding: 0 10px;
+    flex: 1 1 45%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,6 +174,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
   }
@@ -193,7 +225,7 @@
     color: #666;
     letter-spacing: 1.5px;
     margin-bottom: 2px;
-    font-weight: 600;
+    font-weight: 700;
     padding: 0 2px;
   }
 
@@ -233,7 +265,7 @@
     top: 0; bottom: 0;
     width: 2px;
     background: #c0392b;
-    box-shadow: 0 0 5px rgba(192,57,43,0.7);
+    box-shadow: 0 0 6px rgba(192,57,43,0.75);
     transition: left 0.05s linear;
     z-index: 5;
   }
@@ -241,7 +273,7 @@
     content: '';
     position: absolute;
     top: -2px; left: -4px;
-    width: 9px; height: 9px;
+    width: 10px; height: 10px;
     background: #c0392b;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
@@ -251,6 +283,8 @@
     display: flex;
     gap: 8px;
     width: 100%;
+    position: relative;
+    z-index: 1;
   }
 
   .meter {
@@ -259,12 +293,12 @@
     position: relative;
     background: linear-gradient(180deg, #fff5d6 0%, #f7ecc8 45%, #e8dcb0 100%);
     border: 1px solid #8a8a86;
-    border-radius: 3px;
+    border-radius: 4px;
     padding: 4px 6px 2px;
     box-shadow:
       inset 0 2px 6px rgba(90, 70, 20, 0.25),
-      0 0 16px rgba(255, 220, 120, 0.25),
-      0 2px 3px rgba(0,0,0,0.3);
+      0 0 18px rgba(255, 220, 120, 0.28),
+      0 2px 4px rgba(0,0,0,0.3);
     overflow: hidden;
   }
 
@@ -291,7 +325,7 @@
     width: 60%; height: 2px;
     background: linear-gradient(90deg, transparent, #ffeb99, #fff8cc, #ffeb99, transparent);
     border-radius: 2px;
-    box-shadow: 0 0 8px rgba(255, 220, 120, 0.9);
+    box-shadow: 0 0 10px rgba(255, 220, 120, 0.95);
     z-index: 3;
     pointer-events: none;
     animation: lampFlicker 4s ease-in-out infinite;
@@ -317,12 +351,14 @@
     z-index: 1;
   }
 
-  /* ============ 传输按键（2×2） ============ */
+  /* ============ 传输按键 2×2 ============ */
   .transport-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     width: 100%;
+    position: relative;
+    z-index: 1;
   }
 
   .transport-key {
@@ -330,22 +366,22 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 8px;
+    padding: 0 8px;
+    height: 52px;
     background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
     border: 1px solid #8a8a86;
-    border-radius: 3px;
+    border-radius: 4px;
     box-shadow:
-      0 3px 4px rgba(0,0,0,0.25),
+      0 3px 5px rgba(0,0,0,0.25),
       inset 0 1px 0 rgba(255,255,255,0.9),
       inset 0 -1px 0 rgba(0,0,0,0.15);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1.5px;
     color: #333;
     cursor: pointer;
     transition: all 0.06s;
     position: relative;
-    min-height: 48px;
     touch-action: manipulation;
   }
 
@@ -359,10 +395,16 @@
     flex-shrink: 0;
   }
 
-  .transport-key.play.active::before { background: #2ecc40; box-shadow: 0 0 6px #2ecc40; }
-  .transport-key.stop.active::before { background: #e33; box-shadow: 0 0 6px #e33; }
+  .transport-key .key-icon {
+    font-size: 0.75rem;
+    color: #555;
+    line-height: 1;
+  }
+
+  .transport-key.play.active::before { background: #2ecc40; box-shadow: 0 0 8px #2ecc40; }
+  .transport-key.stop.active::before { background: #e33; box-shadow: 0 0 8px #e33; }
   .transport-key.prev.active::before,
-  .transport-key.next.active::before { background: #ffb347; box-shadow: 0 0 6px #ffb347; }
+  .transport-key.next.active::before { background: #ffb347; box-shadow: 0 0 8px #ffb347; }
 
   .transport-key:active,
   .transport-key.pressed {
@@ -373,19 +415,16 @@
     transform: translateY(1px);
   }
 
-  .transport-key .key-icon {
-    font-size: 0.85rem;
-    color: #555;
-  }
-
   /* ============ 底部控制 ============ */
   .bottom-controls {
     display: grid;
     grid-template-columns: auto auto 1fr;
-    gap: 12px;
+    gap: 14px;
     align-items: center;
-    padding-top: 8px;
+    padding-top: 10px;
     border-top: 1px solid #b0b0b0;
+    position: relative;
+    z-index: 1;
   }
 
   .control-group {
@@ -403,7 +442,7 @@
   }
 
   .switch {
-    width: 44px; height: 24px;
+    width: 46px; height: 26px;
     background: #b0b0b0;
     border-radius: 3px;
     position: relative;
@@ -416,13 +455,16 @@
     content: '';
     position: absolute;
     top: 1px; left: 1px;
-    width: 20px; height: 20px;
+    width: 22px; height: 22px;
     background: linear-gradient(180deg, #eee, #999);
     border-radius: 2px;
     transition: transform 0.15s;
     box-shadow: 0 1px 2px rgba(0,0,0,0.4);
   }
-  .switch.on::after { transform: translateX(18px); background: linear-gradient(180deg, #fff, #bbb); }
+  .switch.on::after {
+    transform: translateX(18px);
+    background: linear-gradient(180deg, #fff, #bbb);
+  }
 
   .small-knob {
     width: 48px; height: 48px;
@@ -453,14 +495,14 @@
   }
 
   .big-knob {
-    width: 78px; height: 78px;
+    width: 84px; height: 84px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
     border: 2px solid #999;
     position: relative;
     cursor: pointer;
     box-shadow:
-      0 6px 12px rgba(0,0,0,0.5),
+      0 6px 14px rgba(0,0,0,0.5),
       inset 0 -4px 8px rgba(0,0,0,0.3),
       inset 0 4px 8px rgba(255,255,255,0.6);
     touch-action: none;
@@ -470,7 +512,7 @@
     position: absolute;
     top: 5px; left: 50%;
     transform: translateX(-50%);
-    width: 3px; height: 20px;
+    width: 3px; height: 22px;
     background: #111;
     border-radius: 2px;
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
@@ -494,6 +536,7 @@
     letter-spacing: 1px;
     font-weight: 700;
     text-align: center;
+    line-height: 1.3;
   }
   .knob-hint strong { color: #c0392b; display: block; font-size: 0.5rem; }
 
@@ -508,7 +551,7 @@
     letter-spacing: 0.5px;
     border-radius: 3px;
     border: 1px solid #0a0806;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.85);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -517,6 +560,8 @@
     word-break: break-all;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
+    position: relative;
+    z-index: 1;
   }
   .status-bar .status-count { color: #8a8078; font-size: 0.55rem; }
 
@@ -540,6 +585,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
+    align-items: center;
   }
 
   footer a { color: #888; text-decoration: none; }
@@ -549,7 +595,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 7px 14px;
+    padding: 8px 14px;
     background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
     border: 1px solid #8a8a86;
     border-radius: 3px;
@@ -570,6 +616,17 @@
     font-size: 0.55rem;
     color: #666;
     text-decoration: underline;
+    padding: 4px;
+  }
+
+  /* 超小屏适配 */
+  @media (max-width: 360px) {
+    .brand-name { font-size: 1rem; letter-spacing: 2px; }
+    .dial-frequency { font-size: 1rem; }
+    .transport-key { font-size: 0.65rem; height: 48px; }
+    .big-knob { width: 72px; height: 72px; }
+    .big-knob::after { height: 18px; }
+    .small-knob { width: 42px; height: 42px; }
   }
 </style>
 </head>
@@ -1075,14 +1132,12 @@
     const item = lockedStation.songs[currentEntryIndex];
     const movements = getMovements(item);
 
-    // 多乐章作品内：切到下一乐章
     if (currentMovementIndex < movements.length - 1) {
       currentMovementIndex++;
       playSong(movements[currentMovementIndex], item, currentMovementIndex);
       return;
     }
 
-    // 最后一个乐章或单曲播放完 → 换一个条目
     if (isWork(item)) {
       currentEntryIndex = (currentEntryIndex + 1) % lockedStation.songs.length;
     } else {
@@ -1099,24 +1154,20 @@
       setStatus('请先选择一个电台');
       return;
     }
-    // 播放超过 3 秒 → 回到当前乐章开头
     if (audio.currentTime > 3) {
       audio.currentTime = 0;
       setStatus('回到开头');
       return;
     }
-
     const item = lockedStation.songs[currentEntryIndex];
     const movements = getMovements(item);
 
-    // 多乐章作品内：回到上一乐章
     if (currentMovementIndex > 0) {
       currentMovementIndex--;
       playSong(movements[currentMovementIndex], item, currentMovementIndex);
       return;
     }
 
-    // 第一个乐章或单曲 → 上一个条目
     if (isWork(item)) {
       currentEntryIndex = (currentEntryIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
     } else {
@@ -1256,6 +1307,7 @@
   }, { passive: true });
 
   document.addEventListener('touchend', endDrag);
+  document.addEventListener('touchcancel', endDrag);
 
   audio.addEventListener('ended', () => { if (isPowered && lockedStation) nextSong(); });
   audio.addEventListener('error', () => {
