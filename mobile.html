@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1a1a1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>CT-X1 · 复古调谐器</title>
 <style>
   @font-face {
@@ -16,12 +14,7 @@
     font-style: normal;
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
     min-height: 100%;
@@ -31,7 +24,6 @@
     color: #ddd;
     -webkit-user-select: none;
     user-select: none;
-    -webkit-touch-callout: none;
     overflow-x: hidden;
   }
 
@@ -49,28 +41,12 @@
     margin: 0 auto;
     background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
     border-radius: 8px;
-    box-shadow:
-      0 12px 32px rgba(0,0,0,0.75),
-      inset 0 1px 0 rgba(255,255,255,0.85),
-      inset 0 -1px 0 rgba(0,0,0,0.15);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.85);
     padding: 14px 12px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     position: relative;
-  }
-
-  .panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent, transparent 1px,
-      rgba(0,0,0,0.025) 1px, rgba(0,0,0,0.025) 2px
-    );
-    pointer-events: none;
   }
 
   .brand-row {
@@ -79,42 +55,16 @@
     align-items: center;
     padding-bottom: 10px;
     border-bottom: 1px solid #b0b0b0;
-    position: relative;
-    z-index: 1;
   }
 
-  .brand-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #111;
-    line-height: 1;
-  }
-  .brand-model {
-    font-size: 0.5rem;
-    letter-spacing: 1px;
-    color: #666;
-    margin-top: 3px;
-  }
+  .brand-name { font-size: 1.15rem; font-weight: 700; letter-spacing: 3px; color: #111; line-height: 1; }
+  .brand-model { font-size: 0.5rem; letter-spacing: 1px; color: #666; margin-top: 3px; }
 
-  .leds {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    font-size: 0.5rem;
-    color: #555;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
+  .leds { display: flex; gap: 12px; align-items: center; font-size: 0.5rem; color: #555; font-weight: 700; letter-spacing: 1px; }
   .indicator { display: flex; align-items: center; gap: 4px; }
-  .led {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #333;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
-    transition: all 0.2s;
-  }
-  .led.on { background: #e33; box-shadow: 0 0 10px #e33, inset 0 1px 2px rgba(255,255,255,0.4); }
-  .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2, inset 0 1px 2px rgba(255,255,255,0.4); }
+  .led { width: 8px; height: 8px; border-radius: 50%; background: #333; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5); transition: all 0.2s; }
+  .led.on { background: #e33; box-shadow: 0 0 10px #e33; }
+  .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2; }
 
   .display {
     background: #f4f4f0;
@@ -125,16 +75,9 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    position: relative;
-    z-index: 1;
   }
 
-  .freq-row {
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-    height: 2.4rem;
-  }
+  .freq-row { display: flex; align-items: stretch; gap: 8px; height: 2.4rem; }
 
   .dial-frequency {
     font-family: 'Courier New', monospace;
@@ -151,13 +94,11 @@
     justify-content: center;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
     min-width: 0;
-    white-space: nowrap;
   }
 
   .station-tag {
     font-family: 'Zpix', 'Courier New', monospace;
     font-size: 0.65rem;
-    font-weight: 400;
     color: #111;
     background: #dedede;
     border: 1px solid #b0b0b0;
@@ -191,8 +132,6 @@
     letter-spacing: 1px;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    position: relative;
   }
 
   .track-display-inner {
@@ -201,7 +140,6 @@
     font-size: 0.75rem;
     color: #c0392b;
     letter-spacing: 1px;
-    font-weight: 400;
     font-family: 'Zpix', 'Courier New', monospace;
     will-change: transform;
     line-height: 1;
@@ -214,24 +152,19 @@
     to   { transform: translateX(var(--to-x)); }
   }
 
-  /* ============ 作品解析栏 ============ */
   .work-info {
     display: none;
     background: linear-gradient(180deg, #f5edd4 0%, #ece0b8 100%);
     border: 1px solid #a89878;
     border-radius: 4px;
     padding: 9px 12px;
-    box-shadow:
-      inset 0 1px 3px rgba(90, 70, 20, 0.15),
-      0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 3px rgba(90, 70, 20, 0.15);
     font-family: 'Zpix', 'Courier New', monospace;
     font-size: 0.62rem;
     line-height: 1.6;
     color: #4a3a1a;
-    max-height: 100px;
+    max-height: 130px;
     overflow-y: auto;
-    position: relative;
-    z-index: 1;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
     animation: workInfoSlideIn 0.3s ease-out;
@@ -263,23 +196,21 @@
     text-overflow: ellipsis;
   }
 
-  .work-info-tag {
-    font-size: 0.46rem;
-    letter-spacing: 1px;
-    color: #a89878;
-    flex-shrink: 0;
-    font-weight: 700;
-  }
+  .work-info-tag { font-size: 0.46rem; letter-spacing: 1px; color: #a89878; flex-shrink: 0; font-weight: 700; }
 
-  .work-info-desc {
-    color: #4a3a1a;
-    letter-spacing: 0.3px;
-  }
+  .work-info-desc { color: #4a3a1a; letter-spacing: 0.3px; }
 
-  .work-info-desc .work-info-base {
+  .work-info-desc .work-info-host {
     display: block;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #b8a888;
+    color: #6a4a1c;
+    font-weight: 700;
     white-space: pre-wrap;
   }
+
+  .work-info-desc .work-info-base { display: block; white-space: pre-wrap; }
 
   .work-info-desc .work-info-now {
     display: block;
@@ -289,12 +220,6 @@
     color: #8a2b1c;
     font-weight: 700;
     white-space: pre-wrap;
-    animation: noteFadeIn 0.25s ease-out;
-  }
-
-  @keyframes noteFadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
   }
 
   .band-labels {
@@ -305,7 +230,6 @@
     letter-spacing: 1.5px;
     margin-bottom: 2px;
     font-weight: 700;
-    padding: 0 2px;
   }
 
   .fm-scale, .am-scale {
@@ -357,13 +281,7 @@
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
 
-  .meters-group {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    position: relative;
-    z-index: 1;
-  }
+  .meters-group { display: flex; gap: 8px; width: 100%; }
 
   .meter {
     flex: 1;
@@ -373,10 +291,7 @@
     border: 1px solid #8a8a86;
     border-radius: 4px;
     padding: 4px 6px 2px;
-    box-shadow:
-      inset 0 2px 6px rgba(90, 70, 20, 0.25),
-      0 0 18px rgba(255, 220, 120, 0.28),
-      0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: inset 0 2px 6px rgba(90, 70, 20, 0.25), 0 0 18px rgba(255, 220, 120, 0.28);
     overflow: hidden;
   }
 
@@ -418,24 +333,15 @@
     font-weight: 700;
     position: relative;
     z-index: 3;
-    text-shadow: 0 0 4px rgba(255, 240, 180, 0.8);
   }
 
-  .meter-svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    position: relative;
-    z-index: 1;
-  }
+  .meter-svg { display: block; width: 100%; height: auto; position: relative; z-index: 1; }
 
   .transport-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     width: 100%;
-    position: relative;
-    z-index: 1;
   }
 
   .transport-key {
@@ -448,17 +354,13 @@
     background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
     border: 1px solid #8a8a86;
     border-radius: 4px;
-    box-shadow:
-      0 3px 5px rgba(0,0,0,0.25),
-      inset 0 1px 0 rgba(255,255,255,0.9),
-      inset 0 -1px 0 rgba(0,0,0,0.15);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1.5px;
     color: #333;
     cursor: pointer;
     transition: all 0.06s;
-    position: relative;
     touch-action: manipulation;
   }
 
@@ -467,15 +369,8 @@
     width: 6px; height: 6px;
     border-radius: 50%;
     background: #888;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
     transition: all 0.2s;
     flex-shrink: 0;
-  }
-
-  .transport-key .key-icon {
-    font-size: 0.75rem;
-    color: #555;
-    line-height: 1;
   }
 
   .transport-key.play.active::before { background: #2ecc40; box-shadow: 0 0 8px #2ecc40; }
@@ -486,11 +381,11 @@
   .transport-key:active,
   .transport-key.pressed {
     background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
-    box-shadow:
-      inset 0 2px 4px rgba(0,0,0,0.35),
-      inset 0 -1px 0 rgba(255,255,255,0.4);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.35);
     transform: translateY(1px);
   }
+
+  .transport-key .key-icon { font-size: 0.75rem; color: #555; line-height: 1; }
 
   .bottom-controls {
     display: grid;
@@ -499,23 +394,10 @@
     align-items: center;
     padding-top: 10px;
     border-top: 1px solid #b0b0b0;
-    position: relative;
-    z-index: 1;
   }
 
-  .control-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .control-label {
-    font-size: 0.5rem;
-    letter-spacing: 1.5px;
-    color: #555;
-    font-weight: 700;
-  }
+  .control-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .control-label { font-size: 0.5rem; letter-spacing: 1.5px; color: #555; font-weight: 700; }
 
   .switch {
     width: 46px; height: 26px;
@@ -535,12 +417,8 @@
     background: linear-gradient(180deg, #eee, #999);
     border-radius: 2px;
     transition: transform 0.15s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
   }
-  .switch.on::after {
-    transform: translateX(18px);
-    background: linear-gradient(180deg, #fff, #bbb);
-  }
+  .switch.on::after { transform: translateX(18px); background: linear-gradient(180deg, #fff, #bbb); }
 
   .small-knob {
     width: 48px; height: 48px;
@@ -562,13 +440,7 @@
     border-radius: 1px;
   }
 
-  .big-knob-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    justify-self: end;
-  }
+  .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 4px; justify-self: end; }
 
   .big-knob {
     width: 84px; height: 84px;
@@ -577,10 +449,7 @@
     border: 2px solid #999;
     position: relative;
     cursor: pointer;
-    box-shadow:
-      0 6px 14px rgba(0,0,0,0.5),
-      inset 0 -4px 8px rgba(0,0,0,0.3),
-      inset 0 4px 8px rgba(255,255,255,0.6);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.5), inset 0 -4px 8px rgba(0,0,0,0.3), inset 0 4px 8px rgba(255,255,255,0.6);
     touch-action: none;
   }
   .big-knob::after {
@@ -591,29 +460,17 @@
     width: 3px; height: 22px;
     background: #111;
     border-radius: 2px;
-    box-shadow: 0 0 4px rgba(0,0,0,0.5);
   }
   .big-knob::before {
     content: '';
     position: absolute;
     inset: 4px;
     border-radius: 50%;
-    background: repeating-conic-gradient(
-      from 0deg,
-      transparent 0deg 4deg,
-      rgba(0,0,0,0.08) 4deg 6deg
-    );
+    background: repeating-conic-gradient(from 0deg, transparent 0deg 4deg, rgba(0,0,0,0.08) 4deg 6deg);
     pointer-events: none;
   }
 
-  .knob-hint {
-    font-size: 0.45rem;
-    color: #777;
-    letter-spacing: 1px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.3;
-  }
+  .knob-hint { font-size: 0.45rem; color: #777; letter-spacing: 1px; font-weight: 700; text-align: center; line-height: 1.3; }
   .knob-hint strong { color: #c0392b; display: block; font-size: 0.5rem; }
 
   .status-bar {
@@ -623,7 +480,6 @@
     color: #ffb347;
     font-family: 'Zpix', 'Courier New', monospace;
     font-size: 0.62rem;
-    letter-spacing: 0.5px;
     border-radius: 3px;
     border: 1px solid #0a0806;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.85);
@@ -635,27 +491,11 @@
     word-break: break-all;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
-    position: relative;
-    z-index: 1;
     row-gap: 3px;
   }
-  .status-bar .status-text {
-    flex: 1 1 100%;
-    min-width: 0;
-    word-break: break-all;
-    color: #ffb347;
-  }
-  .status-bar .status-time {
-    color: #a5f3fc;
-    font-size: 0.62rem;
-    font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-  }
-  .status-bar .status-count {
-    color: #8a8078;
-    font-size: 0.55rem;
-    flex-shrink: 0;
-  }
+  .status-bar .status-text { flex: 1 1 100%; min-width: 0; word-break: break-all; color: #ffb347; }
+  .status-bar .status-time { color: #a5f3fc; font-size: 0.62rem; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .status-bar .status-count { color: #8a8078; font-size: 0.55rem; flex-shrink: 0; }
 
   footer {
     max-width: 520px;
@@ -671,16 +511,8 @@
     text-align: center;
   }
 
-  .footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
-  }
-
+  .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: center; }
   footer a { color: #888; text-decoration: none; }
-  footer a:active { color: #c0392b; }
 
   .feedback-btn {
     display: inline-flex;
@@ -698,17 +530,9 @@
     text-decoration: none;
     touch-action: manipulation;
   }
-  .feedback-btn:active {
-    transform: translateY(1px);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-  }
+  .feedback-btn:active { transform: translateY(1px); }
 
-  .desktop-link {
-    font-size: 0.55rem;
-    color: #666;
-    text-decoration: underline;
-    padding: 4px;
-  }
+  .desktop-link { font-size: 0.55rem; color: #666; text-decoration: underline; padding: 4px; }
 
   @media (max-width: 360px) {
     .brand-name { font-size: 1rem; letter-spacing: 2px; }
@@ -717,7 +541,7 @@
     .big-knob { width: 72px; height: 72px; }
     .big-knob::after { height: 18px; }
     .small-knob { width: 42px; height: 42px; }
-    .work-info { font-size: 0.58rem; max-height: 90px; }
+    .work-info { font-size: 0.58rem; max-height: 110px; }
   }
 </style>
 </head>
@@ -730,12 +554,8 @@
       <div class="brand-model">CT-X1 · AM/FM STEREO TUNER</div>
     </div>
     <div class="leds">
-      <div class="indicator">
-        <span class="led green" id="ledStereo"></span> FM ST
-      </div>
-      <div class="indicator">
-        <span class="led" id="ledPower"></span> POWER
-      </div>
+      <div class="indicator"><span class="led green" id="ledStereo"></span> FM ST</div>
+      <div class="indicator"><span class="led" id="ledPower"></span> POWER</div>
     </div>
   </div>
 
@@ -763,7 +583,7 @@
   <div class="work-info" id="workInfo">
     <div class="work-info-header">
       <div class="work-info-title" id="workInfoTitle"></div>
-      <div class="work-info-tag">WORK NOTES</div>
+      <div class="work-info-tag">ON AIR</div>
     </div>
     <div class="work-info-desc" id="workInfoDesc"></div>
   </div>
@@ -782,18 +602,10 @@
   </div>
 
   <div class="transport-grid">
-    <div class="transport-key prev" id="prevBtn">
-      <span class="key-icon">◀◀</span> PREV
-    </div>
-    <div class="transport-key next" id="nextBtn">
-      <span class="key-icon">▶▶</span> NEXT
-    </div>
-    <div class="transport-key play" id="playBtn">
-      <span class="key-icon">▶</span> PLAY
-    </div>
-    <div class="transport-key stop" id="stopBtn">
-      <span class="key-icon">■</span> STOP
-    </div>
+    <div class="transport-key prev" id="prevBtn"><span class="key-icon">◀◀</span> PREV</div>
+    <div class="transport-key next" id="nextBtn"><span class="key-icon">▶▶</span> NEXT</div>
+    <div class="transport-key play" id="playBtn"><span class="key-icon">▶</span> PLAY</div>
+    <div class="transport-key stop" id="stopBtn"><span class="key-icon">■</span> STOP</div>
   </div>
 
   <div class="bottom-controls">
@@ -809,10 +621,7 @@
 
     <div class="big-knob-container">
       <div class="big-knob" id="tuningKnob"></div>
-      <div class="knob-hint">
-        TUNING
-        <strong>点击自动选台</strong>
-      </div>
+      <div class="knob-hint">TUNING<strong>点击自动选台</strong></div>
     </div>
   </div>
 
@@ -826,9 +635,7 @@
 <footer>
   <div class="footer-links">
     <a href="https://github.com/Rydio258/rydio258.github.io/" target="_blank" rel="noopener">GITHUB</a>
-    <a href="https://github.com/Rydio258/rydio258.github.io/issues/new?title=%5B%E5%8F%8D%E9%A6%88%5D%20%E8%AF%B7%E5%A1%AB%E5%86%99%E6%A0%87%E9%A2%98&body=%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%8F%8D%E9%A6%88%EF%BC%81%E8%AF%B7%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%8F%8F%E8%BF%B0%E6%82%A8%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A" target="_blank" rel="noopener" class="feedback-btn">
-      💬 反馈建议
-    </a>
+    <a href="https://github.com/Rydio258/rydio258.github.io/issues/new?title=%5B%E5%8F%8D%E9%A6%88%5D&body=%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%8F%8D%E9%A6%88%EF%BC%81" target="_blank" rel="noopener" class="feedback-btn">💬 反馈建议</a>
     <a href="index.html?desktop=1" class="desktop-link">桌面版</a>
   </div>
   <div>© 2025 Rydio258</div>
@@ -881,25 +688,13 @@
   let vuNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  let vuCurrentAngle = -65;
-  let vuTargetAngle = -65;
-  let tunCurrentAngle = -65;
-  let tunTargetAngle = -65;
+  let vuCurrentAngle = -65, vuTargetAngle = -65;
+  let tunCurrentAngle = -65, tunTargetAngle = -65;
 
-  function setStatus(text) {
-    statusText.textContent = text;
-    console.log('[状态]', text);
-  }
+  function setStatus(text) { statusText.textContent = text; console.log('[状态]', text); }
 
-  // ============ 工具函数 ============
-  function isWork(item) {
-    return item && typeof item === 'object' && Array.isArray(item.movements);
-  }
-
-  function getMovements(item) {
-    if (isWork(item)) return item.movements;
-    return [item];
-  }
+  function isWork(item) { return item && typeof item === 'object' && Array.isArray(item.movements); }
+  function getMovements(item) { return isWork(item) ? item.movements : [item]; }
 
   function getFileName(path) {
     if (!path) return '';
@@ -916,157 +711,205 @@
   }
 
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    })[c]);
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   }
 
-  // ============ info.txt 加载与缓存 ============
-  const workInfoCache = new Map();
-  let currentInfoItem = null;
-  let currentInfoData = null;
+  // ============ 虚拟电台时钟 ============
+  const SLOT_SONG = 240;
+  const SLOT_WORK = 480;
+  function estimateDuration(item) { return isWork(item) ? SLOT_WORK : SLOT_SONG; }
+
+  function getVirtualPlayhead(station) {
+    const songs = station.songs;
+    if (!songs || songs.length === 0) return { index: 0, movementIndex: 0, offset: 0 };
+    const durations = songs.map(estimateDuration);
+    const totalCycle = durations.reduce((a, b) => a + b, 0);
+    if (totalCycle === 0) return { index: 0, movementIndex: 0, offset: 0 };
+    const elapsed = Math.floor(Date.now() / 1000) % totalCycle;
+    let acc = 0;
+    for (let i = 0; i < songs.length; i++) {
+      if (elapsed < acc + durations[i]) {
+        const inItem = elapsed - acc;
+        const item = songs[i];
+        if (isWork(item)) {
+          const moveCount = Math.max(1, item.movements.length);
+          const moveDur = durations[i] / moveCount;
+          let mi = Math.floor(inItem / moveDur);
+          if (mi >= item.movements.length) mi = item.movements.length - 1;
+          return { index: i, movementIndex: mi, offset: inItem - mi * moveDur };
+        }
+        return { index: i, movementIndex: 0, offset: inItem };
+      }
+      acc += durations[i];
+    }
+    return { index: 0, movementIndex: 0, offset: 0 };
+  }
+
+  // ============ info.txt 加载 ============
+  const infoCache = new Map();
+
+  function parseTimelineSection(section) {
+    const notes = [];
+    for (const rawLine of section.split('\n')) {
+      const line = rawLine.trim();
+      if (!line) continue;
+      const m = line.match(/^\[?(\d+:\d{2}(?::\d{2})?)\]?\s+(.+)$/);
+      if (m) {
+        const parts = m[1].split(':').map(Number);
+        const sec = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + parts[1];
+        notes.push({ time: sec, text: m[2].trim() });
+      }
+    }
+    notes.sort((a, b) => a.time - b.time);
+    return notes;
+  }
+
+  function parseTagSection(section) {
+    const tags = {};
+    for (const rawLine of section.split('\n')) {
+      const line = rawLine.trim();
+      if (!line) continue;
+      const m = line.match(/^\[([^\]]+)\]\s*(.+)$/);
+      if (m) tags[m[1].trim().toLowerCase()] = m[2].trim();
+    }
+    return tags;
+  }
 
   function parseInfoTxt(content) {
     const sections = content.split(/\n\s*[-=]{3,}\s*\n/).map(s => s.trim()).filter(Boolean);
     if (sections.length === 0) return null;
-
     const description = sections[0];
-    const movementNotes = [];
-
+    const timeline = [];
+    const tags = {};
     for (let i = 1; i < sections.length; i++) {
-      const notes = [];
-      for (const rawLine of sections[i].split('\n')) {
-        const line = rawLine.trim();
-        if (!line) continue;
-        const m = line.match(/^\[?(\d+:\d{2}(?::\d{2})?)\]?\s+(.+)$/);
-        if (m) {
-          const parts = m[1].split(':').map(Number);
-          let sec = 0;
-          if (parts.length === 3) sec = parts[0] * 3600 + parts[1] * 60 + parts[2];
-          else sec = parts[0] * 60 + parts[1];
-          notes.push({ time: sec, text: m[2].trim() });
-        }
-      }
-      notes.sort((a, b) => a.time - b.time);
-      movementNotes.push(notes);
+      const section = sections[i];
+      const firstLine = section.split('\n')[0].trim();
+      if (/^\[?\d+:\d{2}/.test(firstLine)) timeline.push(parseTimelineSection(section));
+      else Object.assign(tags, parseTagSection(section));
     }
-
-    return { description, movementNotes };
+    return { description, timeline, tags };
   }
 
-  async function loadWorkInfo(infoPath) {
-    if (workInfoCache.has(infoPath)) return workInfoCache.get(infoPath);
+  async function loadInfo(path) {
+    if (infoCache.has(path)) return infoCache.get(path);
     try {
-      const resp = await fetch(infoPath, { cache: 'force-cache' });
-      if (!resp.ok) {
-        workInfoCache.set(infoPath, null);
-        return null;
-      }
+      const resp = await fetch(path, { cache: 'force-cache' });
+      if (!resp.ok) { infoCache.set(path, null); return null; }
       const text = await resp.text();
       const parsed = parseInfoTxt(text);
-      workInfoCache.set(infoPath, parsed);
+      infoCache.set(path, parsed);
       return parsed;
     } catch (err) {
-      console.warn('读取 info.txt 失败:', infoPath, err);
-      workInfoCache.set(infoPath, null);
+      infoCache.set(path, null);
       return null;
     }
   }
 
-  function getInfoPath(item) {
-    if (!item || !isWork(item) || !item.movements.length) return null;
+  function getStationInfoPath(station) {
+    if (!station || !station.songs || station.songs.length === 0) return null;
+    const first = station.songs[0];
+    const firstFile = isWork(first) ? first.movements[0] : first;
+    const parts = firstFile.split('/');
+    parts.pop();
+    return parts.join('/') + '/info.txt';
+  }
+
+  function getWorkInfoPath(item) {
+    if (!isWork(item) || item.movements.length === 0) return null;
     const first = item.movements[0];
     const lastSlash = first.lastIndexOf('/');
     if (lastSlash < 0) return null;
     return first.substring(0, lastSlash) + '/info.txt';
   }
 
-  function findNoteAt(notes, t) {
-    if (!notes || notes.length === 0) return null;
-    let found = null;
-    for (const n of notes) {
-      if (t >= n.time) found = n;
-      else break;
-    }
-    return found;
+  // ============ 主持人文字 ============
+  function getTimeSlot(date) {
+    const h = date.getHours();
+    if (h >= 5 && h < 11) return 'morning';
+    if (h >= 11 && h < 14) return 'noon';
+    if (h >= 14 && h < 18) return 'afternoon';
+    if (h >= 18 && h < 22) return 'evening';
+    return 'night';
   }
 
-  async function updateWorkInfo(item, movementIndex, currentTime) {
-    if (!item || !isWork(item)) {
-      workInfo.style.display = 'none';
-      currentInfoItem = null;
-      currentInfoData = null;
-      return;
-    }
+  function fillPlaceholders(text, item, file) {
+    const songName = getFileName(file);
+    const workName = item && isWork(item) ? item.work : '';
+    const now = new Date();
+    const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    return text.replace(/\{song\}/g, songName).replace(/\{work\}/g, workName).replace(/\{time\}/g, timeStr);
+  }
 
-    if (item !== currentInfoItem) {
-      currentInfoItem = item;
-      currentInfoData = null;
-      const infoPath = getInfoPath(item);
-      if (infoPath) {
-        currentInfoData = await loadWorkInfo(infoPath);
+  function pickHostMessage(tags, item, file) {
+    if (!tags) return null;
+    const fileName = getFileName(file);
+    const songKey = ('song:' + fileName).toLowerCase();
+    if (tags[songKey]) return fillPlaceholders(tags[songKey], item, file);
+    const timeKey = getTimeSlot(new Date());
+    if (tags[timeKey]) return fillPlaceholders(tags[timeKey], item, file);
+    const day = new Date().getDay();
+    if ((day === 0 || day === 6) && tags['weekend']) return fillPlaceholders(tags['weekend'], item, file);
+    if (day >= 1 && day <= 5 && tags['weekday']) return fillPlaceholders(tags['weekday'], item, file);
+    if (tags['default']) return fillPlaceholders(tags['default'], item, file);
+    return null;
+  }
+
+  let lastRenderedInfo = '';
+
+  async function renderInfo(item, movementIndex, currentTime, file) {
+    if (!lockedStation) { workInfo.style.display = 'none'; lastRenderedInfo = ''; return; }
+    const stationPath = getStationInfoPath(lockedStation);
+    const workPath = isWork(item) ? getWorkInfoPath(item) : null;
+    const [stationInfo, workInfoData] = await Promise.all([
+      stationPath ? loadInfo(stationPath) : Promise.resolve(null),
+      workPath ? loadInfo(workPath) : Promise.resolve(null)
+    ]);
+
+    if (!stationInfo && !workInfoData) { workInfo.style.display = 'none'; lastRenderedInfo = ''; return; }
+
+    let title = '';
+    if (item && isWork(item)) title = item.work;
+    else if (file) title = getFileName(file);
+    else title = lockedStation.name;
+
+    let hostMessage = stationInfo && stationInfo.tags ? pickHostMessage(stationInfo.tags, item, file) : null;
+    let description = '';
+    if (workInfoData && workInfoData.description) description = workInfoData.description;
+    else if (stationInfo && stationInfo.description) description = stationInfo.description;
+
+    let nowNote = null;
+    if (workInfoData && workInfoData.timeline && workInfoData.timeline[movementIndex]) {
+      for (const n of workInfoData.timeline[movementIndex]) {
+        if (currentTime >= n.time) nowNote = n;
+        else break;
       }
     }
 
-    if (item !== currentInfoItem) return;
-
-    if (!currentInfoData) {
-      workInfo.style.display = 'none';
-      return;
-    }
-
-    const { description, movementNotes } = currentInfoData;
-    const notes = movementNotes[movementIndex] || [];
-    const note = findNoteAt(notes, currentTime);
-
     let html = '';
-    if (description) {
-      html += '<span class="work-info-base">' + escapeHtml(description) + '</span>';
-    }
-    if (note) {
-      html += '<span class="work-info-now">▸ ' + escapeHtml(note.text) + '</span>';
-    }
+    if (hostMessage) html += '<span class="work-info-host">▸ ' + escapeHtml(hostMessage) + '</span>';
+    if (description) html += '<span class="work-info-base">' + escapeHtml(description) + '</span>';
+    if (nowNote) html += '<span class="work-info-now">♪ ' + escapeHtml(nowNote.text) + '</span>';
 
-    if (workInfoDesc.dataset.rendered !== html) {
-      workInfoDesc.innerHTML = html;
-      workInfoDesc.dataset.rendered = html;
-    }
-
-    workInfoTitle.textContent = item.work || '';
+    if (html === lastRenderedInfo) return;
+    lastRenderedInfo = html;
+    workInfoTitle.textContent = title;
+    workInfoDesc.innerHTML = html;
     workInfo.style.display = 'block';
   }
 
-  function hideWorkInfo() {
-    workInfo.style.display = 'none';
-    currentInfoItem = null;
-    currentInfoData = null;
-  }
+  function hideWorkInfo() { workInfo.style.display = 'none'; lastRenderedInfo = ''; }
 
-  // ============ 表头构建 ============
+  // ============ 表头 ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const CX = 80, CY = 42;
   const START_DEG = -155, END_DEG = -25;
-  const R_ARC = 30;
-  const R_TICK_IN = 25;
-  const R_TICK_OUT = 30;
-  const NEEDLE_LEN = 32;
-
+  const R_ARC = 30, R_TICK_IN = 25, R_TICK_OUT = 30, NEEDLE_LEN = 32;
   const VU_MARKS = [
-    { t: 0.00, major: true },
-    { t: 0.05, major: false },
-    { t: 0.10, major: false },
-    { t: 0.16, major: true },
-    { t: 0.22, major: false },
-    { t: 0.28, major: true },
-    { t: 0.33, major: false },
-    { t: 0.38, major: true },
-    { t: 0.44, major: false },
-    { t: 0.50, major: true },
-    { t: 0.57, major: true },
-    { t: 0.64, major: true },
-    { t: 0.72, major: true },
-    { t: 0.80, major: true },
-    { t: 0.87, major: true },
+    { t: 0.00, major: true }, { t: 0.05, major: false }, { t: 0.10, major: false },
+    { t: 0.16, major: true }, { t: 0.22, major: false }, { t: 0.28, major: true },
+    { t: 0.33, major: false }, { t: 0.38, major: true }, { t: 0.44, major: false },
+    { t: 0.50, major: true }, { t: 0.57, major: true }, { t: 0.64, major: true },
+    { t: 0.72, major: true }, { t: 0.80, major: true }, { t: 0.87, major: true },
     { t: 0.94, major: true }
   ];
 
@@ -1079,36 +922,26 @@
     const defs = document.createElementNS(SVG_NS, 'defs');
     const radial = document.createElementNS(SVG_NS, 'radialGradient');
     radial.setAttribute('id', gradientId);
-    radial.setAttribute('cx', '50%');
-    radial.setAttribute('cy', '0%');
-    radial.setAttribute('r', '110%');
-    const s1 = document.createElementNS(SVG_NS, 'stop');
-    s1.setAttribute('offset', '0%');
-    s1.setAttribute('stop-color', '#fffbe8');
-    const s2 = document.createElementNS(SVG_NS, 'stop');
-    s2.setAttribute('offset', '45%');
-    s2.setAttribute('stop-color', '#fdf4d0');
-    const s3 = document.createElementNS(SVG_NS, 'stop');
-    s3.setAttribute('offset', '100%');
-    s3.setAttribute('stop-color', '#ecdfb0');
-    radial.appendChild(s1); radial.appendChild(s2); radial.appendChild(s3);
-    defs.appendChild(radial);
-    svg.appendChild(defs);
+    radial.setAttribute('cx', '50%'); radial.setAttribute('cy', '0%'); radial.setAttribute('r', '110%');
+    ['#fffbe8', '#fdf4d0', '#ecdfb0'].forEach((c, i) => {
+      const s = document.createElementNS(SVG_NS, 'stop');
+      s.setAttribute('offset', (i * 50) + '%');
+      s.setAttribute('stop-color', c);
+      radial.appendChild(s);
+    });
+    defs.appendChild(radial); svg.appendChild(defs);
 
     const bg = document.createElementNS(SVG_NS, 'rect');
     bg.setAttribute('x', 0); bg.setAttribute('y', 0);
     bg.setAttribute('width', 160); bg.setAttribute('height', 45);
-    bg.setAttribute('rx', 2);
-    bg.setAttribute('fill', `url(#${gradientId})`);
+    bg.setAttribute('rx', 2); bg.setAttribute('fill', `url(#${gradientId})`);
     svg.appendChild(bg);
 
     const [ax1, ay1] = polar(START_DEG, R_ARC);
     const [ax2, ay2] = polar(END_DEG, R_ARC);
     const arc = document.createElementNS(SVG_NS, 'path');
     arc.setAttribute('d', `M ${ax1} ${ay1} A ${R_ARC} ${R_ARC} 0 0 1 ${ax2} ${ay2}`);
-    arc.setAttribute('fill', 'none');
-    arc.setAttribute('stroke', '#4a3a1a');
-    arc.setAttribute('stroke-width', '1.2');
+    arc.setAttribute('fill', 'none'); arc.setAttribute('stroke', '#4a3a1a'); arc.setAttribute('stroke-width', '1.2');
     svg.appendChild(arc);
 
     VU_MARKS.forEach(mark => {
@@ -1129,42 +962,31 @@
     const rp2 = polar(END_DEG, R_ARC);
     const redArc = document.createElementNS(SVG_NS, 'path');
     redArc.setAttribute('d', `M ${rp1[0]} ${rp1[1]} A ${R_ARC} ${R_ARC} 0 0 1 ${rp2[0]} ${rp2[1]}`);
-    redArc.setAttribute('fill', 'none');
-    redArc.setAttribute('stroke', '#c0392b');
-    redArc.setAttribute('stroke-width', '2.5');
-    redArc.setAttribute('stroke-linecap', 'round');
+    redArc.setAttribute('fill', 'none'); redArc.setAttribute('stroke', '#c0392b');
+    redArc.setAttribute('stroke-width', '2.5'); redArc.setAttribute('stroke-linecap', 'round');
     svg.appendChild(redArc);
 
     const needleEl = document.createElementNS(SVG_NS, 'line');
-    needleEl.setAttribute('x1', CX);
-    needleEl.setAttribute('y1', CY);
-    needleEl.setAttribute('x2', CX);
-    needleEl.setAttribute('y2', CY - NEEDLE_LEN);
-    needleEl.setAttribute('stroke', color);
-    needleEl.setAttribute('stroke-width', '1.6');
+    needleEl.setAttribute('x1', CX); needleEl.setAttribute('y1', CY);
+    needleEl.setAttribute('x2', CX); needleEl.setAttribute('y2', CY - NEEDLE_LEN);
+    needleEl.setAttribute('stroke', color); needleEl.setAttribute('stroke-width', '1.6');
     needleEl.setAttribute('stroke-linecap', 'round');
     needleEl.setAttribute('transform', `rotate(-65 ${CX} ${CY})`);
     svg.appendChild(needleEl);
 
     const pivot = document.createElementNS(SVG_NS, 'circle');
-    pivot.setAttribute('cx', CX);
-    pivot.setAttribute('cy', CY);
-    pivot.setAttribute('r', 3);
-    pivot.setAttribute('fill', '#2a1a0a');
+    pivot.setAttribute('cx', CX); pivot.setAttribute('cy', CY);
+    pivot.setAttribute('r', 3); pivot.setAttribute('fill', '#2a1a0a');
     svg.appendChild(pivot);
-
     return needleEl;
   }
 
   vuNeedle = buildVUMeter(document.getElementById('vuMeter'), 'vuGlow', '#1a1a1a');
   tuningNeedle = buildVUMeter(document.getElementById('tuningMeter'), 'tuningGlow', '#c0392b');
 
-  // ============ 刻度构建 ============
   function buildFMScale() {
     const container = document.getElementById('fmTicks');
-    const total = 32;
-    for (let i = 0; i <= total; i++) {
-      const freq = FM_MIN + i;
+    for (let i = 0; i <= 32; i++) {
       const tick = document.createElement('div');
       tick.className = 'fm-tick' + (i % 5 === 0 ? ' major' : '');
       const line = document.createElement('div');
@@ -1173,7 +995,7 @@
       if (i % 5 === 0) {
         const num = document.createElement('div');
         num.className = 'num';
-        num.textContent = freq;
+        num.textContent = FM_MIN + i;
         tick.appendChild(num);
       }
       container.appendChild(tick);
@@ -1182,9 +1004,8 @@
 
   function buildAMScale() {
     const container = document.getElementById('amTicks');
-    const total = 10;
-    for (let i = 0; i <= total; i++) {
-      const freq = AM_MIN + i * (AM_MAX - AM_MIN) / total;
+    for (let i = 0; i <= 10; i++) {
+      const freq = AM_MIN + i * (AM_MAX - AM_MIN) / 10;
       const tick = document.createElement('div');
       tick.className = 'am-tick major';
       const line = document.createElement('div');
@@ -1198,15 +1019,11 @@
     }
   }
 
-  buildFMScale();
-  buildAMScale();
+  buildFMScale(); buildAMScale();
 
   // ============ 音频分析 ============
   function initAudioContext() {
-    if (audioContext) {
-      if (audioContext.state === 'suspended') audioContext.resume();
-      return;
-    }
+    if (audioContext) { if (audioContext.state === 'suspended') audioContext.resume(); return; }
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
       audioContext = new AC();
@@ -1214,21 +1031,15 @@
       analyser = audioContext.createAnalyser();
       analyser.fftSize = 2048;
       analyser.smoothingTimeConstant = 0.3;
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
+      source.connect(analyser); analyser.connect(audioContext.destination);
       timeDataArray = new Uint8Array(analyser.fftSize);
       freqDataArray = new Uint8Array(analyser.frequencyBinCount);
       requestAnimationFrame(animateMeters);
-    } catch (err) {
-      console.warn('AudioContext 初始化失败:', err);
-    }
+    } catch (err) {}
   }
 
   function animateMeters() {
-    if (!analyser || !timeDataArray || !freqDataArray) {
-      requestAnimationFrame(animateMeters);
-      return;
-    }
+    if (!analyser || !timeDataArray || !freqDataArray) { requestAnimationFrame(animateMeters); return; }
     analyser.getByteTimeDomainData(timeDataArray);
     let sum = 0;
     for (let i = 0; i < timeDataArray.length; i++) {
@@ -1237,9 +1048,7 @@
     }
     const rms = Math.sqrt(sum / timeDataArray.length);
     const db = 20 * Math.log10(rms + 0.0001);
-    let vuT = (db + 40) / 43;
-    if (vuT < 0) vuT = 0;
-    if (vuT > 1) vuT = 1;
+    let vuT = Math.max(0, Math.min(1, (db + 40) / 43));
     vuTargetAngle = -65 + vuT * 130;
     vuCurrentAngle += (vuTargetAngle - vuCurrentAngle) * 0.18;
     vuNeedle.setAttribute('transform', `rotate(${vuCurrentAngle} ${CX} ${CY})`);
@@ -1250,21 +1059,14 @@
     let bandSum = 0;
     for (let i = binStart; i < binEnd; i++) bandSum += freqDataArray[i];
     const bandAvg = bandSum / (binEnd - binStart);
-    let tunT = bandAvg / 130;
-    if (tunT < 0) tunT = 0;
-    if (tunT > 1) tunT = 1;
+    let tunT = Math.max(0, Math.min(1, bandAvg / 130));
     const jitter = (Math.random() - 0.5) * 0.05;
-    let tunTarget = -65 + (tunT + jitter) * 130;
-    if (tunTarget < -65) tunTarget = -65;
-    if (tunTarget > 65) tunTarget = 65;
-    tunTargetAngle = tunTarget;
+    tunTargetAngle = Math.max(-65, Math.min(65, -65 + (tunT + jitter) * 130));
     tunCurrentAngle += (tunTargetAngle - tunCurrentAngle) * 0.55;
     tuningNeedle.setAttribute('transform', `rotate(${tunCurrentAngle} ${CX} ${CY})`);
-
     requestAnimationFrame(animateMeters);
   }
 
-  // ============ 滚动显示 ============
   function updateTrackDisplay(text) {
     trackDisplayInner.textContent = text;
     trackDisplayInner.style.animation = 'none';
@@ -1276,8 +1078,7 @@
     const tw = trackDisplayInner.scrollWidth;
     if (tw > threshold) {
       const totalDist = cw + tw;
-      const speed = 45;
-      const dur = Math.max(totalDist / speed, 4);
+      const dur = Math.max(totalDist / 45, 4);
       trackDisplayInner.style.setProperty('--from-x', cw + 'px');
       trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
       trackDisplayInner.style.setProperty('--dur', dur + 's');
@@ -1285,14 +1086,8 @@
     }
   }
 
-  // ============ 调谐逻辑 ============
-  function posToFreq(pos) {
-    return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
-  }
-
-  function formatFreq(pos) {
-    return posToFreq(pos).toFixed(1) + ' MHz';
-  }
+  function posToFreq(pos) { return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN); }
+  function formatFreq(pos) { return posToFreq(pos).toFixed(1) + ' MHz'; }
 
   function updateTuning(pos) {
     if (pos < 0) pos = 0;
@@ -1305,80 +1100,75 @@
     for (const st of stations) {
       if (Math.abs(pos - st.pos) < 1.2) { found = st; break; }
     }
-
     if (found) {
       ledStereo.classList.add('on');
       stationTag.textContent = found.name || '—';
       if (found !== lockedStation) {
         lockedStation = found;
-        if (isPowered) playStation(found);
-        else setStatus('已锁定电台：' + found.name + '（电源未开）');
+        if (isPowered) playStationVirtual(found);
+        else setStatus('已锁定：' + found.name + '（电源未开）');
       }
     } else {
       lockedStation = null;
       ledStereo.classList.remove('on');
       stationTag.textContent = '—';
       if (isPowered && isPlaying) { audio.pause(); isPlaying = false; }
-    }
-  }
-
-  // ============ 播放逻辑 ============
-  function playStation(station) {
-    if (!station || !station.songs || station.songs.length === 0) {
-      setStatus('该电台没有歌曲');
       hideWorkInfo();
-      return;
     }
-    const entryIndex = Math.floor(Math.random() * station.songs.length);
-    currentEntryIndex = entryIndex;
-    currentMovementIndex = 0;
-    const item = station.songs[entryIndex];
-    const movements = getMovements(item);
-    playSong(movements[0], item, 0);
   }
 
-  function playSong(file, item, movementIndex) {
+  function playStationVirtual(station) {
+    if (!station || !station.songs || station.songs.length === 0) {
+      setStatus('该电台没有歌曲'); hideWorkInfo(); return;
+    }
+    const pos = getVirtualPlayhead(station);
+    currentEntryIndex = pos.index;
+    currentMovementIndex = pos.movementIndex;
+    const item = station.songs[pos.index];
+    const movements = getMovements(item);
+    playSong(movements[pos.movementIndex], item, pos.movementIndex, pos.offset);
+  }
+
+  function playSong(file, item, movementIndex, startOffset) {
     initAudioContext();
-    updateWorkInfo(item, movementIndex, 0);
-
-    const displayName = (item && isWork(item))
-      ? item.work + ' - ' + getFileName(file)
-      : getFileName(file);
-
-    setStatus('正在加载：' + displayName);
+    startOffset = startOffset || 0;
+    const displayName = (item && isWork(item)) ? item.work + ' - ' + getFileName(file) : getFileName(file);
+    setStatus('正在播放：' + displayName);
     audio.src = file;
     audio.volume = volumeLevel;
-    const promise = audio.play();
-    if (promise !== undefined) {
-      promise.then(() => {
+
+    const onLoaded = () => {
+      audio.removeEventListener('loadedmetadata', onLoaded);
+      if (startOffset > 0) {
+        const maxOff = Math.max(0, (audio.duration || 300) - 3);
+        audio.currentTime = Math.min(startOffset, maxOff);
+      }
+      audio.play().then(() => {
         isPlaying = true;
         updateTrackDisplay(displayName);
-        setStatus('正在播放：' + displayName);
         playBtn.classList.add('active');
         stopBtn.classList.remove('active');
+        renderInfo(item, movementIndex, audio.currentTime || 0, file);
       }).catch(err => {
-        console.warn('播放失败:', err);
         isPlaying = false;
         setStatus('播放失败：' + (err.message || err.name));
         updateTrackDisplay('播放失败');
       });
-    }
+    };
+    audio.addEventListener('loadedmetadata', onLoaded);
   }
 
   function nextSong() {
     if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
-      setStatus('请先选择一个电台');
-      return;
+      setStatus('请先选择一个电台'); return;
     }
     const item = lockedStation.songs[currentEntryIndex];
     const movements = getMovements(item);
-
     if (currentMovementIndex < movements.length - 1) {
       currentMovementIndex++;
-      playSong(movements[currentMovementIndex], item, currentMovementIndex);
+      playSong(movements[currentMovementIndex], item, currentMovementIndex, 0);
       return;
     }
-
     if (isWork(item)) {
       currentEntryIndex = (currentEntryIndex + 1) % lockedStation.songs.length;
     } else {
@@ -1386,29 +1176,21 @@
     }
     currentMovementIndex = 0;
     const nextItem = lockedStation.songs[currentEntryIndex];
-    const nextMovements = getMovements(nextItem);
-    playSong(nextMovements[0], nextItem, 0);
+    playSong(getMovements(nextItem)[0], nextItem, 0, 0);
   }
 
   function prevSong() {
     if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
-      setStatus('请先选择一个电台');
-      return;
+      setStatus('请先选择一个电台'); return;
     }
-    if (audio.currentTime > 3) {
-      audio.currentTime = 0;
-      setStatus('回到开头');
-      return;
-    }
+    if (audio.currentTime > 3) { audio.currentTime = 0; setStatus('回到开头'); return; }
     const item = lockedStation.songs[currentEntryIndex];
     const movements = getMovements(item);
-
     if (currentMovementIndex > 0) {
       currentMovementIndex--;
-      playSong(movements[currentMovementIndex], item, currentMovementIndex);
+      playSong(movements[currentMovementIndex], item, currentMovementIndex, 0);
       return;
     }
-
     if (isWork(item)) {
       currentEntryIndex = (currentEntryIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
     } else {
@@ -1417,7 +1199,7 @@
     const prevItem = lockedStation.songs[currentEntryIndex];
     const prevMovements = getMovements(prevItem);
     currentMovementIndex = prevMovements.length - 1;
-    playSong(prevMovements[currentMovementIndex], prevItem, currentMovementIndex);
+    playSong(prevMovements[currentMovementIndex], prevItem, currentMovementIndex, 0);
   }
 
   function tuneToStation(station) {
@@ -1427,19 +1209,14 @@
   }
 
   function handlePlay() {
-    if (stations.length === 0) {
-      setStatus('歌单为空，请检查 playlist.js');
-      updateTrackDisplay('歌单为空');
-      return;
-    }
+    if (stations.length === 0) { setStatus('歌单为空'); return; }
     if (!isPowered) {
       isPowered = true;
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-    if (lockedStation) {
-      playStation(lockedStation);
-    } else {
+    if (lockedStation) playStationVirtual(lockedStation);
+    else {
       const randomStation = stations[Math.floor(Math.random() * stations.length)];
       tuneToStation(randomStation);
     }
@@ -1452,18 +1229,14 @@
     playBtn.classList.remove('active');
     stopBtn.classList.add('active');
     setTimeout(() => stopBtn.classList.remove('active'), 200);
-    vuTargetAngle = -65;
-    tunTargetAngle = -65;
+    vuTargetAngle = -65; tunTargetAngle = -65;
     statusTime.textContent = '--:-- / --:--';
     setStatus('已停止');
     updateTrackDisplay('已停止');
     hideWorkInfo();
   }
 
-  function flashKey(btn) {
-    btn.classList.add('active');
-    setTimeout(() => btn.classList.remove('active'), 200);
-  }
+  function flashKey(btn) { btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), 200); }
 
   playBtn.addEventListener('click', handlePlay);
   stopBtn.addEventListener('click', handleStop);
@@ -1474,20 +1247,16 @@
     isPowered = !isPowered;
     powerSwitch.classList.toggle('on', isPowered);
     ledPower.classList.toggle('on', isPowered);
-    if (isPowered) {
-      setStatus('电源已开');
-      updateTuning(currentPos);
-    } else {
-      audio.pause();
-      isPlaying = false;
+    if (isPowered) { setStatus('电源已开'); updateTuning(currentPos); }
+    else {
+      audio.pause(); isPlaying = false;
       ledStereo.classList.remove('on');
       stationTag.textContent = '—';
       setStatus('电源已关');
       updateTrackDisplay('关机');
       statusTime.textContent = '--:-- / --:--';
       playBtn.classList.remove('active');
-      vuTargetAngle = -65;
-      tunTargetAngle = -65;
+      vuTargetAngle = -65; tunTargetAngle = -65;
       hideWorkInfo();
     }
   });
@@ -1498,39 +1267,21 @@
     setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
   });
 
-  // ============ 大旋钮：点击随机选台，拖动微调 ============
-  let isDragging = false;
-  let startY = 0;
-  let startPos = 0;
-  let totalMovement = 0;
-  let lastY = 0;
+  // ============ 大旋钮 ============
+  let isDragging = false, startY = 0, startPos = 0, totalMovement = 0, lastY = 0;
 
-  function beginDrag(y) {
-    isDragging = true;
-    startY = y;
-    lastY = y;
-    totalMovement = 0;
-    startPos = currentPos;
-  }
-
+  function beginDrag(y) { isDragging = true; startY = y; lastY = y; totalMovement = 0; startPos = currentPos; }
   function moveDrag(y) {
     if (!isDragging) return;
     totalMovement += Math.abs(y - lastY);
     lastY = y;
-    const deltaY = startY - y;
-    updateTuning(startPos + deltaY * 0.4);
+    updateTuning(startPos + (startY - y) * 0.4);
   }
-
   function endDrag() {
     if (isDragging && totalMovement < 8) {
-      if (stations.length === 0) {
-        setStatus('歌单为空，请检查 playlist.js');
-      } else {
-        if (!isPowered) {
-          isPowered = true;
-          powerSwitch.classList.add('on');
-          ledPower.classList.add('on');
-        }
+      if (stations.length === 0) { setStatus('歌单为空'); }
+      else {
+        if (!isPowered) { isPowered = true; powerSwitch.classList.add('on'); ledPower.classList.add('on'); }
         const randomStation = stations[Math.floor(Math.random() * stations.length)];
         tuneToStation(randomStation);
       }
@@ -1541,34 +1292,23 @@
   tuningKnob.addEventListener('mousedown', (e) => { beginDrag(e.clientY); e.preventDefault(); });
   document.addEventListener('mousemove', (e) => moveDrag(e.clientY));
   document.addEventListener('mouseup', endDrag);
-
-  tuningKnob.addEventListener('touchstart', (e) => {
-    beginDrag(e.touches[0].clientY);
-  }, { passive: true });
-
-  document.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    moveDrag(e.touches[0].clientY);
-  }, { passive: true });
-
+  tuningKnob.addEventListener('touchstart', (e) => beginDrag(e.touches[0].clientY), { passive: true });
+  document.addEventListener('touchmove', (e) => { if (isDragging) moveDrag(e.touches[0].clientY); }, { passive: true });
   document.addEventListener('touchend', endDrag);
   document.addEventListener('touchcancel', endDrag);
 
   audio.addEventListener('ended', () => { if (isPowered && lockedStation) nextSong(); });
-  audio.addEventListener('error', () => {
-    setStatus('音频加载失败：' + getFileName(audio.src));
-    updateTrackDisplay('加载失败');
-  });
+  audio.addEventListener('error', () => { setStatus('加载失败：' + getFileName(audio.src)); updateTrackDisplay('加载失败'); });
 
   audio.addEventListener('timeupdate', () => {
     const cur = audio.currentTime || 0;
     const dur = audio.duration || 0;
     statusTime.textContent = formatTime(cur) + ' / ' + formatTime(dur);
-
     if (lockedStation && currentEntryIndex >= 0) {
       const item = lockedStation.songs[currentEntryIndex];
-      if (item && isWork(item)) {
-        updateWorkInfo(item, currentMovementIndex, cur);
+      if (item) {
+        const file = getMovements(item)[currentMovementIndex];
+        renderInfo(item, currentMovementIndex, cur, file);
       }
     }
   });
@@ -1578,13 +1318,13 @@
   });
 
   if (stations.length === 0) {
-    setStatus('未检测到歌单，请检查 playlist.js');
+    setStatus('未检测到歌单');
     updateTrackDisplay('歌单未加载');
     statusCount.textContent = '歌单: 0';
   } else {
     const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
-    statusCount.textContent = `歌单: ${stations.length}台 / ${totalSongs}个条目`;
-    setStatus('就绪，点击 PLAY 开始');
+    statusCount.textContent = `歌单: ${stations.length}台 / ${totalSongs}条目`;
+    setStatus('就绪，点击 PLAY 调进电台');
     updateTuning(stations[0].pos);
   }
   audio.volume = volumeLevel;
