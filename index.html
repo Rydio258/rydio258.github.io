@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YAMAHA CT-X1 · 复古调谐器</title>
+<script>
+  // 移动端自动跳转到 mobile.html
+  (function() {
+    var ua = navigator.userAgent || '';
+    var isMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry/i.test(ua);
+    var isNarrow = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+    var forceDesktop = /[?&]desktop=1/.test(location.search);
+    if ((isMobile || isNarrow) && !forceDesktop) {
+      location.replace('mobile.html' + location.hash);
+    }
+  })();
+</script>
 <style>
   @font-face {
     font-family: 'Zpix';
@@ -229,7 +241,7 @@
     font-size: 0.68rem;
     line-height: 1.7;
     color: #4a3a1a;
-    max-height: 96px;
+    max-height: 110px;
     overflow-y: auto;
     position: relative;
     image-rendering: pixelated;
@@ -279,8 +291,27 @@
   .work-info-desc {
     color: #4a3a1a;
     letter-spacing: 0.5px;
+  }
+
+  .work-info-desc .work-info-base {
+    display: block;
     white-space: pre-wrap;
-    word-break: break-word;
+  }
+
+  .work-info-desc .work-info-now {
+    display: block;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed #b8a888;
+    color: #8a2b1c;
+    font-weight: 700;
+    white-space: pre-wrap;
+    animation: noteFadeIn 0.25s ease-out;
+  }
+
+  @keyframes noteFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 
   .control-row {
@@ -562,8 +593,15 @@
     -webkit-font-smoothing: none;
   }
 
-  .status-bar .status-text { color: #ffb347; }
-  .status-bar .status-count { color: #8a8078; }
+  .status-bar .status-text { color: #ffb347; flex: 1; min-width: 0; word-break: break-all; }
+  .status-bar .status-time {
+    color: #a5f3fc;
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .status-bar .status-count { color: #8a8078; flex-shrink: 0; }
 
   footer {
     margin-top: 28px;
@@ -628,7 +666,7 @@
     .track-display { max-width: 160px; }
     .track-display-inner { font-size: 0.65rem; }
     .station-tag { display: none; }
-    .work-info { max-height: 80px; font-size: 0.62rem; }
+    .work-info { max-height: 90px; font-size: 0.62rem; }
   }
 </style>
 </head>
@@ -677,7 +715,6 @@
     </div>
   </div>
 
-  <!-- ============ 作品解析栏 ============ -->
   <div class="work-info" id="workInfo">
     <div class="work-info-header">
       <div class="work-info-title" id="workInfoTitle"></div>
@@ -743,6 +780,7 @@
 
   <div class="status-bar">
     <span class="status-text" id="statusText">正在初始化...</span>
+    <span class="status-time" id="statusTime">--:-- / --:--</span>
     <span class="status-count" id="statusCount">歌单: —</span>
   </div>
 </div>
@@ -786,6 +824,7 @@
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const statusText = document.getElementById('statusText');
+  const statusTime = document.getElementById('statusTime');
   const statusCount = document.getElementById('statusCount');
   const footerInfoLink = document.getElementById('footerInfoLink');
   const workInfo = document.getElementById('workInfo');
@@ -815,7 +854,7 @@
     console.log('[状态]', text);
   }
 
-  // ============ 条目工具函数 ============
+  // ============ 工具函数 ============
   function isWork(item) {
     return item && typeof item === 'object' && Array.isArray(item.movements);
   }
@@ -832,20 +871,138 @@
     return filename.replace(/\.[^/.]+$/, '');
   }
 
-  // ============ 作品解析 ============
-  function updateWorkInfo(item) {
-    if (item && isWork(item) && item.description) {
-      workInfoTitle.textContent = item.work || '';
-      workInfoDesc.textContent = item.description;
-      workInfo.style.display = 'block';
-      workInfo.scrollTop = 0;
-    } else {
-      workInfo.style.display = 'none';
+  function formatTime(sec) {
+    if (!isFinite(sec) || sec < 0) return '--:--';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + String(s).padStart(2, '0');
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
+  }
+
+  // ============ info.txt 加载与缓存 ============
+  const workInfoCache = new Map();
+  let currentInfoItem = null;
+  let currentInfoData = null;
+
+  function parseInfoTxt(content) {
+    const sections = content.split(/\n\s*[-=]{3,}\s*\n/).map(s => s.trim()).filter(Boolean);
+    if (sections.length === 0) return null;
+
+    const description = sections[0];
+    const movementNotes = [];
+
+    for (let i = 1; i < sections.length; i++) {
+      const notes = [];
+      for (const rawLine of sections[i].split('\n')) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        const m = line.match(/^\[?(\d+:\d{2}(?::\d{2})?)\]?\s+(.+)$/);
+        if (m) {
+          const parts = m[1].split(':').map(Number);
+          let sec = 0;
+          if (parts.length === 3) sec = parts[0] * 3600 + parts[1] * 60 + parts[2];
+          else sec = parts[0] * 60 + parts[1];
+          notes.push({ time: sec, text: m[2].trim() });
+        }
+      }
+      notes.sort((a, b) => a.time - b.time);
+      movementNotes.push(notes);
     }
+
+    return { description, movementNotes };
+  }
+
+  async function loadWorkInfo(infoPath) {
+    if (workInfoCache.has(infoPath)) return workInfoCache.get(infoPath);
+    try {
+      const resp = await fetch(infoPath, { cache: 'force-cache' });
+      if (!resp.ok) {
+        workInfoCache.set(infoPath, null);
+        return null;
+      }
+      const text = await resp.text();
+      const parsed = parseInfoTxt(text);
+      workInfoCache.set(infoPath, parsed);
+      return parsed;
+    } catch (err) {
+      console.warn('读取 info.txt 失败:', infoPath, err);
+      workInfoCache.set(infoPath, null);
+      return null;
+    }
+  }
+
+  function getInfoPath(item) {
+    if (!item || !isWork(item) || !item.movements.length) return null;
+    const first = item.movements[0];
+    const lastSlash = first.lastIndexOf('/');
+    if (lastSlash < 0) return null;
+    return first.substring(0, lastSlash) + '/info.txt';
+  }
+
+  function findNoteAt(notes, t) {
+    if (!notes || notes.length === 0) return null;
+    let found = null;
+    for (const n of notes) {
+      if (t >= n.time) found = n;
+      else break;
+    }
+    return found;
+  }
+
+  async function updateWorkInfo(item, movementIndex, currentTime) {
+    if (!item || !isWork(item)) {
+      workInfo.style.display = 'none';
+      currentInfoItem = null;
+      currentInfoData = null;
+      return;
+    }
+
+    if (item !== currentInfoItem) {
+      currentInfoItem = item;
+      currentInfoData = null;
+      const infoPath = getInfoPath(item);
+      if (infoPath) {
+        currentInfoData = await loadWorkInfo(infoPath);
+      }
+    }
+
+    if (item !== currentInfoItem) return;
+
+    if (!currentInfoData) {
+      workInfo.style.display = 'none';
+      return;
+    }
+
+    const { description, movementNotes } = currentInfoData;
+    const notes = movementNotes[movementIndex] || [];
+    const note = findNoteAt(notes, currentTime);
+
+    let html = '';
+    if (description) {
+      html += '<span class="work-info-base">' + escapeHtml(description) + '</span>';
+    }
+    if (note) {
+      html += '<span class="work-info-now">▸ ' + escapeHtml(note.text) + '</span>';
+    }
+
+    if (workInfoDesc.dataset.rendered !== html) {
+      workInfoDesc.innerHTML = html;
+      workInfoDesc.dataset.rendered = html;
+    }
+
+    workInfoTitle.textContent = item.work || '';
+    workInfo.style.display = 'block';
   }
 
   function hideWorkInfo() {
     workInfo.style.display = 'none';
+    currentInfoItem = null;
+    currentInfoData = null;
   }
 
   // ============ 表头构建 ============
@@ -1146,7 +1303,7 @@
 
   function playSong(file, item, movementIndex) {
     initAudioContext();
-    updateWorkInfo(item);
+    updateWorkInfo(item, movementIndex, 0);
 
     const displayName = (item && isWork(item))
       ? item.work + ' - ' + getFileName(file)
@@ -1261,6 +1418,7 @@
     setTimeout(() => stopBtn.classList.remove('active'), 200);
     vuTargetAngle = -65;
     tunTargetAngle = -65;
+    statusTime.textContent = '--:-- / --:--';
     setStatus('已停止');
     updateTrackDisplay('已停止');
     hideWorkInfo();
@@ -1298,6 +1456,7 @@
       stationTag.textContent = '—';
       setStatus('电源已关');
       updateTrackDisplay('关机');
+      statusTime.textContent = '--:-- / --:--';
       playBtn.classList.remove('active');
       vuTargetAngle = -65;
       tunTargetAngle = -65;
@@ -1401,9 +1560,26 @@
     updateTrackDisplay('加载失败');
   });
 
+  audio.addEventListener('timeupdate', () => {
+    const cur = audio.currentTime || 0;
+    const dur = audio.duration || 0;
+    statusTime.textContent = formatTime(cur) + ' / ' + formatTime(dur);
+
+    if (lockedStation && currentEntryIndex >= 0) {
+      const item = lockedStation.songs[currentEntryIndex];
+      if (item && isWork(item)) {
+        updateWorkInfo(item, currentMovementIndex, cur);
+      }
+    }
+  });
+
+  audio.addEventListener('loadedmetadata', () => {
+    statusTime.textContent = '0:00 / ' + formatTime(audio.duration);
+  });
+
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 古典电台支持多乐章作品，会显示作品解析');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· 古典作品会读取 info.txt 显示赏析');
   });
 
   if (stations.length === 0) {
