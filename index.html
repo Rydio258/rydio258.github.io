@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<script>
+  // 检测到移动设备或窄屏时，自动跳转到 mobile.html
+  (function() {
+    var ua = navigator.userAgent || '';
+    var isMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry/i.test(ua);
+    var isNarrow = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+    // 允许用户手动强制桌面版：URL 加 ?desktop=1
+    var forceDesktop = /[?&]desktop=1/.test(location.search);
+    if ((isMobile || isNarrow) && !forceDesktop) {
+      location.replace('mobile.html' + location.hash);
+    }
+  })();
+</script>
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
