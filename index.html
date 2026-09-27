@@ -1,22 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<script>
-  // 检测到移动设备或窄屏时，自动跳转到 mobile.html
-  (function() {
-    var ua = navigator.userAgent || '';
-    var isMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone|webOS|BlackBerry/i.test(ua);
-    var isNarrow = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
-    // 允许用户手动强制桌面版：URL 加 ?desktop=1
-    var forceDesktop = /[?&]desktop=1/.test(location.search);
-    if ((isMobile || isNarrow) && !forceDesktop) {
-      location.replace('mobile.html' + location.hash);
-    }
-  })();
-</script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rydio 258</title>
+<title>YAMAHA CT-X1 · 复古调谐器</title>
 <style>
   @font-face {
     font-family: 'Zpix';
@@ -91,7 +78,7 @@
     border: 1px solid #a0a0a0;
     border-radius: 3px;
     padding: 14px 20px;
-    margin-bottom: 22px;
+    margin-bottom: 16px;
     box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
     position: relative;
   }
@@ -225,6 +212,75 @@
     width: 10px; height: 10px;
     background: #c0392b;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+
+  /* ============ 作品解析栏 ============ */
+  .work-info {
+    display: none;
+    background: linear-gradient(180deg, #f5edd4 0%, #ece0b8 100%);
+    border: 1px solid #a89878;
+    border-radius: 3px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    box-shadow:
+      inset 0 1px 3px rgba(90, 70, 20, 0.15),
+      0 1px 2px rgba(0,0,0,0.1);
+    font-family: 'Zpix', 'Courier New', monospace;
+    font-size: 0.68rem;
+    line-height: 1.7;
+    color: #4a3a1a;
+    max-height: 96px;
+    overflow-y: auto;
+    position: relative;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    animation: workInfoSlideIn 0.3s ease-out;
+  }
+
+  @keyframes workInfoSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .work-info::-webkit-scrollbar { width: 6px; }
+  .work-info::-webkit-scrollbar-track { background: rgba(90, 70, 20, 0.08); border-radius: 3px; }
+  .work-info::-webkit-scrollbar-thumb { background: #a89878; border-radius: 3px; }
+  .work-info::-webkit-scrollbar-thumb:hover { background: #8a7a5a; }
+
+  .work-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #b8a888;
+    gap: 12px;
+  }
+
+  .work-info-title {
+    font-weight: 700;
+    color: #8a2b1c;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .work-info-tag {
+    font-size: 0.5rem;
+    letter-spacing: 1.5px;
+    color: #a89878;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  .work-info-desc {
+    color: #4a3a1a;
+    letter-spacing: 0.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   .control-row {
@@ -572,6 +628,7 @@
     .track-display { max-width: 160px; }
     .track-display-inner { font-size: 0.65rem; }
     .station-tag { display: none; }
+    .work-info { max-height: 80px; font-size: 0.62rem; }
   }
 </style>
 </head>
@@ -618,6 +675,15 @@
     <div class="am-scale" id="amScale">
       <div class="am-ticks" id="amTicks"></div>
     </div>
+  </div>
+
+  <!-- ============ 作品解析栏 ============ -->
+  <div class="work-info" id="workInfo">
+    <div class="work-info-header">
+      <div class="work-info-title" id="workInfoTitle"></div>
+      <div class="work-info-tag">WORK NOTES</div>
+    </div>
+    <div class="work-info-desc" id="workInfoDesc"></div>
   </div>
 
   <div class="control-row">
@@ -722,6 +788,9 @@
   const statusText = document.getElementById('statusText');
   const statusCount = document.getElementById('statusCount');
   const footerInfoLink = document.getElementById('footerInfoLink');
+  const workInfo = document.getElementById('workInfo');
+  const workInfoTitle = document.getElementById('workInfoTitle');
+  const workInfoDesc = document.getElementById('workInfoDesc');
 
   let isPowered = false;
   let currentPos = 20;
@@ -763,13 +832,20 @@
     return filename.replace(/\.[^/.]+$/, '');
   }
 
-  function getMovementDisplayName(item, movementIndex) {
-    const movements = getMovements(item);
-    const fileName = getFileName(movements[movementIndex]);
-    if (isWork(item)) {
-      return item.work + ' - ' + fileName;
+  // ============ 作品解析 ============
+  function updateWorkInfo(item) {
+    if (item && isWork(item) && item.description) {
+      workInfoTitle.textContent = item.work || '';
+      workInfoDesc.textContent = item.description;
+      workInfo.style.display = 'block';
+      workInfo.scrollTop = 0;
+    } else {
+      workInfo.style.display = 'none';
     }
-    return fileName;
+  }
+
+  function hideWorkInfo() {
+    workInfo.style.display = 'none';
   }
 
   // ============ 表头构建 ============
@@ -999,16 +1075,12 @@
     trackDisplayInner.textContent = text;
     trackDisplayInner.style.animation = 'none';
     trackDisplayInner.style.transform = 'translateX(0)';
-
     void trackDisplayInner.offsetWidth;
-
     const tunerEl = document.querySelector('.tuner');
     const panelWidth = tunerEl.clientWidth - 72;
     const threshold = panelWidth / 3;
-
     const cw = trackDisplay.clientWidth - 24;
     const tw = trackDisplayInner.scrollWidth;
-
     if (tw > threshold) {
       const totalDist = cw + tw;
       const speed = 60;
@@ -1033,38 +1105,27 @@
     if (pos < 0) pos = 0;
     if (pos > 100) pos = 100;
     currentPos = pos;
-
     freqDisplay.textContent = formatFreq(pos);
     needle.style.left = pos + '%';
 
     let found = null;
     for (const st of stations) {
-      if (Math.abs(pos - st.pos) < 1.2) {
-        found = st;
-        break;
-      }
+      if (Math.abs(pos - st.pos) < 1.2) { found = st; break; }
     }
 
     if (found) {
       ledStereo.classList.add('on');
       stationTag.textContent = found.name || '—';
-
       if (found !== lockedStation) {
         lockedStation = found;
-        if (isPowered) {
-          playStation(found);
-        } else {
-          setStatus('已锁定电台：' + found.name + '（电源未开）');
-        }
+        if (isPowered) playStation(found);
+        else setStatus('已锁定电台：' + found.name + '（电源未开）');
       }
     } else {
       lockedStation = null;
       ledStereo.classList.remove('on');
       stationTag.textContent = '—';
-      if (isPowered && isPlaying) {
-        audio.pause();
-        isPlaying = false;
-      }
+      if (isPowered && isPlaying) { audio.pause(); isPlaying = false; }
     }
   }
 
@@ -1072,9 +1133,9 @@
   function playStation(station) {
     if (!station || !station.songs || station.songs.length === 0) {
       setStatus('该电台没有歌曲');
+      hideWorkInfo();
       return;
     }
-    // 随机选一个条目（单曲或多乐章作品）
     const entryIndex = Math.floor(Math.random() * station.songs.length);
     currentEntryIndex = entryIndex;
     currentMovementIndex = 0;
@@ -1085,6 +1146,8 @@
 
   function playSong(file, item, movementIndex) {
     initAudioContext();
+    updateWorkInfo(item);
+
     const displayName = (item && isWork(item))
       ? item.work + ' - ' + getFileName(file)
       : getFileName(file);
@@ -1109,12 +1172,6 @@
     }
   }
 
-  // 判断当前条目是否为多乐章作品
-  function currentItemIsWork() {
-    if (!lockedStation) return false;
-    return isWork(lockedStation.songs[currentEntryIndex]);
-  }
-
   function nextSong() {
     if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
       setStatus('请先选择一个电台');
@@ -1123,19 +1180,15 @@
     const item = lockedStation.songs[currentEntryIndex];
     const movements = getMovements(item);
 
-    // 多乐章作品内：切到下一乐章
     if (currentMovementIndex < movements.length - 1) {
       currentMovementIndex++;
       playSong(movements[currentMovementIndex], item, currentMovementIndex);
       return;
     }
 
-    // 作品的最后一个乐章或单曲播放完 → 换一个条目
     if (isWork(item)) {
-      // 古典作品：顺序下一个作品（循环）
       currentEntryIndex = (currentEntryIndex + 1) % lockedStation.songs.length;
     } else {
-      // 普通单曲：随机下一首
       currentEntryIndex = Math.floor(Math.random() * lockedStation.songs.length);
     }
     currentMovementIndex = 0;
@@ -1149,24 +1202,20 @@
       setStatus('请先选择一个电台');
       return;
     }
-    // 播放超过 3 秒 → 回到当前乐章开头
     if (audio.currentTime > 3) {
       audio.currentTime = 0;
       setStatus('回到开头');
       return;
     }
-
     const item = lockedStation.songs[currentEntryIndex];
     const movements = getMovements(item);
 
-    // 多乐章作品内：回到上一乐章
     if (currentMovementIndex > 0) {
       currentMovementIndex--;
       playSong(movements[currentMovementIndex], item, currentMovementIndex);
       return;
     }
 
-    // 第一个乐章或单曲 → 上一个条目
     if (isWork(item)) {
       currentEntryIndex = (currentEntryIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
     } else {
@@ -1181,9 +1230,7 @@
   function tuneToStation(station) {
     needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
     updateTuning(station.pos);
-    setTimeout(() => {
-      needle.style.transition = 'left 0.05s linear';
-    }, 950);
+    setTimeout(() => { needle.style.transition = 'left 0.05s linear'; }, 950);
   }
 
   function handlePlay() {
@@ -1216,6 +1263,7 @@
     tunTargetAngle = -65;
     setStatus('已停止');
     updateTrackDisplay('已停止');
+    hideWorkInfo();
   }
 
   function handlePrev() {
@@ -1253,6 +1301,7 @@
       playBtn.classList.remove('active');
       vuTargetAngle = -65;
       tunTargetAngle = -65;
+      hideWorkInfo();
     }
   });
 
@@ -1354,7 +1403,7 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('Welcome to my radio station\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 古典电台支持多乐章作品，顺序播放');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 古典电台支持多乐章作品，会显示作品解析');
   });
 
   if (stations.length === 0) {
