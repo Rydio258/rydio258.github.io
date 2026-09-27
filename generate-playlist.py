@@ -2,11 +2,9 @@ import os
 import re
 import datetime
 
-# ============ 配置 ============
 MUSIC_DIR = 'music'
 OUTPUT_FILE = 'playlist.js'
 WORK_BASED_DIRS = ['classical']
-# ==============================
 
 
 def natural_sort_key(s):
@@ -120,29 +118,19 @@ def main():
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
 
-    total_entries = 0
-    total_works = 0
-    total_singles = 0
-    for s in stations:
-        for song in s['songs']:
-            total_entries += 1
-            if isinstance(song, dict):
-                total_works += 1
-            else:
-                total_singles += 1
+    total_entries = sum(len(s['songs']) for s in stations)
+    total_works = sum(1 for s in stations for x in s['songs'] if isinstance(x, dict))
+    total_singles = total_entries - total_works
 
     print(f'已生成 {OUTPUT_FILE}')
     print(f'  电台数：{len(stations)}')
     print(f'  条目数：{total_entries}（{total_works} 作品 + {total_singles} 单曲）')
-    print('')
     for s in stations:
         works = sum(1 for x in s['songs'] if isinstance(x, dict))
         singles = sum(1 for x in s['songs'] if not isinstance(x, dict))
         tag = []
-        if works:
-            tag.append(f'{works}作品')
-        if singles:
-            tag.append(f'{singles}单曲')
+        if works: tag.append(f'{works}作品')
+        if singles: tag.append(f'{singles}单曲')
         print(f'    [{s["pos"]:>3}] {s["name"]} · {", ".join(tag) or "空"}')
 
 
