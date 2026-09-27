@@ -207,7 +207,7 @@
   .left-controls {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     flex-shrink: 0;
   }
 
@@ -254,7 +254,7 @@
     border-radius: 1px;
   }
 
-  /* ===== 卡座按键 ===== */
+  /* ===== 卡座按键（雅马哈面板风格） ===== */
   .transport-key {
     display: flex;
     flex-direction: column;
@@ -265,51 +265,67 @@
   }
 
   .transport-key .key-body {
-    width: 60px;
-    height: 40px;
-    background: linear-gradient(180deg, #3a3530 0%, #1a1614 100%);
-    border: 1px solid #0a0806;
-    border-radius: 3px;
-    box-shadow: 0 4px 0 #0a0806, inset 0 1px 0 rgba(255,255,255,0.1);
+    width: 72px;
+    height: 34px;
+    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
+    border: 1px solid #8a8a86;
+    border-radius: 2px;
+    box-shadow:
+      0 2px 3px rgba(0,0,0,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    color: #d4c4a8;
-    transition: all 0.05s;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    color: #333;
+    font-weight: 700;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    transition: all 0.06s;
     position: relative;
   }
 
   .transport-key .key-body::before {
     content: '';
     position: absolute;
-    top: 4px; left: 6px;
-    width: 5px; height: 5px;
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background: #333;
+    background: #888;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
     transition: all 0.2s;
   }
 
   .transport-key.play.active .key-body::before {
-    background: #4cd964;
-    box-shadow: 0 0 6px #4cd964;
+    background: #2ecc40;
+    box-shadow: 0 0 6px #2ecc40, inset 0 1px 1px rgba(255,255,255,0.5);
   }
 
-  .transport-key.stop .key-body::before {
-    background: #ff3b30;
-    box-shadow: 0 0 6px #ff3b30;
+  .transport-key.stop.active .key-body::before {
+    background: #e33;
+    box-shadow: 0 0 6px #e33, inset 0 1px 1px rgba(255,255,255,0.5);
   }
 
-  .transport-key:active .key-body {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #0a0806, inset 0 1px 0 rgba(255,255,255,0.1);
+  .transport-key:active .key-body,
+  .transport-key.pressed .key-body {
+    background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
+    box-shadow:
+      0 0 0 rgba(0,0,0,0),
+      inset 0 2px 4px rgba(0,0,0,0.35),
+      inset 0 -1px 0 rgba(255,255,255,0.4);
+    transform: translateY(1px);
   }
 
   .transport-key .key-label {
-    font-size: 0.55rem;
-    letter-spacing: 1.5px;
-    color: #555;
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    color: #666;
     font-weight: 700;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
 
   .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
@@ -378,7 +394,6 @@
   }
   .knob-hint strong { color: #c0392b; display: block; font-size: 0.6rem; }
 
-  /* 状态条 */
   .status-bar {
     margin-top: 14px;
     padding: 6px 14px;
@@ -417,7 +432,7 @@
   footer a:hover { color: #c0392b; }
   .footer-links { display: flex; gap: 22px; }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     .tuner { padding: 20px; }
     .brand-name { font-size: 1.3rem; }
     .brand-model { display: none; }
@@ -490,16 +505,14 @@
         <div class="small-knob" id="volumeKnob"></div>
       </div>
 
-      <!-- ★ 播放按钮 -->
       <div class="transport-key play" id="playBtn">
-        <div class="key-body">▶</div>
-        <div class="key-label">PLAY</div>
+        <div class="key-body">PLAY</div>
+        <div class="key-label">▶</div>
       </div>
 
-      <!-- ★ 停止按钮 -->
       <div class="transport-key stop" id="stopBtn">
-        <div class="key-body">■</div>
-        <div class="key-label">STOP</div>
+        <div class="key-body">STOP</div>
+        <div class="key-label">■</div>
       </div>
     </div>
 
@@ -523,7 +536,6 @@
     </div>
   </div>
 
-  <!-- ★ 状态条 -->
   <div class="status-bar">
     <span class="status-text" id="statusText">正在初始化...</span>
     <span class="status-count" id="statusCount">歌单: —</span>
@@ -544,13 +556,11 @@
 
 <script>
 (function() {
-  // ==================== 读取歌单 ====================
   const config = window.PLAYLIST || { stations: [] };
   const stations = Array.isArray(config.stations) ? config.stations : [];
 
   const FM_MIN = 76.0, FM_MAX = 108.0;
   const AM_MIN = 520, AM_MAX = 1600;
-  // ==================================================
 
   const audio = document.getElementById('bgMusic');
   const freqDisplay = document.getElementById('freqDisplay');
@@ -580,7 +590,6 @@
   let signalNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  // ============ 状态显示 ============
   function setStatus(text) {
     statusText.textContent = text;
     console.log('[状态]', text);
@@ -748,7 +757,7 @@
     requestAnimationFrame(animateMeters);
   }
 
-  // ============ 从文件路径提取文件名（不含后缀） ============
+  // ============ 从路径提取文件名（不含后缀） ============
   function getFileName(path) {
     if (!path) return '';
     const decoded = decodeURIComponent(path);
@@ -756,7 +765,7 @@
     return filename.replace(/\.[^/.]+$/, '');
   }
 
-  // ============ 滚动曲目显示 ============
+  // ============ 滚动显示 ============
   function updateTrackDisplay(text) {
     trackDisplayInner.textContent = text;
     trackDisplayInner.style.animation = 'none';
@@ -854,6 +863,7 @@
         updateTrackDisplay(getFileName(file));
         setStatus('正在播放：' + getFileName(file));
         playBtn.classList.add('active');
+        stopBtn.classList.remove('active');
       }).catch(err => {
         console.warn('播放失败:', err);
         isPlaying = false;
@@ -870,7 +880,6 @@
     }
   }
 
-  // ============ 平滑调谐 ============
   function tuneToStation(station) {
     needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
     updateTuning(station.pos);
@@ -879,7 +888,7 @@
     }, 950);
   }
 
-  // ============ 播放 / 停止按钮 ============
+  // ============ PLAY / STOP ============
   function handlePlay() {
     if (stations.length === 0) {
       setStatus('歌单为空，请检查 playlist.js');
@@ -893,7 +902,6 @@
       ledPower.classList.add('on');
     }
 
-    // 如果当前已锁定电台，直接播放；否则随机选一个
     if (lockedStation) {
       playStation(lockedStation);
     } else {
@@ -907,6 +915,8 @@
     audio.currentTime = 0;
     isPlaying = false;
     playBtn.classList.remove('active');
+    stopBtn.classList.add('active');
+    setTimeout(() => stopBtn.classList.remove('active'), 200);
     setStatus('已停止');
     updateTrackDisplay('已停止');
   }
@@ -967,18 +977,17 @@
 
   document.addEventListener('mouseup', () => {
     if (isDragging && totalMovement < 6) {
-      // 点击 → 自动随机选台
       if (stations.length === 0) {
         setStatus('歌单为空，请检查 playlist.js');
-        return;
+      } else {
+        if (!isPowered) {
+          isPowered = true;
+          powerSwitch.classList.add('on');
+          ledPower.classList.add('on');
+        }
+        const randomStation = stations[Math.floor(Math.random() * stations.length)];
+        tuneToStation(randomStation);
       }
-      if (!isPowered) {
-        isPowered = true;
-        powerSwitch.classList.add('on');
-        ledPower.classList.add('on');
-      }
-      const randomStation = stations[Math.floor(Math.random() * stations.length)];
-      tuneToStation(randomStation);
     }
     isDragging = false;
   });
@@ -1028,7 +1037,7 @@
     if (isPowered && lockedStation) nextSong();
   });
 
-  audio.addEventListener('error', (e) => {
+  audio.addEventListener('error', () => {
     setStatus('音频加载失败：' + getFileName(audio.src));
     updateTrackDisplay('加载失败');
   });
