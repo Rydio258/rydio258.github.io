@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rydio 258</title>
+<title>YAMAHA CT-X1 · 复古调谐器</title>
 <style>
   @font-face {
     font-family: 'Zpix';
@@ -369,7 +369,6 @@
     overflow: hidden;
   }
 
-  /* 灯泡发光叠加层 */
   .meter::after {
     content: '';
     position: absolute;
@@ -387,7 +386,6 @@
     50% { opacity: 0.92; }
   }
 
-  /* 表头正上方的小灯泡指示 */
   .meter-lamp {
     position: absolute;
     top: -1px;
@@ -499,6 +497,7 @@
   .status-bar .status-text { color: #ffb347; }
   .status-bar .status-count { color: #8a8078; }
 
+  /* ===== 页脚 + 反馈按钮 ===== */
   footer {
     margin-top: 28px;
     display: flex;
@@ -515,7 +514,39 @@
   }
   footer a { color: #888; text-decoration: none; transition: color 0.2s; }
   footer a:hover { color: #c0392b; }
-  .footer-links { display: flex; gap: 22px; }
+  .footer-links { display: flex; gap: 22px; align-items: center; }
+
+  .feedback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
+    border: 1px solid #8a8a86;
+    border-radius: 2px;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    color: #333;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.1s;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  .feedback-btn:hover {
+    background: linear-gradient(180deg, #f0f0ec 0%, #dbdbd7 45%, #c4c4c0 100%);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9);
+    color: #111;
+  }
+  .feedback-btn:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .feedback-btn .btn-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+  }
 
   @media (max-width: 1080px) {
     .tuner { padding: 20px; }
@@ -642,7 +673,10 @@
 <footer>
   <div>© 2025 我的 GitHub 主页</div>
   <div class="footer-links">
-    <a href="https://github.com/" target="_blank" rel="noopener">GITHUB</a>
+    <a href="https://github.com/Rydio258/rydio258.github.io/" target="_blank" rel="noopener">GITHUB</a>
+    <a href="https://github.com/Rydio258/rydio258.github.io/issues/new?title=%5B%E5%8F%8D%E9%A6%88%5D%20%E8%AF%B7%E5%A1%AB%E5%86%99%E6%A0%87%E9%A2%98&body=%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%8F%8D%E9%A6%88%EF%BC%81%E8%AF%B7%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%8F%8F%E8%BF%B0%E6%82%A8%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A" target="_blank" rel="noopener" class="feedback-btn">
+      <span class="btn-icon">💬</span> 反馈建议
+    </a>
     <a href="#" id="footerInfoLink">ABOUT</a>
   </div>
 </footer>
@@ -690,10 +724,8 @@
   let vuNeedle, tuningNeedle;
   let volumeLevel = 0.7;
 
-  // VU 表指针平滑状态
   let vuCurrentAngle = -65;
   let vuTargetAngle = -65;
-  // FM TUNING 表指针状态
   let tunCurrentAngle = -65;
   let tunTargetAngle = -65;
 
@@ -711,24 +743,24 @@
   const R_TICK_OUT = 30;
   const NEEDLE_LEN = 32;
 
-  // VU 表刻度：dB 值 - 位置比例 0~1
+  // 只保留刻度位置，不显示数字
   const VU_MARKS = [
-    { label: '-20', t: 0.00, major: true },
-    { label: '',    t: 0.05, major: false },
-    { label: '',    t: 0.10, major: false },
-    { label: '-10', t: 0.16, major: true },
-    { label: '',    t: 0.22, major: false },
-    { label: '-7',  t: 0.28, major: true },
-    { label: '',    t: 0.33, major: false },
-    { label: '-5',  t: 0.38, major: true },
-    { label: '',    t: 0.44, major: false },
-    { label: '-3',  t: 0.50, major: true },
-    { label: '-2',  t: 0.57, major: true },
-    { label: '-1',  t: 0.64, major: true },
-    { label: '0',   t: 0.72, major: true },
-    { label: '+1',  t: 0.80, major: true },
-    { label: '+2',  t: 0.87, major: true },
-    { label: '+3',  t: 0.94, major: true }
+    { t: 0.00, major: true },
+    { t: 0.05, major: false },
+    { t: 0.10, major: false },
+    { t: 0.16, major: true },
+    { t: 0.22, major: false },
+    { t: 0.28, major: true },
+    { t: 0.33, major: false },
+    { t: 0.38, major: true },
+    { t: 0.44, major: false },
+    { t: 0.50, major: true },
+    { t: 0.57, major: true },
+    { t: 0.64, major: true },
+    { t: 0.72, major: true },
+    { t: 0.80, major: true },
+    { t: 0.87, major: true },
+    { t: 0.94, major: true }
   ];
 
   function polar(deg, r) {
@@ -737,7 +769,6 @@
   }
 
   function buildVUMeter(svg, gradientId, color) {
-    // 定义背光渐变
     const defs = document.createElementNS(SVG_NS, 'defs');
     const radial = document.createElementNS(SVG_NS, 'radialGradient');
     radial.setAttribute('id', gradientId);
@@ -759,7 +790,6 @@
     defs.appendChild(radial);
     svg.appendChild(defs);
 
-    // 表盘底
     const bg = document.createElementNS(SVG_NS, 'rect');
     bg.setAttribute('x', 0); bg.setAttribute('y', 0);
     bg.setAttribute('width', 160); bg.setAttribute('height', 45);
@@ -767,7 +797,6 @@
     bg.setAttribute('fill', `url(#${gradientId})`);
     svg.appendChild(bg);
 
-    // 主弧线
     const [ax1, ay1] = polar(START_DEG, R_ARC);
     const [ax2, ay2] = polar(END_DEG, R_ARC);
     const arc = document.createElementNS(SVG_NS, 'path');
@@ -777,7 +806,7 @@
     arc.setAttribute('stroke-width', '1.2');
     svg.appendChild(arc);
 
-    // 刻度线与数字
+    // 只画刻度线，不画数字
     VU_MARKS.forEach(mark => {
       const t = mark.t;
       const angle = START_DEG + (END_DEG - START_DEG) * t;
@@ -792,24 +821,8 @@
       tick.setAttribute('stroke', '#4a3a1a');
       tick.setAttribute('stroke-width', mark.major ? '1.3' : '0.6');
       svg.appendChild(tick);
-
-      if (mark.label) {
-        const lp = polar(angle, 18);
-        const text = document.createElementNS(SVG_NS, 'text');
-        text.setAttribute('x', lp[0]);
-        text.setAttribute('y', lp[1]);
-        text.setAttribute('font-size', '4.5');
-        text.setAttribute('font-family', 'Courier New, monospace');
-        text.setAttribute('font-weight', 'bold');
-        text.setAttribute('fill', '#4a3a1a');
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('dominant-baseline', 'middle');
-        text.textContent = mark.label;
-        svg.appendChild(text);
-      }
     });
 
-    // 红色过载区（0dB 之后）
     const redStartT = 0.72;
     const degRedStart = START_DEG + (END_DEG - START_DEG) * redStartT;
     const rp1 = polar(degRedStart, R_ARC);
@@ -822,7 +835,6 @@
     redArc.setAttribute('stroke-linecap', 'round');
     svg.appendChild(redArc);
 
-    // 指针
     const needleEl = document.createElementNS(SVG_NS, 'line');
     needleEl.setAttribute('x1', CX);
     needleEl.setAttribute('y1', CY);
@@ -834,7 +846,6 @@
     needleEl.setAttribute('transform', `rotate(-65 ${CX} ${CY})`);
     svg.appendChild(needleEl);
 
-    // 轴心
     const pivot = document.createElementNS(SVG_NS, 'circle');
     pivot.setAttribute('cx', CX);
     pivot.setAttribute('cy', CY);
@@ -921,7 +932,6 @@
       return;
     }
 
-    // ===== VU 表：RMS 平均值，模拟机械 VU 表的迟钝响应 =====
     analyser.getByteTimeDomainData(timeDataArray);
     let sum = 0;
     for (let i = 0; i < timeDataArray.length; i++) {
@@ -930,18 +940,14 @@
     }
     const rms = Math.sqrt(sum / timeDataArray.length);
     const db = 20 * Math.log10(rms + 0.0001);
-    // 映射范围：-40dB ~ +3dB
     let vuT = (db + 40) / 43;
     if (vuT < 0) vuT = 0;
     if (vuT > 1) vuT = 1;
     vuTargetAngle = -65 + vuT * 130;
-    // VU 表响应速度慢，模拟机械惯性
     vuCurrentAngle += (vuTargetAngle - vuCurrentAngle) * 0.18;
     vuNeedle.setAttribute('transform', `rotate(${vuCurrentAngle} ${CX} ${CY})`);
 
-    // ===== FM TUNING 表：频谱中高频能量，响应灵敏活泼 =====
     analyser.getByteFrequencyData(freqDataArray);
-    // 取中高频段（大致 1kHz ~ 8kHz 区间，视采样率而定）
     const binStart = Math.floor(freqDataArray.length * 0.08);
     const binEnd = Math.floor(freqDataArray.length * 0.55);
     let bandSum = 0;
@@ -952,20 +958,17 @@
     let tunT = bandAvg / 130;
     if (tunT < 0) tunT = 0;
     if (tunT > 1) tunT = 1;
-    // 叠加一点随机抖动，模拟信号跳动的感觉
     const jitter = (Math.random() - 0.5) * 0.05;
     let tunTarget = -65 + (tunT + jitter) * 130;
     if (tunTarget < -65) tunTarget = -65;
     if (tunTarget > 65) tunTarget = 65;
     tunTargetAngle = tunTarget;
-    // FM TUNING 表响应快，模拟跳动
     tunCurrentAngle += (tunTargetAngle - tunCurrentAngle) * 0.55;
     tuningNeedle.setAttribute('transform', `rotate(${tunCurrentAngle} ${CX} ${CY})`);
 
     requestAnimationFrame(animateMeters);
   }
 
-  // ============ 从路径提取文件名（不含后缀） ============
   function getFileName(path) {
     if (!path) return '';
     const decoded = decodeURIComponent(path);
@@ -973,7 +976,6 @@
     return filename.replace(/\.[^/.]+$/, '');
   }
 
-  // ============ 滚动显示 ============
   function updateTrackDisplay(text) {
     trackDisplayInner.textContent = text;
     trackDisplayInner.style.animation = 'none';
@@ -999,7 +1001,6 @@
     }
   }
 
-  // ============ 调谐逻辑 ============
   function posToFreq(pos) {
     return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
   }
@@ -1109,7 +1110,6 @@
     }, 950);
   }
 
-  // ============ PLAY / STOP / PREV / NEXT ============
   function handlePlay() {
     if (stations.length === 0) {
       setStatus('歌单为空，请检查 playlist.js');
@@ -1138,7 +1138,6 @@
     playBtn.classList.remove('active');
     stopBtn.classList.add('active');
     setTimeout(() => stopBtn.classList.remove('active'), 200);
-    // 归零两个指针
     vuTargetAngle = -65;
     tunTargetAngle = -65;
     setStatus('已停止');
@@ -1162,7 +1161,6 @@
   prevBtn.addEventListener('click', handlePrev);
   nextBtn.addEventListener('click', handleNext);
 
-  // ============ 电源 ============
   powerSwitch.addEventListener('click', () => {
     isPowered = !isPowered;
     powerSwitch.classList.toggle('on', isPowered);
@@ -1184,14 +1182,12 @@
     }
   });
 
-  // ============ 音量 ============
   volumeKnob.addEventListener('click', () => {
     volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
     audio.volume = volumeLevel;
     setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
   });
 
-  // ============ 大旋钮 ============
   let isDragging = false;
   let startY = 0;
   let startPos = 0;
@@ -1284,10 +1280,9 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 点击「反馈建议」可前往 GitHub 提交 issue');
   });
 
-  // ============ 初始化 ============
   if (stations.length === 0) {
     setStatus('未检测到歌单，请检查 playlist.js');
     updateTrackDisplay('歌单未加载');
