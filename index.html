@@ -13,7 +13,6 @@
     }
   })();
 </script>
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -367,7 +366,6 @@
 
   .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
 
-  /* ===== 表头 + 淡黄色灯光照明 ===== */
   .meter {
     width: 200px;
     position: relative;
@@ -511,7 +509,6 @@
   .status-bar .status-text { color: #ffb347; }
   .status-bar .status-count { color: #8a8078; }
 
-  /* ===== 页脚 + 反馈按钮 ===== */
   footer {
     margin-top: 28px;
     display: flex;
@@ -685,7 +682,7 @@
 </div>
 
 <footer>
-  <div>© 2026 Rybee</div>
+  <div>© 2025 我的 GitHub 主页</div>
   <div class="footer-links">
     <a href="https://github.com/Rydio258/rydio258.github.io/" target="_blank" rel="noopener">GITHUB</a>
     <a href="https://github.com/Rydio258/rydio258.github.io/issues/new?title=%5B%E5%8F%8D%E9%A6%88%5D%20%E8%AF%B7%E5%A1%AB%E5%86%99%E6%A0%87%E9%A2%98&body=%E6%84%9F%E8%B0%A2%E6%82%A8%E7%9A%84%E5%8F%8D%E9%A6%88%EF%BC%81%E8%AF%B7%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%8F%8F%E8%BF%B0%E6%82%A8%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A" target="_blank" rel="noopener" class="feedback-btn">
@@ -730,7 +727,8 @@
   let currentPos = 20;
   let lockedStation = null;
   let isPlaying = false;
-  let currentSongIndex = 0;
+  let currentEntryIndex = 0;
+  let currentMovementIndex = 0;
   let audioContext = null;
   let analyser = null;
   let timeDataArray = null;
@@ -748,6 +746,32 @@
     console.log('[状态]', text);
   }
 
+  // ============ 条目工具函数 ============
+  function isWork(item) {
+    return item && typeof item === 'object' && Array.isArray(item.movements);
+  }
+
+  function getMovements(item) {
+    if (isWork(item)) return item.movements;
+    return [item];
+  }
+
+  function getFileName(path) {
+    if (!path) return '';
+    const decoded = decodeURIComponent(path);
+    const filename = decoded.split('/').pop() || '';
+    return filename.replace(/\.[^/.]+$/, '');
+  }
+
+  function getMovementDisplayName(item, movementIndex) {
+    const movements = getMovements(item);
+    const fileName = getFileName(movements[movementIndex]);
+    if (isWork(item)) {
+      return item.work + ' - ' + fileName;
+    }
+    return fileName;
+  }
+
   // ============ 表头构建 ============
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const CX = 80, CY = 42;
@@ -757,7 +781,6 @@
   const R_TICK_OUT = 30;
   const NEEDLE_LEN = 32;
 
-  // 只保留刻度位置，不显示数字
   const VU_MARKS = [
     { t: 0.00, major: true },
     { t: 0.05, major: false },
@@ -789,7 +812,6 @@
     radial.setAttribute('cx', '50%');
     radial.setAttribute('cy', '0%');
     radial.setAttribute('r', '110%');
-
     const s1 = document.createElementNS(SVG_NS, 'stop');
     s1.setAttribute('offset', '0%');
     s1.setAttribute('stop-color', '#fffbe8');
@@ -799,7 +821,6 @@
     const s3 = document.createElementNS(SVG_NS, 'stop');
     s3.setAttribute('offset', '100%');
     s3.setAttribute('stop-color', '#ecdfb0');
-
     radial.appendChild(s1); radial.appendChild(s2); radial.appendChild(s3);
     defs.appendChild(radial);
     svg.appendChild(defs);
@@ -820,15 +841,11 @@
     arc.setAttribute('stroke-width', '1.2');
     svg.appendChild(arc);
 
-    // 只画刻度线，不画数字
     VU_MARKS.forEach(mark => {
-      const t = mark.t;
-      const angle = START_DEG + (END_DEG - START_DEG) * t;
+      const angle = START_DEG + (END_DEG - START_DEG) * mark.t;
       const rIn = mark.major ? R_TICK_IN - 3 : R_TICK_IN;
-      const rOut = R_TICK_OUT;
       const p1 = polar(angle, rIn);
-      const p2 = polar(angle, rOut);
-
+      const p2 = polar(angle, R_TICK_OUT);
       const tick = document.createElementNS(SVG_NS, 'line');
       tick.setAttribute('x1', p1[0]); tick.setAttribute('y1', p1[1]);
       tick.setAttribute('x2', p2[0]); tick.setAttribute('y2', p2[1]);
@@ -837,8 +854,7 @@
       svg.appendChild(tick);
     });
 
-    const redStartT = 0.72;
-    const degRedStart = START_DEG + (END_DEG - START_DEG) * redStartT;
+    const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.72;
     const rp1 = polar(degRedStart, R_ARC);
     const rp2 = polar(END_DEG, R_ARC);
     const redArc = document.createElementNS(SVG_NS, 'path');
@@ -930,10 +946,8 @@
       analyser.smoothingTimeConstant = 0.3;
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-
       timeDataArray = new Uint8Array(analyser.fftSize);
       freqDataArray = new Uint8Array(analyser.frequencyBinCount);
-
       requestAnimationFrame(animateMeters);
     } catch (err) {
       console.warn('AudioContext 初始化失败:', err);
@@ -945,7 +959,6 @@
       requestAnimationFrame(animateMeters);
       return;
     }
-
     analyser.getByteTimeDomainData(timeDataArray);
     let sum = 0;
     for (let i = 0; i < timeDataArray.length; i++) {
@@ -965,9 +978,7 @@
     const binStart = Math.floor(freqDataArray.length * 0.08);
     const binEnd = Math.floor(freqDataArray.length * 0.55);
     let bandSum = 0;
-    for (let i = binStart; i < binEnd; i++) {
-      bandSum += freqDataArray[i];
-    }
+    for (let i = binStart; i < binEnd; i++) bandSum += freqDataArray[i];
     const bandAvg = bandSum / (binEnd - binStart);
     let tunT = bandAvg / 130;
     if (tunT < 0) tunT = 0;
@@ -983,13 +994,7 @@
     requestAnimationFrame(animateMeters);
   }
 
-  function getFileName(path) {
-    if (!path) return '';
-    const decoded = decodeURIComponent(path);
-    const filename = decoded.split('/').pop() || '';
-    return filename.replace(/\.[^/.]+$/, '');
-  }
-
+  // ============ 滚动显示 ============
   function updateTrackDisplay(text) {
     trackDisplayInner.textContent = text;
     trackDisplayInner.style.animation = 'none';
@@ -1015,6 +1020,7 @@
     }
   }
 
+  // ============ 调谐逻辑 ============
   function posToFreq(pos) {
     return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
   }
@@ -1062,26 +1068,36 @@
     }
   }
 
+  // ============ 播放逻辑 ============
   function playStation(station) {
     if (!station || !station.songs || station.songs.length === 0) {
       setStatus('该电台没有歌曲');
       return;
     }
-    currentSongIndex = Math.floor(Math.random() * station.songs.length);
-    playSong(station.songs[currentSongIndex]);
+    // 随机选一个条目（单曲或多乐章作品）
+    const entryIndex = Math.floor(Math.random() * station.songs.length);
+    currentEntryIndex = entryIndex;
+    currentMovementIndex = 0;
+    const item = station.songs[entryIndex];
+    const movements = getMovements(item);
+    playSong(movements[0], item, 0);
   }
 
-  function playSong(file) {
+  function playSong(file, item, movementIndex) {
     initAudioContext();
-    setStatus('正在加载：' + getFileName(file));
+    const displayName = (item && isWork(item))
+      ? item.work + ' - ' + getFileName(file)
+      : getFileName(file);
+
+    setStatus('正在加载：' + displayName);
     audio.src = file;
     audio.volume = volumeLevel;
     const promise = audio.play();
     if (promise !== undefined) {
       promise.then(() => {
         isPlaying = true;
-        updateTrackDisplay(getFileName(file));
-        setStatus('正在播放：' + getFileName(file));
+        updateTrackDisplay(displayName);
+        setStatus('正在播放：' + displayName);
         playBtn.classList.add('active');
         stopBtn.classList.remove('active');
       }).catch(err => {
@@ -1093,13 +1109,39 @@
     }
   }
 
+  // 判断当前条目是否为多乐章作品
+  function currentItemIsWork() {
+    if (!lockedStation) return false;
+    return isWork(lockedStation.songs[currentEntryIndex]);
+  }
+
   function nextSong() {
     if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
       setStatus('请先选择一个电台');
       return;
     }
-    currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
-    playSong(lockedStation.songs[currentSongIndex]);
+    const item = lockedStation.songs[currentEntryIndex];
+    const movements = getMovements(item);
+
+    // 多乐章作品内：切到下一乐章
+    if (currentMovementIndex < movements.length - 1) {
+      currentMovementIndex++;
+      playSong(movements[currentMovementIndex], item, currentMovementIndex);
+      return;
+    }
+
+    // 作品的最后一个乐章或单曲播放完 → 换一个条目
+    if (isWork(item)) {
+      // 古典作品：顺序下一个作品（循环）
+      currentEntryIndex = (currentEntryIndex + 1) % lockedStation.songs.length;
+    } else {
+      // 普通单曲：随机下一首
+      currentEntryIndex = Math.floor(Math.random() * lockedStation.songs.length);
+    }
+    currentMovementIndex = 0;
+    const nextItem = lockedStation.songs[currentEntryIndex];
+    const nextMovements = getMovements(nextItem);
+    playSong(nextMovements[0], nextItem, 0);
   }
 
   function prevSong() {
@@ -1107,13 +1149,33 @@
       setStatus('请先选择一个电台');
       return;
     }
+    // 播放超过 3 秒 → 回到当前乐章开头
     if (audio.currentTime > 3) {
       audio.currentTime = 0;
       setStatus('回到开头');
       return;
     }
-    currentSongIndex = (currentSongIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
-    playSong(lockedStation.songs[currentSongIndex]);
+
+    const item = lockedStation.songs[currentEntryIndex];
+    const movements = getMovements(item);
+
+    // 多乐章作品内：回到上一乐章
+    if (currentMovementIndex > 0) {
+      currentMovementIndex--;
+      playSong(movements[currentMovementIndex], item, currentMovementIndex);
+      return;
+    }
+
+    // 第一个乐章或单曲 → 上一个条目
+    if (isWork(item)) {
+      currentEntryIndex = (currentEntryIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
+    } else {
+      currentEntryIndex = Math.floor(Math.random() * lockedStation.songs.length);
+    }
+    const prevItem = lockedStation.songs[currentEntryIndex];
+    const prevMovements = getMovements(prevItem);
+    currentMovementIndex = prevMovements.length - 1;
+    playSong(prevMovements[currentMovementIndex], prevItem, currentMovementIndex);
   }
 
   function tuneToStation(station) {
@@ -1130,13 +1192,11 @@
       updateTrackDisplay('歌单为空');
       return;
     }
-
     if (!isPowered) {
       isPowered = true;
       powerSwitch.classList.add('on');
       ledPower.classList.add('on');
     }
-
     if (lockedStation) {
       playStation(lockedStation);
     } else {
@@ -1294,7 +1354,7 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('Welcome to my radio station!\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 点击「反馈建议」可前往 GitHub 提交 issue');
+    alert('Welcome to my radio station\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台\n· VU 表显示音乐响度，FM TUNING 表随音乐跳动\n· 古典电台支持多乐章作品，顺序播放');
   });
 
   if (stations.length === 0) {
@@ -1303,7 +1363,7 @@
     statusCount.textContent = '歌单: 0 个电台';
   } else {
     const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
-    statusCount.textContent = `歌单: ${stations.length} 个电台 / ${totalSongs} 首歌`;
+    statusCount.textContent = `歌单: ${stations.length} 个电台 / ${totalSongs} 个条目`;
     setStatus('就绪，点击 PLAY 开始');
     updateTuning(stations[0].pos);
   }
