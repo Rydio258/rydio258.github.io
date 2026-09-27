@@ -29,7 +29,7 @@
 
   .tuner {
     width: 100%;
-    max-width: 1120px;
+    max-width: 1180px;
     background: #d8d8d8;
     background-image: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
     border-radius: 4px;
@@ -37,7 +37,7 @@
       0 40px 80px rgba(0,0,0,0.85),
       inset 0 1px 0 rgba(255,255,255,0.8),
       inset 0 -1px 0 rgba(0,0,0,0.2);
-    padding: 28px 36px;
+    padding: 28px 32px;
     position: relative;
   }
 
@@ -218,14 +218,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     padding: 0 4px;
   }
 
   .left-controls {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 14px;
     flex-shrink: 0;
   }
 
@@ -272,6 +272,7 @@
     border-radius: 1px;
   }
 
+  /* ===== 传输按键（雅马哈面板风格） ===== */
   .transport-key {
     display: flex;
     flex-direction: column;
@@ -282,7 +283,7 @@
   }
 
   .transport-key .key-body {
-    width: 72px;
+    width: 58px;
     height: 34px;
     background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
     border: 1px solid #8a8a86;
@@ -294,8 +295,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.68rem;
-    letter-spacing: 2px;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
     color: #333;
     font-weight: 700;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -306,7 +307,7 @@
   .transport-key .key-body::before {
     content: '';
     position: absolute;
-    left: 7px;
+    left: 5px;
     top: 50%;
     transform: translateY(-50%);
     width: 5px;
@@ -327,6 +328,12 @@
     box-shadow: 0 0 6px #e33, inset 0 1px 1px rgba(255,255,255,0.5);
   }
 
+  .transport-key.prev.active .key-body::before,
+  .transport-key.next.active .key-body::before {
+    background: #ffb347;
+    box-shadow: 0 0 6px #ffb347, inset 0 1px 1px rgba(255,255,255,0.5);
+  }
+
   .transport-key:active .key-body,
   .transport-key.pressed .key-body {
     background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
@@ -345,9 +352,17 @@
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
 
+  /* 传输按键中间的分组间隔 */
+  .transport-divider {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(180deg, transparent, #b0b0b0 40%, #b0b0b0 60%, transparent);
+    margin: 0 2px;
+  }
+
   .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
   .meter {
-    width: 220px;
+    width: 200px;
     background: #f4f4f0;
     border: 1px solid #999;
     border-radius: 3px;
@@ -359,7 +374,7 @@
 
   .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
   .big-knob {
-    width: 118px; height: 118px;
+    width: 112px; height: 112px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
     border: 2px solid #999;
@@ -383,7 +398,7 @@
     position: absolute;
     top: 8px; left: 50%;
     transform: translateX(-50%);
-    width: 4px; height: 32px;
+    width: 4px; height: 30px;
     background: #111;
     border-radius: 2px;
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
@@ -439,7 +454,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1120px;
+    max-width: 1180px;
     padding: 0 8px;
     font-size: 0.7rem;
     color: #666;
@@ -451,7 +466,7 @@
   footer a:hover { color: #c0392b; }
   .footer-links { display: flex; gap: 22px; }
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1080px) {
     .tuner { padding: 20px; }
     .brand-name { font-size: 1.3rem; }
     .brand-model { display: none; }
@@ -524,12 +539,22 @@
         <div class="small-knob" id="volumeKnob"></div>
       </div>
 
-      <div class="transport-key play" id="playBtn">
+      <div class="transport-key prev" id="prevBtn" title="上一首">
+        <div class="key-body">PREV</div>
+        <div class="key-label">◀◀</div>
+      </div>
+
+      <div class="transport-key play" id="playBtn" title="播放">
         <div class="key-body">PLAY</div>
         <div class="key-label">▶</div>
       </div>
 
-      <div class="transport-key stop" id="stopBtn">
+      <div class="transport-key next" id="nextBtn" title="下一首">
+        <div class="key-body">NEXT</div>
+        <div class="key-label">▶▶</div>
+      </div>
+
+      <div class="transport-key stop" id="stopBtn" title="停止">
         <div class="key-body">STOP</div>
         <div class="key-label">■</div>
       </div>
@@ -594,6 +619,8 @@
   const tuningKnob = document.getElementById('tuningKnob');
   const playBtn = document.getElementById('playBtn');
   const stopBtn = document.getElementById('stopBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
   const statusText = document.getElementById('statusText');
   const statusCount = document.getElementById('statusCount');
   const footerInfoLink = document.getElementById('footerInfoLink');
@@ -893,10 +920,28 @@
   }
 
   function nextSong() {
-    if (lockedStation && lockedStation.songs && lockedStation.songs.length > 0) {
-      currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
-      playSong(lockedStation.songs[currentSongIndex]);
+    if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
+      setStatus('请先选择一个电台');
+      return;
     }
+    currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
+    playSong(lockedStation.songs[currentSongIndex]);
+  }
+
+  function prevSong() {
+    if (!lockedStation || !lockedStation.songs || lockedStation.songs.length === 0) {
+      setStatus('请先选择一个电台');
+      return;
+    }
+    // 播放超过 3 秒，回到当前歌曲开头
+    if (audio.currentTime > 3) {
+      audio.currentTime = 0;
+      setStatus('回到开头');
+      return;
+    }
+    // 否则切到上一首
+    currentSongIndex = (currentSongIndex - 1 + lockedStation.songs.length) % lockedStation.songs.length;
+    playSong(lockedStation.songs[currentSongIndex]);
   }
 
   function tuneToStation(station) {
@@ -907,7 +952,7 @@
     }, 950);
   }
 
-  // ============ PLAY / STOP ============
+  // ============ PLAY / STOP / PREV / NEXT ============
   function handlePlay() {
     if (stations.length === 0) {
       setStatus('歌单为空，请检查 playlist.js');
@@ -940,8 +985,22 @@
     updateTrackDisplay('已停止');
   }
 
+  function handlePrev() {
+    prevBtn.classList.add('active');
+    setTimeout(() => prevBtn.classList.remove('active'), 200);
+    prevSong();
+  }
+
+  function handleNext() {
+    nextBtn.classList.add('active');
+    setTimeout(() => nextBtn.classList.remove('active'), 200);
+    nextSong();
+  }
+
   playBtn.addEventListener('click', handlePlay);
   stopBtn.addEventListener('click', handleStop);
+  prevBtn.addEventListener('click', handlePrev);
+  nextBtn.addEventListener('click', handleNext);
 
   // ============ 电源 ============
   powerSwitch.addEventListener('click', () => {
@@ -1063,7 +1122,7 @@
 
   footerInfoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· 点击 PLAY 按钮播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台');
+    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· PREV / PLAY / NEXT / STOP 控制播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台');
   });
 
   // ============ 初始化 ============
