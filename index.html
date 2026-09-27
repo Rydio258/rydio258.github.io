@@ -1,1066 +1,1314 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YAMAHA CT-X1 · 复古调谐器</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAMAHA CT-X1 · 复古调谐器</title>
+    <style>
+        @font-face {
+            font-family: 'Zpix';
+            src: url('Zpix.ttf') format('truetype');
+            font-display: swap;
+            font-weight: normal;
+            font-style: normal;
+        }
 
-  body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: #1a1a1a;
-    background-image: radial-gradient(ellipse at 50% 0%, #333 0%, #111 70%);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    padding: 2rem 1rem;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  .tuner {
-    width: 100%;
-    max-width: 1120px;
-    background: #d8d8d8;
-    background-image: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
-    border-radius: 4px;
-    box-shadow:
-      0 40px 80px rgba(0,0,0,0.85),
-      inset 0 1px 0 rgba(255,255,255,0.8),
-      inset 0 -1px 0 rgba(0,0,0,0.2);
-    padding: 28px 36px;
-    position: relative;
-  }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+            background-image: radial-gradient(ellipse at 50% 0%, #333 0%, #111 70%);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            padding: 2rem 1rem;
+        }
 
-  .tuner::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent, transparent 1px,
-      rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px
-    );
-    border-radius: 4px;
-    pointer-events: none;
-  }
+        .tuner {
+            width: 100%;
+            max-width: 1120px;
+            background: #d8d8d8;
+            background-image: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+            border-radius: 4px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(0,0,0,0.2);
+            padding: 28px 36px;
+            position: relative;
+        }
 
-  .brand-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #b0b0b0;
-  }
+            .tuner::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: repeating-linear-gradient( 90deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px );
+                border-radius: 4px;
+                pointer-events: none;
+            }
 
-  .brand-left { display: flex; align-items: baseline; gap: 20px; }
-  .brand-name { font-size: 1.75rem; font-weight: 700; letter-spacing: 3px; color: #111; }
-  .brand-model { font-size: 0.75rem; letter-spacing: 2px; color: #555; text-transform: uppercase; }
+        .brand-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #b0b0b0;
+        }
 
-  .brand-indicators { display: flex; gap: 24px; align-items: center; font-size: 0.7rem; letter-spacing: 1.5px; color: #555; font-weight: 600; }
-  .indicator { display: flex; align-items: center; gap: 6px; }
-  .led { width: 8px; height: 8px; border-radius: 50%; background: #333; transition: all 0.2s; }
-  .led.on { background: #e33; box-shadow: 0 0 10px #e33, inset 0 0 2px rgba(255,255,255,0.6); }
-  .led.green.on { background: #2a2; box-shadow: 0 0 10px #2a2, inset 0 0 2px rgba(255,255,255,0.6); }
+        .brand-left {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+        }
 
-  .dial-section {
-    background: #f4f4f0;
-    border: 1px solid #a0a0a0;
-    border-radius: 3px;
-    padding: 14px 20px;
-    margin-bottom: 22px;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
-    position: relative;
-  }
+        .brand-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #111;
+        }
 
-  .dial-display {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 12px;
-  }
+        .brand-model {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #555;
+            text-transform: uppercase;
+        }
 
-  .dial-frequency {
-    font-family: 'Courier New', monospace;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111;
-    letter-spacing: 2px;
-    background: #e8e8e4;
-    padding: 4px 18px;
-    border-radius: 2px;
-    border: 1px solid #b0b0b0;
-    min-width: 170px;
-    text-align: center;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    flex-shrink: 0;
-  }
+        .brand-indicators {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            color: #555;
+            font-weight: 600;
+        }
 
-  .station-tag {
-    font-family: '宋体', SimSun, 'Songti SC', STSong, serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #111;
-    background: #dedede;
-    border: 1px solid #b0b0b0;
-    border-radius: 2px;
-    padding: 4px 12px;
-    min-width: 100px;
-    max-width: 180px;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    flex-shrink: 0;
-  }
+        .indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-  .track-display {
-    flex: 1;
-    max-width: 33.33%;
-    height: 2.2rem;
-    overflow: hidden;
-    position: relative;
-    background: #e8e8e4;
-    border: 1px solid #b0b0b0;
-    border-radius: 2px;
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    font-family: '宋体', SimSun, 'Songti SC', STSong, serif;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    margin-left: auto;
-  }
+        .led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #333;
+            transition: all 0.2s;
+        }
 
-  .track-display-inner {
-    display: inline-block;
-    white-space: nowrap;
-    font-size: 1rem;
-    color: #c0392b;
-    letter-spacing: 1px;
-    font-weight: 600;
-    will-change: transform;
-  }
+            .led.on {
+                background: #e33;
+                box-shadow: 0 0 10px #e33, inset 0 0 2px rgba(255,255,255,0.6);
+            }
 
-  @keyframes marqueeMove {
-    from { transform: translateX(var(--from-x)); }
-    to   { transform: translateX(var(--to-x)); }
-  }
+            .led.green.on {
+                background: #2a2;
+                box-shadow: 0 0 10px #2a2, inset 0 0 2px rgba(255,255,255,0.6);
+            }
 
-  .dial-band-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.65rem;
-    color: #666;
-    letter-spacing: 1.5px;
-    margin-bottom: 3px;
-    font-weight: 600;
-  }
+        .dial-section {
+            background: #f4f4f0;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 14px 20px;
+            margin-bottom: 22px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+            position: relative;
+        }
 
-  .fm-scale { position: relative; height: 38px; margin-bottom: 6px; background: #fafaf8; border-top: 1px solid #999; border-bottom: 1px solid #ccc; }
-  .fm-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; }
-  .fm-tick { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; }
-  .fm-tick .line { width: 1px; height: 10px; background: #555; }
-  .fm-tick.major .line { height: 18px; background: #111; width: 1.5px; }
-  .fm-tick .num { font-size: 0.6rem; color: #333; margin-top: 3px; font-family: 'Courier New', monospace; font-weight: 600; }
+        .dial-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 12px;
+        }
 
-  .am-scale { position: relative; height: 32px; background: #fafaf8; border-top: 1px solid #999; border-bottom: 1px solid #ccc; }
-  .am-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; }
-  .am-tick { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; }
-  .am-tick .line { width: 1px; height: 8px; background: #555; }
-  .am-tick.major .line { height: 15px; background: #111; width: 1.5px; }
-  .am-tick .num { font-size: 0.55rem; color: #333; margin-top: 2px; font-family: 'Courier New', monospace; font-weight: 600; }
+        .dial-frequency {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111;
+            letter-spacing: 2px;
+            background: #e8e8e4;
+            padding: 4px 18px;
+            border-radius: 2px;
+            border: 1px solid #b0b0b0;
+            min-width: 170px;
+            text-align: center;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
 
-  .needle {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 2px;
-    background: #c0392b;
-    box-shadow: 0 0 5px rgba(192,57,43,0.7);
-    transition: left 0.05s linear;
-    z-index: 5;
-  }
-  .needle::before {
-    content: '';
-    position: absolute;
-    top: -2px; left: -4px;
-    width: 10px; height: 10px;
-    background: #c0392b;
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  }
+        .station-tag {
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #111;
+            background: #dedede;
+            border: 1px solid #b0b0b0;
+            border-radius: 2px;
+            padding: 4px 12px;
+            min-width: 100px;
+            max-width: 180px;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            image-rendering: pixelated;
+            -webkit-font-smoothing: none;
+        }
 
-  .control-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding: 0 4px;
-  }
+        .track-display {
+            flex: 1;
+            max-width: 33.33%;
+            height: 2.2rem;
+            overflow: hidden;
+            position: relative;
+            background: #e8e8e4;
+            border: 1px solid #b0b0b0;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            image-rendering: pixelated;
+            -webkit-font-smoothing: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            margin-left: auto;
+        }
 
-  .left-controls {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    flex-shrink: 0;
-  }
+        .track-display-inner {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 0.75rem;
+            color: #c0392b;
+            letter-spacing: 1px;
+            font-weight: 400;
+            font-family: 'Zpix', 'Courier New', monospace;
+            will-change: transform;
+            line-height: 1;
+            image-rendering: pixelated;
+            -webkit-font-smoothing: none;
+        }
 
-  .control-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .control-label { font-size: 0.6rem; letter-spacing: 2px; color: #555; text-transform: uppercase; font-weight: 700; }
+        @keyframes marqueeMove {
+            from {
+                transform: translateX(var(--from-x));
+            }
 
-  .switch {
-    width: 42px; height: 22px;
-    background: #b0b0b0;
-    border-radius: 2px;
-    position: relative;
-    cursor: pointer;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-    border: 1px solid #888;
-  }
-  .switch::after {
-    content: '';
-    position: absolute;
-    top: 1px; left: 1px;
-    width: 18px; height: 18px;
-    background: linear-gradient(180deg, #eee, #999);
-    border-radius: 2px;
-    transition: transform 0.15s;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-  }
-  .switch.on::after { transform: translateX(20px); background: linear-gradient(180deg, #fff, #bbb); }
+            to {
+                transform: translateX(var(--to-x));
+            }
+        }
 
-  .small-knob {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #f0f0f0, #999 60%, #666);
-    border: 2px solid #888;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
-  }
-  .small-knob::after {
-    content: '';
-    position: absolute;
-    top: 4px; left: 50%;
-    transform: translateX(-50%);
-    width: 2px; height: 14px;
-    background: #111;
-    border-radius: 1px;
-  }
+        .dial-band-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #666;
+            letter-spacing: 1.5px;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
 
-  /* ===== 卡座按键（雅马哈面板风格） ===== */
-  .transport-key {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    user-select: none;
-  }
+        .fm-scale {
+            position: relative;
+            height: 38px;
+            margin-bottom: 6px;
+            background: #fafaf8;
+            border-top: 1px solid #999;
+            border-bottom: 1px solid #ccc;
+        }
 
-  .transport-key .key-body {
-    width: 72px;
-    height: 34px;
-    background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
-    border: 1px solid #8a8a86;
-    border-radius: 2px;
-    box-shadow:
-      0 2px 3px rgba(0,0,0,0.25),
-      inset 0 1px 0 rgba(255,255,255,0.9),
-      inset 0 -1px 0 rgba(0,0,0,0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.68rem;
-    letter-spacing: 2px;
-    color: #333;
-    font-weight: 700;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    transition: all 0.06s;
-    position: relative;
-  }
+        .fm-ticks {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 6px;
+        }
 
-  .transport-key .key-body::before {
-    content: '';
-    position: absolute;
-    left: 7px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #888;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
-    transition: all 0.2s;
-  }
+        .fm-tick {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100%;
+        }
 
-  .transport-key.play.active .key-body::before {
-    background: #2ecc40;
-    box-shadow: 0 0 6px #2ecc40, inset 0 1px 1px rgba(255,255,255,0.5);
-  }
+            .fm-tick .line {
+                width: 1px;
+                height: 10px;
+                background: #555;
+            }
 
-  .transport-key.stop.active .key-body::before {
-    background: #e33;
-    box-shadow: 0 0 6px #e33, inset 0 1px 1px rgba(255,255,255,0.5);
-  }
+            .fm-tick.major .line {
+                height: 18px;
+                background: #111;
+                width: 1.5px;
+            }
 
-  .transport-key:active .key-body,
-  .transport-key.pressed .key-body {
-    background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
-    box-shadow:
-      0 0 0 rgba(0,0,0,0),
-      inset 0 2px 4px rgba(0,0,0,0.35),
-      inset 0 -1px 0 rgba(255,255,255,0.4);
-    transform: translateY(1px);
-  }
+            .fm-tick .num {
+                font-size: 0.6rem;
+                color: #333;
+                margin-top: 3px;
+                font-family: 'Courier New', monospace;
+                font-weight: 600;
+            }
 
-  .transport-key .key-label {
-    font-size: 0.5rem;
-    letter-spacing: 2px;
-    color: #666;
-    font-weight: 700;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  }
+        .am-scale {
+            position: relative;
+            height: 32px;
+            background: #fafaf8;
+            border-top: 1px solid #999;
+            border-bottom: 1px solid #ccc;
+        }
 
-  .meters-group { display: flex; gap: 16px; flex: 1; justify-content: center; }
-  .meter {
-    width: 220px;
-    background: #f4f4f0;
-    border: 1px solid #999;
-    border-radius: 3px;
-    padding: 5px 8px 3px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
-  }
-  .meter-label { font-size: 0.55rem; letter-spacing: 2px; color: #555; text-align: center; margin-bottom: 1px; font-weight: 700; }
-  .meter-svg { display: block; width: 100%; height: auto; }
+        .am-ticks {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 6px;
+        }
 
-  .big-knob-container { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
-  .big-knob {
-    width: 118px; height: 118px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
-    border: 2px solid #999;
-    position: relative;
-    cursor: pointer;
-    box-shadow:
-      0 10px 20px rgba(0,0,0,0.5),
-      inset 0 -5px 10px rgba(0,0,0,0.3),
-      inset 0 5px 10px rgba(255,255,255,0.6);
-    transition: box-shadow 0.2s;
-  }
-  .big-knob:hover {
-    box-shadow:
-      0 12px 24px rgba(0,0,0,0.6),
-      0 0 0 3px rgba(192,57,43,0.15),
-      inset 0 -5px 10px rgba(0,0,0,0.3),
-      inset 0 5px 10px rgba(255,255,255,0.6);
-  }
-  .big-knob::after {
-    content: '';
-    position: absolute;
-    top: 8px; left: 50%;
-    transform: translateX(-50%);
-    width: 4px; height: 32px;
-    background: #111;
-    border-radius: 2px;
-    box-shadow: 0 0 4px rgba(0,0,0,0.5);
-  }
-  .big-knob::before {
-    content: '';
-    position: absolute;
-    inset: 5px;
-    border-radius: 50%;
-    background: repeating-conic-gradient(
-      from 0deg,
-      transparent 0deg 4deg,
-      rgba(0,0,0,0.08) 4deg 6deg
-    );
-    pointer-events: none;
-  }
+        .am-tick {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100%;
+        }
 
-  .knob-hint {
-    font-size: 0.55rem;
-    color: #777;
-    letter-spacing: 1.5px;
-    font-weight: 600;
-    text-align: center;
-    line-height: 1.4;
-  }
-  .knob-hint strong { color: #c0392b; display: block; font-size: 0.6rem; }
+            .am-tick .line {
+                width: 1px;
+                height: 8px;
+                background: #555;
+            }
 
-  .status-bar {
-    margin-top: 14px;
-    padding: 6px 14px;
-    background: #1a1614;
-    color: #ffb347;
-    font-family: 'Courier New', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 1px;
-    border-radius: 3px;
-    border: 1px solid #0a0806;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
+            .am-tick.major .line {
+                height: 15px;
+                background: #111;
+                width: 1.5px;
+            }
 
-  .status-bar .status-text { color: #ffb347; }
-  .status-bar .status-count { color: #8a8078; }
+            .am-tick .num {
+                font-size: 0.55rem;
+                color: #333;
+                margin-top: 2px;
+                font-family: 'Courier New', monospace;
+                font-weight: 600;
+            }
 
-  footer {
-    margin-top: 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1120px;
-    padding: 0 8px;
-    font-size: 0.7rem;
-    color: #666;
-    letter-spacing: 1.5px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  footer a { color: #888; text-decoration: none; transition: color 0.2s; }
-  footer a:hover { color: #c0392b; }
-  .footer-links { display: flex; gap: 22px; }
+        .needle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #c0392b;
+            box-shadow: 0 0 5px rgba(192,57,43,0.7);
+            transition: left 0.05s linear;
+            z-index: 5;
+        }
 
-  @media (max-width: 1000px) {
-    .tuner { padding: 20px; }
-    .brand-name { font-size: 1.3rem; }
-    .brand-model { display: none; }
-    .control-row { flex-wrap: wrap; gap: 14px; }
-    .left-controls { width: 100%; justify-content: space-around; }
-    .meters-group { order: -1; width: 100%; justify-content: space-around; }
-    .meter { width: 46%; }
-    .big-knob { width: 90px; height: 90px; }
-    .big-knob::after { height: 24px; }
-    .track-display { max-width: 160px; }
-    .track-display-inner { font-size: 0.85rem; }
-    .station-tag { display: none; }
-  }
-</style>
+            .needle::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -4px;
+                width: 10px;
+                height: 10px;
+                background: #c0392b;
+                clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            }
+
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 0 4px;
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-shrink: 0;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            color: #555;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .switch {
+            width: 42px;
+            height: 22px;
+            background: #b0b0b0;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+            border: 1px solid #888;
+        }
+
+            .switch::after {
+                content: '';
+                position: absolute;
+                top: 1px;
+                left: 1px;
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(180deg, #eee, #999);
+                border-radius: 2px;
+                transition: transform 0.15s;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            }
+
+            .switch.on::after {
+                transform: translateX(20px);
+                background: linear-gradient(180deg, #fff, #bbb);
+            }
+
+        .small-knob {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #f0f0f0, #999 60%, #666);
+            border: 2px solid #888;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
+        }
+
+            .small-knob::after {
+                content: '';
+                position: absolute;
+                top: 4px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 2px;
+                height: 14px;
+                background: #111;
+                border-radius: 1px;
+            }
+
+        .transport-key {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+            .transport-key .key-body {
+                width: 72px;
+                height: 34px;
+                background: linear-gradient(180deg, #e4e4e0 0%, #cfcfcb 45%, #b8b8b4 100%);
+                border: 1px solid #8a8a86;
+                border-radius: 2px;
+                box-shadow: 0 2px 3px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.68rem;
+                letter-spacing: 2px;
+                color: #333;
+                font-weight: 700;
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                transition: all 0.06s;
+                position: relative;
+            }
+
+                .transport-key .key-body::before {
+                    content: '';
+                    position: absolute;
+                    left: 7px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 5px;
+                    height: 5px;
+                    border-radius: 50%;
+                    background: #888;
+                    box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
+                    transition: all 0.2s;
+                }
+
+            .transport-key.play.active .key-body::before {
+                background: #2ecc40;
+                box-shadow: 0 0 6px #2ecc40, inset 0 1px 1px rgba(255,255,255,0.5);
+            }
+
+            .transport-key.stop.active .key-body::before {
+                background: #e33;
+                box-shadow: 0 0 6px #e33, inset 0 1px 1px rgba(255,255,255,0.5);
+            }
+
+            .transport-key:active .key-body,
+            .transport-key.pressed .key-body {
+                background: linear-gradient(180deg, #b8b8b4 0%, #c4c4c0 50%, #d4d4d0 100%);
+                box-shadow: 0 0 0 rgba(0,0,0,0), inset 0 2px 4px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.4);
+                transform: translateY(1px);
+            }
+
+            .transport-key .key-label {
+                font-size: 0.5rem;
+                letter-spacing: 2px;
+                color: #666;
+                font-weight: 700;
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            }
+
+        .meters-group {
+            display: flex;
+            gap: 16px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .meter {
+            width: 220px;
+            background: #f4f4f0;
+            border: 1px solid #999;
+            border-radius: 3px;
+            padding: 5px 8px 3px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .meter-label {
+            font-size: 0.55rem;
+            letter-spacing: 2px;
+            color: #555;
+            text-align: center;
+            margin-bottom: 1px;
+            font-weight: 700;
+        }
+
+        .meter-svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .big-knob-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .big-knob {
+            width: 118px;
+            height: 118px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #f5f5f5, #b0b0b0 50%, #777 90%);
+            border: 2px solid #999;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 -5px 10px rgba(0,0,0,0.3), inset 0 5px 10px rgba(255,255,255,0.6);
+            transition: box-shadow 0.2s;
+        }
+
+            .big-knob:hover {
+                box-shadow: 0 12px 24px rgba(0,0,0,0.6), 0 0 0 3px rgba(192,57,43,0.15), inset 0 -5px 10px rgba(0,0,0,0.3), inset 0 5px 10px rgba(255,255,255,0.6);
+            }
+
+            .big-knob::after {
+                content: '';
+                position: absolute;
+                top: 8px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 4px;
+                height: 32px;
+                background: #111;
+                border-radius: 2px;
+                box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            }
+
+            .big-knob::before {
+                content: '';
+                position: absolute;
+                inset: 5px;
+                border-radius: 50%;
+                background: repeating-conic-gradient( from 0deg, transparent 0deg 4deg, rgba(0,0,0,0.08) 4deg 6deg );
+                pointer-events: none;
+            }
+
+        .knob-hint {
+            font-size: 0.55rem;
+            color: #777;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+            .knob-hint strong {
+                color: #c0392b;
+                display: block;
+                font-size: 0.6rem;
+            }
+
+        .status-bar {
+            margin-top: 14px;
+            padding: 6px 14px;
+            background: #1a1614;
+            color: #ffb347;
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            border-radius: 3px;
+            border: 1px solid #0a0806;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            image-rendering: pixelated;
+            -webkit-font-smoothing: none;
+        }
+
+            .status-bar .status-text {
+                color: #ffb347;
+            }
+
+            .status-bar .status-count {
+                color: #8a8078;
+            }
+
+        footer {
+            margin-top: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1120px;
+            padding: 0 8px;
+            font-size: 0.7rem;
+            color: #666;
+            letter-spacing: 1.5px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+            footer a {
+                color: #888;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+                footer a:hover {
+                    color: #c0392b;
+                }
+
+        .footer-links {
+            display: flex;
+            gap: 22px;
+        }
+
+        @media (max-width: 1000px) {
+            .tuner {
+                padding: 20px;
+            }
+
+            .brand-name {
+                font-size: 1.3rem;
+            }
+
+            .brand-model {
+                display: none;
+            }
+
+            .control-row {
+                flex-wrap: wrap;
+                gap: 14px;
+            }
+
+            .left-controls {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .meters-group {
+                order: -1;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .meter {
+                width: 46%;
+            }
+
+            .big-knob {
+                width: 90px;
+                height: 90px;
+            }
+
+                .big-knob::after {
+                    height: 24px;
+                }
+
+            .track-display {
+                max-width: 160px;
+            }
+
+            .track-display-inner {
+                font-size: 0.65rem;
+            }
+
+            .station-tag {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="tuner">
-  <div class="brand-row">
-    <div class="brand-left">
-      <div class="brand-name">YAMAHA</div>
-      <div class="brand-model">Natural Sound AM/FM Stereo Tuner · CT-X1</div>
+    <div class="tuner">
+        <div class="brand-row">
+            <div class="brand-left">
+                <div class="brand-name">YAMAHA</div>
+                <div class="brand-model">Natural Sound AM/FM Stereo Tuner · CT-X1</div>
+            </div>
+            <div class="brand-indicators">
+                <div class="indicator">
+                    <span class="led green" id="ledStereo"></span> FM STEREO
+                </div>
+                <div class="indicator">
+                    <span class="led" id="ledPower"></span> POWER
+                </div>
+            </div>
+        </div>
+
+        <div class="dial-section">
+            <div class="dial-display">
+                <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
+                <div class="station-tag" id="stationTag">—</div>
+                <div class="track-display" id="trackDisplay">
+                    <div class="track-display-inner" id="trackDisplayInner">未播放</div>
+                </div>
+            </div>
+
+            <div class="dial-band-labels">
+                <span>FM</span>
+                <span>MHz</span>
+            </div>
+            <div class="fm-scale" id="fmScale">
+                <div class="fm-ticks" id="fmTicks"></div>
+                <div class="needle" id="needle"></div>
+            </div>
+
+            <div class="dial-band-labels" style="margin-top:6px;">
+                <span>AM</span>
+                <span>kHz</span>
+            </div>
+            <div class="am-scale" id="amScale">
+                <div class="am-ticks" id="amTicks"></div>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <div class="left-controls">
+                <div class="control-group">
+                    <div class="control-label">POWER</div>
+                    <div class="switch" id="powerSwitch"></div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">OUTPUT</div>
+                    <div class="small-knob" id="volumeKnob"></div>
+                </div>
+
+                <div class="transport-key play" id="playBtn">
+                    <div class="key-body">PLAY</div>
+                    <div class="key-label">▶</div>
+                </div>
+
+                <div class="transport-key stop" id="stopBtn">
+                    <div class="key-body">STOP</div>
+                    <div class="key-label">■</div>
+                </div>
+            </div>
+
+            <div class="meters-group">
+                <div class="meter">
+                    <div class="meter-label">SIGNAL</div>
+                    <svg class="meter-svg" id="signalMeter" viewBox="0 0 160 45"></svg>
+                </div>
+                <div class="meter">
+                    <div class="meter-label">FM TUNING</div>
+                    <svg class="meter-svg" id="tuningMeter" viewBox="0 0 160 45"></svg>
+                </div>
+            </div>
+
+            <div class="big-knob-container">
+                <div class="big-knob" id="tuningKnob" title="拖动 / 滚轮调节频率，点击自动选台"></div>
+                <div class="knob-hint">
+                    TUNING
+                    <strong>点击自动选台</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span class="status-text" id="statusText">正在初始化...</span>
+            <span class="status-count" id="statusCount">歌单: —</span>
+        </div>
     </div>
-    <div class="brand-indicators">
-      <div class="indicator">
-        <span class="led green" id="ledStereo"></span> FM STEREO
-      </div>
-      <div class="indicator">
-        <span class="led" id="ledPower"></span> POWER
-      </div>
-    </div>
-  </div>
 
-  <div class="dial-section">
-    <div class="dial-display">
-      <div class="dial-frequency" id="freqDisplay">--.- MHz</div>
-      <div class="station-tag" id="stationTag">—</div>
-      <div class="track-display" id="trackDisplay">
-        <div class="track-display-inner" id="trackDisplayInner">未播放</div>
-      </div>
-    </div>
+    <footer>
+        <div>© 2025 我的 GitHub 主页</div>
+        <div class="footer-links">
+            <a href="https://github.com/" target="_blank" rel="noopener">GITHUB</a>
+            <a href="#" id="footerInfoLink">ABOUT</a>
+        </div>
+    </footer>
 
-    <div class="dial-band-labels">
-      <span>FM</span>
-      <span>MHz</span>
-    </div>
-    <div class="fm-scale" id="fmScale">
-      <div class="fm-ticks" id="fmTicks"></div>
-      <div class="needle" id="needle"></div>
-    </div>
+    <audio id="bgMusic" preload="auto"></audio>
 
-    <div class="dial-band-labels" style="margin-top:6px;">
-      <span>AM</span>
-      <span>kHz</span>
-    </div>
-    <div class="am-scale" id="amScale">
-      <div class="am-ticks" id="amTicks"></div>
-    </div>
-  </div>
+    <script src="playlist.js"></script>
 
-  <div class="control-row">
-    <div class="left-controls">
-      <div class="control-group">
-        <div class="control-label">POWER</div>
-        <div class="switch" id="powerSwitch"></div>
-      </div>
+    <script>
+        (function() {
+        const config = window.PLAYLIST || { stations: [] };
+        const stations = Array.isArray(config.stations) ? config.stations : [];
 
-      <div class="control-group">
-        <div class="control-label">OUTPUT</div>
-        <div class="small-knob" id="volumeKnob"></div>
-      </div>
+        const FM_MIN = 76.0, FM_MAX = 108.0;
+        const AM_MIN = 520, AM_MAX = 1600;
 
-      <div class="transport-key play" id="playBtn">
-        <div class="key-body">PLAY</div>
-        <div class="key-label">▶</div>
-      </div>
+        const audio = document.getElementById('bgMusic');
+        const freqDisplay = document.getElementById('freqDisplay');
+        const stationTag = document.getElementById('stationTag');
+        const trackDisplay = document.getElementById('trackDisplay');
+        const trackDisplayInner = document.getElementById('trackDisplayInner');
+        const needle = document.getElementById('needle');
+        const powerSwitch = document.getElementById('powerSwitch');
+        const ledPower = document.getElementById('ledPower');
+        const ledStereo = document.getElementById('ledStereo');
+        const volumeKnob = document.getElementById('volumeKnob');
+        const tuningKnob = document.getElementById('tuningKnob');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusText = document.getElementById('statusText');
+        const statusCount = document.getElementById('statusCount');
+        const footerInfoLink = document.getElementById('footerInfoLink');
 
-      <div class="transport-key stop" id="stopBtn">
-        <div class="key-body">STOP</div>
-        <div class="key-label">■</div>
-      </div>
-    </div>
+        let isPowered = false;
+        let currentPos = 20;
+        let lockedStation = null;
+        let isPlaying = false;
+        let currentSongIndex = 0;
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+        let signalNeedle, tuningNeedle;
+        let volumeLevel = 0.7;
 
-    <div class="meters-group">
-      <div class="meter">
-        <div class="meter-label">SIGNAL</div>
-        <svg class="meter-svg" id="signalMeter" viewBox="0 0 160 45"></svg>
-      </div>
-      <div class="meter">
-        <div class="meter-label">FM TUNING</div>
-        <svg class="meter-svg" id="tuningMeter" viewBox="0 0 160 45"></svg>
-      </div>
-    </div>
+        function setStatus(text) {
+        statusText.textContent = text;
+        console.log('[状态]', text);
+        }
 
-    <div class="big-knob-container">
-      <div class="big-knob" id="tuningKnob" title="拖动 / 滚轮调节频率，点击自动选台"></div>
-      <div class="knob-hint">
-        TUNING
-        <strong>点击自动选台</strong>
-      </div>
-    </div>
-  </div>
+        // ============ 表头构建 ============
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        const CX = 80, CY = 42;
+        const START_DEG = -155, END_DEG = -25;
+        const R_ARC = 30;
+        const R_TICK_IN = 25;
+        const R_TICK_OUT = 30;
+        const NEEDLE_LEN = 32;
 
-  <div class="status-bar">
-    <span class="status-text" id="statusText">正在初始化...</span>
-    <span class="status-count" id="statusCount">歌单: —</span>
-  </div>
-</div>
+        function polar(deg, r) {
+        const rad = deg * Math.PI / 180;
+        return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
+        }
 
-<footer>
-  <div>© 2025 我的 GitHub 主页</div>
-  <div class="footer-links">
-    <a href="https://github.com/" target="_blank" rel="noopener">GITHUB</a>
-    <a href="#" id="footerInfoLink">ABOUT</a>
-  </div>
-</footer>
+        function buildMeter(svg, color) {
+        const bg = document.createElementNS(SVG_NS, 'rect');
+        bg.setAttribute('x', 0); bg.setAttribute('y', 0);
+        bg.setAttribute('width', 160); bg.setAttribute('height', 45);
+        bg.setAttribute('rx', 2);
+        bg.setAttribute('fill', '#fafaf5');
+        svg.appendChild(bg);
 
-<audio id="bgMusic" preload="auto"></audio>
+        const [ax1, ay1] = polar(START_DEG, R_ARC);
+        const [ax2, ay2] = polar(END_DEG, R_ARC);
+        const arc = document.createElementNS(SVG_NS, 'path');
+        arc.setAttribute('d', `M ${ax1} ${ay1} A ${R_ARC} ${R_ARC} 0 0 1 ${ax2} ${ay2}`);
+        arc.setAttribute('fill', 'none');
+        arc.setAttribute('stroke', '#333');
+        arc.setAttribute('stroke-width', '1.2');
+        svg.appendChild(arc);
 
-<script src="playlist.js"></script>
+        for (let i = 0; i <= 8; i++) {
+        const t = i / 8;
+        const angle = START_DEG + (END_DEG - START_DEG) * t;
+        const rIn = (i % 4 === 0) ? R_TICK_IN - 3 : R_TICK_IN;
+        const p1 = polar(angle, rIn);
+        const p2 = polar(angle, R_TICK_OUT);
+        const tick = document.createElementNS(SVG_NS, 'line');
+        tick.setAttribute('x1', p1[0]); tick.setAttribute('y1', p1[1]);
+        tick.setAttribute('x2', p2[0]); tick.setAttribute('y2', p2[1]);
+        tick.setAttribute('stroke', '#333');
+        tick.setAttribute('stroke-width', (i % 4 === 0) ? '1.3' : '0.6');
+        svg.appendChild(tick);
+        }
 
-<script>
-(function() {
-  const config = window.PLAYLIST || { stations: [] };
-  const stations = Array.isArray(config.stations) ? config.stations : [];
+        const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.75;
+        const rp1 = polar(degRedStart, R_ARC);
+        const rp2 = polar(END_DEG, R_ARC);
+        const redArc = document.createElementNS(SVG_NS, 'path');
+        redArc.setAttribute('d', `M ${rp1[0]} ${rp1[1]} A ${R_ARC} ${R_ARC} 0 0 1 ${rp2[0]} ${rp2[1]}`);
+        redArc.setAttribute('fill', 'none');
+        redArc.setAttribute('stroke', '#c0392b');
+        redArc.setAttribute('stroke-width', '2');
+        redArc.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(redArc);
 
-  const FM_MIN = 76.0, FM_MAX = 108.0;
-  const AM_MIN = 520, AM_MAX = 1600;
+        const needleEl = document.createElementNS(SVG_NS, 'line');
+        needleEl.setAttribute('x1', CX);
+        needleEl.setAttribute('y1', CY);
+        needleEl.setAttribute('x2', CX);
+        needleEl.setAttribute('y2', CY - NEEDLE_LEN);
+        needleEl.setAttribute('stroke', color);
+        needleEl.setAttribute('stroke-width', '1.6');
+        needleEl.setAttribute('stroke-linecap', 'round');
+        needleEl.setAttribute('transform', `rotate(${START_DEG + 90} ${CX} ${CY})`);
+        svg.appendChild(needleEl);
 
-  const audio = document.getElementById('bgMusic');
-  const freqDisplay = document.getElementById('freqDisplay');
-  const stationTag = document.getElementById('stationTag');
-  const trackDisplay = document.getElementById('trackDisplay');
-  const trackDisplayInner = document.getElementById('trackDisplayInner');
-  const needle = document.getElementById('needle');
-  const powerSwitch = document.getElementById('powerSwitch');
-  const ledPower = document.getElementById('ledPower');
-  const ledStereo = document.getElementById('ledStereo');
-  const volumeKnob = document.getElementById('volumeKnob');
-  const tuningKnob = document.getElementById('tuningKnob');
-  const playBtn = document.getElementById('playBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const statusText = document.getElementById('statusText');
-  const statusCount = document.getElementById('statusCount');
-  const footerInfoLink = document.getElementById('footerInfoLink');
+        const pivot = document.createElementNS(SVG_NS, 'circle');
+        pivot.setAttribute('cx', CX);
+        pivot.setAttribute('cy', CY);
+        pivot.setAttribute('r', 3);
+        pivot.setAttribute('fill', '#222');
+        svg.appendChild(pivot);
 
-  let isPowered = false;
-  let currentPos = 20;
-  let lockedStation = null;
-  let isPlaying = false;
-  let currentSongIndex = 0;
-  let audioContext = null;
-  let analyser = null;
-  let dataArray = null;
-  let signalNeedle, tuningNeedle;
-  let volumeLevel = 0.7;
+        return needleEl;
+        }
 
-  function setStatus(text) {
-    statusText.textContent = text;
-    console.log('[状态]', text);
-  }
+        signalNeedle = buildMeter(document.getElementById('signalMeter'), '#111');
+        tuningNeedle = buildMeter(document.getElementById('tuningMeter'), '#c0392b');
 
-  // ============ 表头构建 ============
-  const SVG_NS = 'http://www.w3.org/2000/svg';
-  const CX = 80, CY = 42;
-  const START_DEG = -155, END_DEG = -25;
-  const R_ARC = 30;
-  const R_TICK_IN = 25;
-  const R_TICK_OUT = 30;
-  const NEEDLE_LEN = 32;
-
-  function polar(deg, r) {
-    const rad = deg * Math.PI / 180;
-    return [CX + r * Math.cos(rad), CY + r * Math.sin(rad)];
-  }
-
-  function buildMeter(svg, color) {
-    const bg = document.createElementNS(SVG_NS, 'rect');
-    bg.setAttribute('x', 0); bg.setAttribute('y', 0);
-    bg.setAttribute('width', 160); bg.setAttribute('height', 45);
-    bg.setAttribute('rx', 2);
-    bg.setAttribute('fill', '#fafaf5');
-    svg.appendChild(bg);
-
-    const [ax1, ay1] = polar(START_DEG, R_ARC);
-    const [ax2, ay2] = polar(END_DEG, R_ARC);
-    const arc = document.createElementNS(SVG_NS, 'path');
-    arc.setAttribute('d', `M ${ax1} ${ay1} A ${R_ARC} ${R_ARC} 0 0 1 ${ax2} ${ay2}`);
-    arc.setAttribute('fill', 'none');
-    arc.setAttribute('stroke', '#333');
-    arc.setAttribute('stroke-width', '1.2');
-    svg.appendChild(arc);
-
-    for (let i = 0; i <= 8; i++) {
-      const t = i / 8;
-      const angle = START_DEG + (END_DEG - START_DEG) * t;
-      const rIn = (i % 4 === 0) ? R_TICK_IN - 3 : R_TICK_IN;
-      const p1 = polar(angle, rIn);
-      const p2 = polar(angle, R_TICK_OUT);
-      const tick = document.createElementNS(SVG_NS, 'line');
-      tick.setAttribute('x1', p1[0]); tick.setAttribute('y1', p1[1]);
-      tick.setAttribute('x2', p2[0]); tick.setAttribute('y2', p2[1]);
-      tick.setAttribute('stroke', '#333');
-      tick.setAttribute('stroke-width', (i % 4 === 0) ? '1.3' : '0.6');
-      svg.appendChild(tick);
-    }
-
-    const degRedStart = START_DEG + (END_DEG - START_DEG) * 0.75;
-    const rp1 = polar(degRedStart, R_ARC);
-    const rp2 = polar(END_DEG, R_ARC);
-    const redArc = document.createElementNS(SVG_NS, 'path');
-    redArc.setAttribute('d', `M ${rp1[0]} ${rp1[1]} A ${R_ARC} ${R_ARC} 0 0 1 ${rp2[0]} ${rp2[1]}`);
-    redArc.setAttribute('fill', 'none');
-    redArc.setAttribute('stroke', '#c0392b');
-    redArc.setAttribute('stroke-width', '2');
-    redArc.setAttribute('stroke-linecap', 'round');
-    svg.appendChild(redArc);
-
-    const needleEl = document.createElementNS(SVG_NS, 'line');
-    needleEl.setAttribute('x1', CX);
-    needleEl.setAttribute('y1', CY);
-    needleEl.setAttribute('x2', CX);
-    needleEl.setAttribute('y2', CY - NEEDLE_LEN);
-    needleEl.setAttribute('stroke', color);
-    needleEl.setAttribute('stroke-width', '1.6');
-    needleEl.setAttribute('stroke-linecap', 'round');
-    needleEl.setAttribute('transform', `rotate(${START_DEG + 90} ${CX} ${CY})`);
-    svg.appendChild(needleEl);
-
-    const pivot = document.createElementNS(SVG_NS, 'circle');
-    pivot.setAttribute('cx', CX);
-    pivot.setAttribute('cy', CY);
-    pivot.setAttribute('r', 3);
-    pivot.setAttribute('fill', '#222');
-    svg.appendChild(pivot);
-
-    return needleEl;
-  }
-
-  signalNeedle = buildMeter(document.getElementById('signalMeter'), '#111');
-  tuningNeedle = buildMeter(document.getElementById('tuningMeter'), '#c0392b');
-
-  // ============ 刻度构建 ============
-  function buildFMScale() {
-    const container = document.getElementById('fmTicks');
-    const total = 32;
-    for (let i = 0; i <= total; i++) {
-      const freq = FM_MIN + i;
-      const tick = document.createElement('div');
-      tick.className = 'fm-tick' + (i % 5 === 0 ? ' major' : '');
-      const line = document.createElement('div');
-      line.className = 'line';
-      tick.appendChild(line);
-      if (i % 2 === 0) {
+        // ============ 刻度构建 ============
+        function buildFMScale() {
+        const container = document.getElementById('fmTicks');
+        const total = 32;
+        for (let i = 0; i <= total; i++) {
+        const freq = FM_MIN + i;
+        const tick = document.createElement('div');
+        tick.className = 'fm-tick' + (i % 5 === 0 ? ' major' : '');
+        const line = document.createElement('div');
+        line.className = 'line';
+        tick.appendChild(line);
+        if (i % 2 === 0) {
         const num = document.createElement('div');
         num.className = 'num';
         num.textContent = freq;
         tick.appendChild(num);
-      }
-      container.appendChild(tick);
-    }
-  }
+        }
+        container.appendChild(tick);
+        }
+        }
 
-  function buildAMScale() {
-    const container = document.getElementById('amTicks');
-    const total = 10;
-    for (let i = 0; i <= total; i++) {
-      const freq = AM_MIN + i * (AM_MAX - AM_MIN) / total;
-      const tick = document.createElement('div');
-      tick.className = 'am-tick major';
-      const line = document.createElement('div');
-      line.className = 'line';
-      tick.appendChild(line);
-      const num = document.createElement('div');
-      num.className = 'num';
-      num.textContent = Math.round(freq);
-      tick.appendChild(num);
-      container.appendChild(tick);
-    }
-  }
+        function buildAMScale() {
+        const container = document.getElementById('amTicks');
+        const total = 10;
+        for (let i = 0; i <= total; i++) {
+        const freq = AM_MIN + i * (AM_MAX - AM_MIN) / total;
+        const tick = document.createElement('div');
+        tick.className = 'am-tick major';
+        const line = document.createElement('div');
+        line.className = 'line';
+        tick.appendChild(line);
+        const num = document.createElement('div');
+        num.className = 'num';
+        num.textContent = Math.round(freq);
+        tick.appendChild(num);
+        container.appendChild(tick);
+        }
+        }
 
-  buildFMScale();
-  buildAMScale();
+        buildFMScale();
+        buildAMScale();
 
-  // ============ 音频分析 ============
-  function initAudioContext() {
-    if (audioContext) {
-      if (audioContext.state === 'suspended') audioContext.resume();
-      return;
-    }
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      audioContext = new AC();
-      const source = audioContext.createMediaElementSource(audio);
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 1024;
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      dataArray = new Uint8Array(analyser.fftSize);
-      requestAnimationFrame(animateMeters);
-    } catch (err) {
-      console.warn('AudioContext 初始化失败:', err);
-    }
-  }
+        // ============ 音频分析 ============
+        function initAudioContext() {
+        if (audioContext) {
+        if (audioContext.state === 'suspended') audioContext.resume();
+        return;
+        }
+        try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AC();
+        const source = audioContext.createMediaElementSource(audio);
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 1024;
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        dataArray = new Uint8Array(analyser.fftSize);
+        requestAnimationFrame(animateMeters);
+        } catch (err) {
+        console.warn('AudioContext 初始化失败:', err);
+        }
+        }
 
-  function animateMeters() {
-    if (analyser && dataArray) {
-      analyser.getByteTimeDomainData(dataArray);
-      let sum = 0;
-      for (let i = 0; i < dataArray.length; i++) {
+        function animateMeters() {
+        if (analyser && dataArray) {
+        analyser.getByteTimeDomainData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
         const v = (dataArray[i] - 128) / 128;
         sum += v * v;
-      }
-      const rms = Math.sqrt(sum / dataArray.length);
-      const db = 20 * Math.log10(rms + 0.0001);
-      let t = (db + 35) / 35;
-      if (t < 0) t = 0;
-      if (t > 1) t = 1;
-      const angle = -65 + t * 130;
-      signalNeedle.setAttribute('transform', `rotate(${angle} ${CX} ${CY})`);
-    }
-    requestAnimationFrame(animateMeters);
-  }
+        }
+        const rms = Math.sqrt(sum / dataArray.length);
+        const db = 20 * Math.log10(rms + 0.0001);
+        let t = (db + 35) / 35;
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        const angle = -65 + t * 130;
+        signalNeedle.setAttribute('transform', `rotate(${angle} ${CX} ${CY})`);
+        }
+        requestAnimationFrame(animateMeters);
+        }
 
-  // ============ 从路径提取文件名（不含后缀） ============
-  function getFileName(path) {
-    if (!path) return '';
-    const decoded = decodeURIComponent(path);
-    const filename = decoded.split('/').pop() || '';
-    return filename.replace(/\.[^/.]+$/, '');
-  }
+        // ============ 从路径提取文件名（不含后缀） ============
+        function getFileName(path) {
+        if (!path) return '';
+        const decoded = decodeURIComponent(path);
+        const filename = decoded.split('/').pop() || '';
+        return filename.replace(/\.[^/.]+$/, '');
+        }
 
-  // ============ 滚动显示 ============
-  function updateTrackDisplay(text) {
-    trackDisplayInner.textContent = text;
-    trackDisplayInner.style.animation = 'none';
-    trackDisplayInner.style.transform = 'translateX(0)';
+        // ============ 滚动显示 ============
+        function updateTrackDisplay(text) {
+        trackDisplayInner.textContent = text;
+        trackDisplayInner.style.animation = 'none';
+        trackDisplayInner.style.transform = 'translateX(0)';
 
-    void trackDisplayInner.offsetWidth;
+        void trackDisplayInner.offsetWidth;
 
-    const tunerEl = document.querySelector('.tuner');
-    const panelWidth = tunerEl.clientWidth - 72;
-    const threshold = panelWidth / 3;
+        const tunerEl = document.querySelector('.tuner');
+        const panelWidth = tunerEl.clientWidth - 72;
+        const threshold = panelWidth / 3;
 
-    const cw = trackDisplay.clientWidth - 24;
-    const tw = trackDisplayInner.scrollWidth;
+        const cw = trackDisplay.clientWidth - 24;
+        const tw = trackDisplayInner.scrollWidth;
 
-    if (tw > threshold) {
-      const totalDist = cw + tw;
-      const speed = 60;
-      const dur = Math.max(totalDist / speed, 4);
-      trackDisplayInner.style.setProperty('--from-x', cw + 'px');
-      trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
-      trackDisplayInner.style.setProperty('--dur', dur + 's');
-      trackDisplayInner.style.animation = 'marqueeMove var(--dur) linear infinite';
-    }
-  }
+        if (tw > threshold) {
+        const totalDist = cw + tw;
+        const speed = 60;
+        const dur = Math.max(totalDist / speed, 4);
+        trackDisplayInner.style.setProperty('--from-x', cw + 'px');
+        trackDisplayInner.style.setProperty('--to-x', -tw + 'px');
+        trackDisplayInner.style.setProperty('--dur', dur + 's');
+        trackDisplayInner.style.animation = 'marqueeMove var(--dur) linear infinite';
+        }
+        }
 
-  // ============ 调谐逻辑 ============
-  function posToFreq(pos) {
-    return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
-  }
+        // ============ 调谐逻辑 ============
+        function posToFreq(pos) {
+        return FM_MIN + (pos / 100) * (FM_MAX - FM_MIN);
+        }
 
-  function formatFreq(pos) {
-    return posToFreq(pos).toFixed(1) + ' MHz';
-  }
+        function formatFreq(pos) {
+        return posToFreq(pos).toFixed(1) + ' MHz';
+        }
 
-  function updateTuning(pos) {
-    if (pos < 0) pos = 0;
-    if (pos > 100) pos = 100;
-    currentPos = pos;
+        function updateTuning(pos) {
+        if (pos < 0) pos = 0;
+        if (pos > 100) pos = 100;
+        currentPos = pos;
 
-    freqDisplay.textContent = formatFreq(pos);
-    needle.style.left = pos + '%';
+        freqDisplay.textContent = formatFreq(pos);
+        needle.style.left = pos + '%';
 
-    let found = null;
-    for (const st of stations) {
-      if (Math.abs(pos - st.pos) < 1.2) {
+        let found = null;
+        for (const st of stations) {
+        if (Math.abs(pos - st.pos) < 1.2) {
         found = st;
         break;
-      }
-    }
+        }
+        }
 
-    if (found) {
-      ledStereo.classList.add('on');
-      const offset = (pos - found.pos) / 1.2;
-      tuningNeedle.setAttribute('transform', `rotate(${offset * 15} ${CX} ${CY})`);
-      stationTag.textContent = found.name || '—';
+        if (found) {
+        ledStereo.classList.add('on');
+        const offset = (pos - found.pos) / 1.2;
+        tuningNeedle.setAttribute('transform', `rotate(${offset * 15} ${CX} ${CY})`);
+        stationTag.textContent = found.name || '—';
 
-      if (found !== lockedStation) {
+        if (found !== lockedStation) {
         lockedStation = found;
         if (isPowered) {
-          playStation(found);
+        playStation(found);
         } else {
-          setStatus('已锁定电台：' + found.name + '（电源未开）');
+        setStatus('已锁定电台：' + found.name + '（电源未开）');
         }
-      }
-    } else {
-      lockedStation = null;
-      ledStereo.classList.remove('on');
-      tuningNeedle.setAttribute('transform', `rotate(0 ${CX} ${CY})`);
-      stationTag.textContent = '—';
-      if (isPowered && isPlaying) {
+        }
+        } else {
+        lockedStation = null;
+        ledStereo.classList.remove('on');
+        tuningNeedle.setAttribute('transform', `rotate(0 ${CX} ${CY})`);
+        stationTag.textContent = '—';
+        if (isPowered && isPlaying) {
         audio.pause();
         isPlaying = false;
-      }
-    }
-  }
+        }
+        }
+        }
 
-  function playStation(station) {
-    if (!station || !station.songs || station.songs.length === 0) {
-      setStatus('该电台没有歌曲');
-      return;
-    }
-    currentSongIndex = Math.floor(Math.random() * station.songs.length);
-    playSong(station.songs[currentSongIndex]);
-  }
+        function playStation(station) {
+        if (!station || !station.songs || station.songs.length === 0) {
+        setStatus('该电台没有歌曲');
+        return;
+        }
+        currentSongIndex = Math.floor(Math.random() * station.songs.length);
+        playSong(station.songs[currentSongIndex]);
+        }
 
-  function playSong(file) {
-    initAudioContext();
-    setStatus('正在加载：' + getFileName(file));
-    audio.src = file;
-    audio.volume = volumeLevel;
-    const promise = audio.play();
-    if (promise !== undefined) {
-      promise.then(() => {
+        function playSong(file) {
+        initAudioContext();
+        setStatus('正在加载：' + getFileName(file));
+        audio.src = file;
+        audio.volume = volumeLevel;
+        const promise = audio.play();
+        if (promise !== undefined) {
+        promise.then(() => {
         isPlaying = true;
         updateTrackDisplay(getFileName(file));
         setStatus('正在播放：' + getFileName(file));
         playBtn.classList.add('active');
         stopBtn.classList.remove('active');
-      }).catch(err => {
+        }).catch(err => {
         console.warn('播放失败:', err);
         isPlaying = false;
         setStatus('播放失败：' + (err.message || err.name));
         updateTrackDisplay('播放失败');
-      });
-    }
-  }
-
-  function nextSong() {
-    if (lockedStation && lockedStation.songs && lockedStation.songs.length > 0) {
-      currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
-      playSong(lockedStation.songs[currentSongIndex]);
-    }
-  }
-
-  function tuneToStation(station) {
-    needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
-    updateTuning(station.pos);
-    setTimeout(() => {
-      needle.style.transition = 'left 0.05s linear';
-    }, 950);
-  }
-
-  // ============ PLAY / STOP ============
-  function handlePlay() {
-    if (stations.length === 0) {
-      setStatus('歌单为空，请检查 playlist.js');
-      updateTrackDisplay('歌单为空');
-      return;
-    }
-
-    if (!isPowered) {
-      isPowered = true;
-      powerSwitch.classList.add('on');
-      ledPower.classList.add('on');
-    }
-
-    if (lockedStation) {
-      playStation(lockedStation);
-    } else {
-      const randomStation = stations[Math.floor(Math.random() * stations.length)];
-      tuneToStation(randomStation);
-    }
-  }
-
-  function handleStop() {
-    audio.pause();
-    audio.currentTime = 0;
-    isPlaying = false;
-    playBtn.classList.remove('active');
-    stopBtn.classList.add('active');
-    setTimeout(() => stopBtn.classList.remove('active'), 200);
-    setStatus('已停止');
-    updateTrackDisplay('已停止');
-  }
-
-  playBtn.addEventListener('click', handlePlay);
-  stopBtn.addEventListener('click', handleStop);
-
-  // ============ 电源 ============
-  powerSwitch.addEventListener('click', () => {
-    isPowered = !isPowered;
-    powerSwitch.classList.toggle('on', isPowered);
-    ledPower.classList.toggle('on', isPowered);
-
-    if (isPowered) {
-      setStatus('电源已开');
-      updateTuning(currentPos);
-    } else {
-      audio.pause();
-      isPlaying = false;
-      ledStereo.classList.remove('on');
-      stationTag.textContent = '—';
-      setStatus('电源已关');
-      updateTrackDisplay('关机');
-      playBtn.classList.remove('active');
-    }
-  });
-
-  // ============ 音量 ============
-  volumeKnob.addEventListener('click', () => {
-    volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
-    audio.volume = volumeLevel;
-    setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
-  });
-
-  // ============ 大旋钮 ============
-  let isDragging = false;
-  let startY = 0;
-  let startPos = 0;
-  let totalMovement = 0;
-  let lastY = 0;
-
-  tuningKnob.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startY = e.clientY;
-    lastY = e.clientY;
-    totalMovement = 0;
-    startPos = currentPos;
-    e.preventDefault();
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    totalMovement += Math.abs(e.clientY - lastY);
-    lastY = e.clientY;
-    const deltaY = startY - e.clientY;
-    updateTuning(startPos + deltaY * 0.15);
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (isDragging && totalMovement < 6) {
-      if (stations.length === 0) {
-        setStatus('歌单为空，请检查 playlist.js');
-      } else {
-        if (!isPowered) {
-          isPowered = true;
-          powerSwitch.classList.add('on');
-          ledPower.classList.add('on');
+        });
         }
-        const randomStation = stations[Math.floor(Math.random() * stations.length)];
-        tuneToStation(randomStation);
-      }
-    }
-    isDragging = false;
-  });
+        }
 
-  tuningKnob.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    if (!isPowered) {
-      isPowered = true;
-      powerSwitch.classList.add('on');
-      ledPower.classList.add('on');
-    }
-    const delta = e.deltaY > 0 ? -0.5 : 0.5;
-    updateTuning(currentPos + delta);
-  }, { passive: false });
+        function nextSong() {
+        if (lockedStation && lockedStation.songs && lockedStation.songs.length > 0) {
+        currentSongIndex = (currentSongIndex + 1) % lockedStation.songs.length;
+        playSong(lockedStation.songs[currentSongIndex]);
+        }
+        }
 
-  tuningKnob.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    startY = e.touches[0].clientY;
-    lastY = e.touches[0].clientY;
-    totalMovement = 0;
-    startPos = currentPos;
-  }, { passive: true });
+        function tuneToStation(station) {
+        needle.style.transition = 'left 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
+        updateTuning(station.pos);
+        setTimeout(() => {
+        needle.style.transition = 'left 0.05s linear';
+        }, 950);
+        }
 
-  document.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    totalMovement += Math.abs(e.touches[0].clientY - lastY);
-    lastY = e.touches[0].clientY;
-    const deltaY = startY - e.touches[0].clientY;
-    updateTuning(startPos + deltaY * 0.15);
-  }, { passive: true });
+        // ============ PLAY / STOP ============
+        function handlePlay() {
+        if (stations.length === 0) {
+        setStatus('歌单为空，请检查 playlist.js');
+        updateTrackDisplay('歌单为空');
+        return;
+        }
 
-  document.addEventListener('touchend', () => {
-    if (isDragging && totalMovement < 8) {
-      if (stations.length === 0) return;
-      if (!isPowered) {
+        if (!isPowered) {
         isPowered = true;
         powerSwitch.classList.add('on');
         ledPower.classList.add('on');
-      }
-      const randomStation = stations[Math.floor(Math.random() * stations.length)];
-      tuneToStation(randomStation);
-    }
-    isDragging = false;
-  });
+        }
 
-  audio.addEventListener('ended', () => {
-    if (isPowered && lockedStation) nextSong();
-  });
+        if (lockedStation) {
+        playStation(lockedStation);
+        } else {
+        const randomStation = stations[Math.floor(Math.random() * stations.length)];
+        tuneToStation(randomStation);
+        }
+        }
 
-  audio.addEventListener('error', () => {
-    setStatus('音频加载失败：' + getFileName(audio.src));
-    updateTrackDisplay('加载失败');
-  });
+        function handleStop() {
+        audio.pause();
+        audio.currentTime = 0;
+        isPlaying = false;
+        playBtn.classList.remove('active');
+        stopBtn.classList.add('active');
+        setTimeout(() => stopBtn.classList.remove('active'), 200);
+        setStatus('已停止');
+        updateTrackDisplay('已停止');
+        }
 
-  footerInfoLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· 点击 PLAY 按钮播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台');
-  });
+        playBtn.addEventListener('click', handlePlay);
+        stopBtn.addEventListener('click', handleStop);
 
-  // ============ 初始化 ============
-  if (stations.length === 0) {
-    setStatus('未检测到歌单，请检查 playlist.js');
-    updateTrackDisplay('歌单未加载');
-    statusCount.textContent = '歌单: 0 个电台';
-  } else {
-    const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
-    statusCount.textContent = `歌单: ${stations.length} 个电台 / ${totalSongs} 首歌`;
-    setStatus('就绪，点击 PLAY 开始');
-    updateTuning(stations[0].pos);
-  }
-  audio.volume = volumeLevel;
-})();
-</script>
+        // ============ 电源 ============
+        powerSwitch.addEventListener('click', () => {
+        isPowered = !isPowered;
+        powerSwitch.classList.toggle('on', isPowered);
+        ledPower.classList.toggle('on', isPowered);
+
+        if (isPowered) {
+        setStatus('电源已开');
+        updateTuning(currentPos);
+        } else {
+        audio.pause();
+        isPlaying = false;
+        ledStereo.classList.remove('on');
+        stationTag.textContent = '—';
+        setStatus('电源已关');
+        updateTrackDisplay('关机');
+        playBtn.classList.remove('active');
+        }
+        });
+
+        // ============ 音量 ============
+        volumeKnob.addEventListener('click', () => {
+        volumeLevel = volumeLevel >= 0.9 ? 0.2 : volumeLevel + 0.25;
+        audio.volume = volumeLevel;
+        setStatus('音量：' + Math.round(volumeLevel * 100) + '%');
+        });
+
+        // ============ 大旋钮 ============
+        let isDragging = false;
+        let startY = 0;
+        let startPos = 0;
+        let totalMovement = 0;
+        let lastY = 0;
+
+        tuningKnob.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        lastY = e.clientY;
+        totalMovement = 0;
+        startPos = currentPos;
+        e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        totalMovement += Math.abs(e.clientY - lastY);
+        lastY = e.clientY;
+        const deltaY = startY - e.clientY;
+        updateTuning(startPos + deltaY * 0.15);
+        });
+
+        document.addEventListener('mouseup', () => {
+        if (isDragging && totalMovement < 6) {
+        if (stations.length === 0) {
+        setStatus('歌单为空，请检查 playlist.js');
+        } else {
+        if (!isPowered) {
+        isPowered = true;
+        powerSwitch.classList.add('on');
+        ledPower.classList.add('on');
+        }
+        const randomStation = stations[Math.floor(Math.random() * stations.length)];
+        tuneToStation(randomStation);
+        }
+        }
+        isDragging = false;
+        });
+
+        tuningKnob.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (!isPowered) {
+        isPowered = true;
+        powerSwitch.classList.add('on');
+        ledPower.classList.add('on');
+        }
+        const delta = e.deltaY > 0 ? -0.5 : 0.5;
+        updateTuning(currentPos + delta);
+        }, { passive: false });
+
+        tuningKnob.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        startY = e.touches[0].clientY;
+        lastY = e.touches[0].clientY;
+        totalMovement = 0;
+        startPos = currentPos;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        totalMovement += Math.abs(e.touches[0].clientY - lastY);
+        lastY = e.touches[0].clientY;
+        const deltaY = startY - e.touches[0].clientY;
+        updateTuning(startPos + deltaY * 0.15);
+        }, { passive: true });
+
+        document.addEventListener('touchend', () => {
+        if (isDragging && totalMovement < 8) {
+        if (stations.length === 0) return;
+        if (!isPowered) {
+        isPowered = true;
+        powerSwitch.classList.add('on');
+        ledPower.classList.add('on');
+        }
+        const randomStation = stations[Math.floor(Math.random() * stations.length)];
+        tuneToStation(randomStation);
+        }
+        isDragging = false;
+        });
+
+        audio.addEventListener('ended', () => {
+        if (isPowered && lockedStation) nextSong();
+        });
+
+        audio.addEventListener('error', () => {
+        setStatus('音频加载失败：' + getFileName(audio.src));
+        updateTrackDisplay('加载失败');
+        });
+
+        footerInfoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('YAMAHA CT-X1 复古调谐器\n\n· 歌单在 playlist.js 中配置\n· 点击 PLAY 按钮播放\n· 拖动大旋钮或滚轮调节频率\n· 点击大旋钮自动随机选台');
+        });
+
+        // ============ 初始化 ============
+        if (stations.length === 0) {
+        setStatus('未检测到歌单，请检查 playlist.js');
+        updateTrackDisplay('歌单未加载');
+        statusCount.textContent = '歌单: 0 个电台';
+        } else {
+        const totalSongs = stations.reduce((sum, st) => sum + (st.songs ? st.songs.length : 0), 0);
+        statusCount.textContent = `歌单: ${stations.length} 个电台 / ${totalSongs} 首歌`;
+        setStatus('就绪，点击 PLAY 开始');
+        updateTuning(stations[0].pos);
+        }
+        audio.volume = volumeLevel;
+        })();
+    </script>
 
 </body>
 </html>
