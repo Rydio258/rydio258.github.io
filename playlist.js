@@ -1,9 +1,5 @@
 // 此文件由脚本自动生成，请勿手动修改
-<<<<<<< HEAD
-// 生成时间：2026-09-27 23:11:52
-=======
-// 生成时间：2026-09-27 14:20:56
->>>>>>> dfd44fdaf6356face14302b4ea4586d7cb722f78
+// 生成时间：2026-09-28 17:37:20
 
 window.PLAYLIST = {
     stations: [
@@ -28,7 +24,6 @@ window.PLAYLIST = {
             name: 'classical',
             songs: [
                 {
-<<<<<<< HEAD
                     work: 'Mussorgsky Pictures at an Exhibition',
                     movements: [
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ I. Gnomus.mp3',
@@ -49,8 +44,6 @@ window.PLAYLIST = {
                     ]
                 },
                 {
-=======
->>>>>>> dfd44fdaf6356face14302b4ea4586d7cb722f78
                     work: 'Rachmaninoff Piano Concerto No.2',
                     movements: [
                         'music/classical/Rachmaninoff Piano Concerto No.2/Piano Concerto No. 2 in C Minor, Op. 18 I. Moderato - 王羽佳, 洛杉矶爱乐乐团, 古斯塔夫・杜达梅尔.mp3',
