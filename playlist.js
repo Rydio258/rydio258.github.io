@@ -26,20 +26,20 @@ window.PLAYLIST = {
                 {
                     work: 'Mussorgsky Pictures at an Exhibition',
                     movements: [
+                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 1.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ I. Gnomus.mp3',
+                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 2.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ II. The Old Castle.mp3',
+                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 3.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ III. Tuileries.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IV. Bydlo.mp3',
-                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IX. The Hut on Fowl\'s Legs (Baba-Yaga).mp3',
-                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 1.mp3',
-                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 2.mp3',
-                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 3.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ Promenade 4.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ V. Ballet of the Unhatched Chicks.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VI. Samuel Goldenberg & Schmuÿle.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VII. The marketplace in Limoges.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VIIIa. Catacombs - Catacombae Sepulcrum Romanum.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VIIIb. Cum mortuis in lingua mortua.mp3',
+                        "music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IX. The Hut on Fowl's Legs (Baba-Yaga).mp3",
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ X. The Great Gate of Kiev.mp3'
                     ]
                 },
