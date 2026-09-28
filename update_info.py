@@ -3,25 +3,23 @@
 """
 自动生成电台级和单曲级 info.txt，并同步到 GitHub。
 
-- 普通电台：调用 DeepSeek 生成 info.txt（可联网查询网易云）
-- classical 电台：不联网、不调用 DeepSeek，只读取本地 info.txt 并做格式规范化
+排序优先级：
+    1. mp3 ID3 标签里的 disc + track 序号（最准）
+    2. 文件名开头的数字
+    3. 自然排序
 
-classical 目录下的结构：
-    music/classical/
-    ├── info.txt                       ← 电台级（本地手写，脚本只格式化）
-    └── Beethoven Symphony No.5/
-        ├── info.txt                   ← 作品级（本地手写）
-        ├── 01.mp3
-        ├── 02.mp3
-        └── 03.mp3
+元数据优先级（用于生成 info）：
+    1. ID3 标签里的 title / artist / album
+    2. 文件名解析
 
 用法：
-    python update_info.py                     # 全量处理
-    python update_info.py --only-new          # 只为没有 info 的条目生成
-    python update_info.py --no-songs          # 只处理电台级
-    python update_info.py --no-netease        # 不用网易云
-    python update_info.py --watch             # 循环运行
-    python update_info.py --dry-run           # 只打印，不调用 API、不写文件
+    python update_info.py
+    python update_info.py --only-new
+    python update_info.py --no-songs
+    python update_info.py --no-netease
+    python update_info.py --watch
+    python update_info.py --dry-run
+    python update_info.py --show-meta      # 只打印每首歌的元数据，不生成
 """
 
 import os
@@ -40,6 +38,14 @@ except ImportError:
     print('缺少依赖：pip install requests')
     sys.exit(1)
 
+try:
+    from mutagen import File as MutagenFile
+    from mutagen.id3 import ID3
+    HAS_MUTAGEN = True
+except ImportError:
+    HAS_MUTAGEN = False
+    print('提示：安装 mutagen 可读取 mp3 元数据 → pip install mutagen')
+
 
 # ==================== 配置 ====================
 
@@ -51,8 +57,8 @@ API_TIMEOUT = 60
 REPO_DIR = Path(__file__).resolve().parent
 MUSIC_DIR = REPO_DIR / 'music'
 
-# 这些目录被特殊处理：只读取本地 info.txt，不联网
 LOCAL_ONLY_DIRS = ['classical']
+NO_NETEASE_DIRS = ['classical']
 
 CACHE_FILE = REPO_DIR / '.info-cache.json'
 GIT_COMMIT_MSG = 'auto: 更新 info.txt'
@@ -71,6 +77,119 @@ NETEASE_TIMEOUT = 10
 
 def log(msg):
     print(f'[{time.strftime("%H:%M:%S")}] {msg}')
+
+
+# ==================== 元数据读取 ====================
+
+def read_mp3_meta(path):
+    """
+    读取 mp3 元数据，返回：
+    {
+        'track': int | None,
+        'disc': int | None,
+        'title': str,
+        'artist': str,
+        'album': str,
+        'album_artist': str,
+        'year': str,
+        'genre': str,
+        'composer': str,
+        'duration': float,
+    }
+    读不到就返回空字段。
+    """
+    meta = {
+        'track': None,
+        'disc': None,
+        'title': '',
+        'artist': '',
+        'album': '',
+        'album_artist': '',
+        'year': '',
+        'genre': '',
+        'composer': '',
+        'duration': 0.0,
+    }
+
+    if not HAS_MUTAGEN:
+        return meta
+
+    try:
+        audio = MutagenFile(str(path), easy=True)
+        if audio is None:
+            return meta
+
+        # 时长
+        if audio.info and hasattr(audio.info, 'length'):
+            meta['duration'] = round(audio.info.length, 1)
+
+        def first(key):
+            v = audio.get(key)
+            if not v:
+                return ''
+            return str(v[0]).strip()
+
+        meta['title'] = first('title')
+        meta['artist'] = first('artist')
+        meta['album'] = first('album')
+        meta['album_artist'] = first('albumartist')
+        meta['year'] = first('date') or first('year')
+        meta['genre'] = first('genre')
+        meta['composer'] = first('composer')
+
+        # track 可能形如 "3" 或 "3/12"
+        trk = first('tracknumber')
+        if trk:
+            m = re.match(r'^\s*(\d+)', trk)
+            if m:
+                meta['track'] = int(m.group(1))
+
+        # disc 可能形如 "1" 或 "1/2"
+        disc = first('discnumber')
+        if disc:
+            m = re.match(r'^\s*(\d+)', disc)
+            if m:
+                meta['disc'] = int(m.group(1))
+
+    except Exception as e:
+        log(f'    读取元数据失败 {path.name}: {e}')
+
+    return meta
+
+
+def get_sort_key(path):
+    """
+    排序 key：
+    1. 有 disc + track → (0, disc, track, 自然名)
+    2. 只有 track       → (0, 1, track, 自然名)
+    3. 文件名有数字     → (1, 0, number, 自然名)
+    4. 都没有           → (2, 0, 0, 自然名)
+    """
+    meta = read_mp3_meta(path) if HAS_MUTAGEN else {}
+
+    stem = path.stem
+    natural = natural_sort_key(stem)
+
+    disc = meta.get('disc')
+    track = meta.get('track')
+
+    if track is not None:
+        return (0, disc if disc is not None else 1, track, natural)
+
+    # 退回文件名开头的数字
+    m = re.match(r'^\s*(\d+)', stem)
+    if m:
+        return (1, 0, int(m.group(1)), natural)
+
+    return (2, 0, 0, natural)
+
+
+def sort_files(paths):
+    return sorted(paths, key=get_sort_key)
+
+
+def natural_sort_key(s):
+    return [int(c) if c.isdigit() else c.lower() for c in re.split(r'(\d+)', s)]
 
 
 # ==================== 缓存 ====================
@@ -93,7 +212,7 @@ def save_cache(cache):
 
 def hash_paths(paths):
     h = hashlib.sha256()
-    for p in sorted(paths):
+    for p in sorted(paths, key=lambda x: x.name):
         try:
             size = p.stat().st_size if p.exists() else 0
         except OSError:
@@ -102,17 +221,31 @@ def hash_paths(paths):
     return h.hexdigest()
 
 
-# ==================== 文件名解析 ====================
+# ==================== 文件名解析（元数据缺失时用） ====================
 
 def parse_filename(name):
     stem = Path(name).stem.strip()
-    if ' - ' in stem:
-        parts = stem.split(' - ', 1)
+    stem_clean = re.sub(r'^\s*\d+[\s.\-_]+', '', stem).strip()
+    if not stem_clean:
+        stem_clean = stem
+
+    if ' - ' in stem_clean:
+        parts = stem_clean.split(' - ', 1)
         return {'artist': parts[0].strip(), 'title': parts[1].strip()}
-    if '-' in stem and ' ' not in stem.split('-')[0]:
-        parts = stem.split('-', 1)
+    if '-' in stem_clean and ' ' not in stem_clean.split('-')[0]:
+        parts = stem_clean.split('-', 1)
         return {'artist': parts[0].strip(), 'title': parts[1].strip()}
-    return {'artist': '', 'title': stem}
+    return {'artist': '', 'title': stem_clean}
+
+
+def get_song_display_name(path):
+    """生成用于显示和 AI 输入的曲名"""
+    meta = read_mp3_meta(path) if HAS_MUTAGEN else {}
+    title = meta.get('title', '').strip()
+    if title:
+        return title
+    parsed = parse_filename(path.name)
+    return parsed['title'] or path.stem
 
 
 # ==================== 网易云 ====================
@@ -173,9 +306,16 @@ def strip_lrc_timestamps(lyric):
     return '\n'.join(lines)
 
 
-def fetch_netease(mp3_name):
-    parsed = parse_filename(mp3_name)
-    keyword = f'{parsed["artist"]} {parsed["title"]}'.strip() or parsed['title']
+def fetch_netease(mp3_path):
+    meta = read_mp3_meta(mp3_path) if HAS_MUTAGEN else {}
+    artist = meta.get('artist', '').strip()
+    title = meta.get('title', '').strip()
+    if not title:
+        parsed = parse_filename(mp3_path.name)
+        artist = artist or parsed['artist']
+        title = parsed['title']
+
+    keyword = f'{artist} {title}'.strip() or title
     info = netease_search(keyword)
     if not info:
         return None
@@ -187,36 +327,34 @@ def fetch_netease(mp3_name):
 # ==================== 扫描 ====================
 
 def scan_stations():
-    """
-    返回：
-    [
-        {
-            'name': 'C-POP',
-            'path': Path,
-            'songs': [Path, ...],       # 单曲
-            'works': [                  # 多乐章作品
-                {'name': 'Beethoven Symphony No.5', 'path': Path}
-            ],
-            'local_only': False,        # 是否只处理本地 info
-        },
-        ...
-    ]
-    """
     if not MUSIC_DIR.is_dir():
         return []
 
     local_only_lower = [d.lower() for d in LOCAL_ONLY_DIRS]
     stations = []
 
-    for d in sorted(MUSIC_DIR.iterdir()):
-        if not d.is_dir() or d.name.startswith('.'):
-            continue
+    top_dirs = sorted(
+        [d for d in MUSIC_DIR.iterdir() if d.is_dir() and not d.name.startswith('.')],
+        key=lambda p: natural_sort_key(p.name)
+    )
 
+    for d in top_dirs:
         songs = []
         works = []
-        for item in sorted(d.iterdir()):
+
+        items = sort_files([
+            x for x in d.iterdir() if not x.name.startswith('.')
+        ])
+
+        for item in items:
             if item.is_dir():
                 works.append({'name': item.name, 'path': item})
+                # 作品里的 mp3 按元数据排序
+                inner_mp3s = sort_files([
+                    f for f in item.iterdir()
+                    if f.is_file() and f.suffix.lower() == '.mp3'
+                ])
+                songs.extend(inner_mp3s)
             elif item.suffix.lower() == '.mp3':
                 songs.append(item)
 
@@ -264,18 +402,22 @@ def call_deepseek(system, user, temperature=0.8):
 
 def build_station_prompt(station):
     lines = [f'电台名称：{station["name"]}', '']
+
     if station['songs']:
-        lines.append('单曲列表：')
-        for s in station['songs']:
-            lines.append(f'  - {s.stem}')
+        lines.append('曲目列表（按播放顺序）：')
+        for idx, s in enumerate(station['songs'], 1):
+            display = get_song_display_name(s)
+            lines.append(f'  {idx:02d}. {display}')
         lines.append('')
+
     if station['works']:
         lines.append('多乐章作品：')
         for w in station['works']:
             lines.append(f'  - {w["name"]}')
+
     context = '\n'.join(lines)
 
-    return f"""你是一个复古调频电台的主持人。根据下面的歌曲信息，为名为「{station['name']}」的电台写一份 info.txt 文案。
+    return f"""你是一个复古调频电台的主持人。根据下面的曲目信息，为名为「{station['name']}」的电台写一份 info.txt 文案。
 
 {context}
 
@@ -299,78 +441,83 @@ def build_station_prompt(station):
 - 直接输出，不要用 markdown 代码块包裹"""
 
 
-def build_song_prompt(mp3_name, netease_info):
-    parts = [f'歌曲文件：{mp3_name}']
+def build_song_prompt(mp3_path, netease_info):
+    meta = read_mp3_meta(mp3_path) if HAS_MUTAGEN else {}
+
+    parts = [f'音频文件：{mp3_path.name}']
+
+    # 优先用 ID3 元数据
+    if meta.get('title'):
+        parts.append(f'曲名：{meta["title"]}')
+    if meta.get('artist'):
+        parts.append(f'艺术家：{meta["artist"]}')
+    if meta.get('album'):
+        parts.append(f'专辑：{meta["album"]}')
+    if meta.get('composer'):
+        parts.append(f'作曲家：{meta["composer"]}')
+    if meta.get('track'):
+        parts.append(f'音轨号：{meta["track"]}')
+    if meta.get('year'):
+        parts.append(f'年份：{meta["year"]}')
+
+    # 网易云补充
     if netease_info:
-        parts.append(f'歌曲名：{netease_info["title"]}')
-        if netease_info.get('artist'):
-            parts.append(f'歌手：{netease_info["artist"]}')
-        if netease_info.get('album'):
-            parts.append(f'专辑：{netease_info["album"]}')
+        if not meta.get('title') and netease_info.get('title'):
+            parts.append(f'曲名（网易云）：{netease_info["title"]}')
+        if not meta.get('artist') and netease_info.get('artist'):
+            parts.append(f'艺术家（网易云）：{netease_info["artist"]}')
         if netease_info.get('lyrics'):
             parts.append('')
             parts.append('歌词节选：')
             parts.append(netease_info['lyrics'][:600])
+
     context = '\n'.join(parts)
 
-    return f"""你是一个音乐电台的撰稿人。根据下面的信息，为这首歌写一份 info.txt。
+    return f"""你是一个古典音乐或流行音乐的撰稿人。根据下面的信息，为这首曲子写一份 info.txt。
 
 {context}
 
 严格按下面的格式输出，不要加其他说明、标题或代码块标记：
 
-第一段：1-2 句歌曲简介，点出这首歌给人的第一印象。
+第一段：1-2 句简介，点出这首曲子的第一印象。
 
 ---
-创作/发行背景，2-3 句话，简洁有信息量。
+创作背景或相关细节，2-3 句话，简洁有信息量。如果是古典音乐，可以谈作品所属的套曲、作曲家、创作年代或改编情况。
 
 ---
-听感点评，2-3 句话，可以谈编曲、情绪、值得注意的段落，克制、有画面感。
+听感点评，2-3 句话，可以谈配器、情绪、节奏、值得注意的段落，克制、有画面感。
 
 要求：
 - 全中文
 - 每段不要超过 120 字
 - 不要 emoji
 - 直接输出，不要用 markdown 代码块包裹
-- 如果信息不足以判断，就基于歌名和歌手合理推想，不要编造具体的年份或事件"""
+- 如果上面有"音轨号"和"专辑"信息，请把它们对应到作品的正确位置
+- 不要编造具体的年份或事件，如果不确定就用"约"或"据传"
+"""
 
 
 # ==================== 本地 info 规范化 ====================
 
 def normalize_local_info(path, dry_run=False):
-    """
-    读取本地 info.txt，做轻量格式化：
-    - 统一换行符
-    - 去掉行尾空白
-    - 保证末尾有换行
-    返回是否有变化。
-    """
     if not path.exists():
         return False
-
     try:
         content = path.read_text(encoding='utf-8')
     except Exception as e:
         log(f'    ✗ 读取失败：{e}')
         return False
 
-    # 统一换行
     normalized = content.replace('\r\n', '\n').replace('\r', '\n')
-
-    # 逐行去尾部空白
     lines = [line.rstrip() for line in normalized.split('\n')]
     normalized = '\n'.join(lines)
-
-    # 保证末尾一个换行
     normalized = normalized.rstrip('\n') + '\n'
 
     if normalized == content:
         return False
-
     if dry_run:
         log(f'    [DRY RUN] 将规范化 {path.relative_to(REPO_DIR)}')
         return False
-
     path.write_text(normalized, encoding='utf-8')
     log(f'    ✓ 规范化 {path.relative_to(REPO_DIR)}')
     return True
@@ -402,18 +549,10 @@ def should_process(info_path, current_hash, cached_hash, only_new):
 # ==================== 处理：本地模式 ====================
 
 def process_local_station(station, cache, args, changed_paths):
-    """
-    classical 等本地电台：
-    - 不调用 DeepSeek
-    - 电台级 info.txt 若存在 → 规范化
-    - 电台级 info.txt 若不存在 → 提示用户手写
-    - 每个作品的 info.txt 同理
-    """
     name = station['name']
     station_dir = station['path']
     any_change = False
 
-    # ---------- 电台级 info ----------
     info_path = station_dir / 'info.txt'
     if info_path.exists():
         log(f'  本地电台级：{name}')
@@ -423,7 +562,6 @@ def process_local_station(station, cache, args, changed_paths):
     else:
         log(f'  本地电台级：{name}（缺 info.txt，跳过）')
 
-    # ---------- 作品级 info ----------
     for work in station['works']:
         work_name = work['name']
         work_path = work['path']
@@ -434,7 +572,6 @@ def process_local_station(station, cache, args, changed_paths):
                 changed_paths.append(work_info)
                 any_change = True
         else:
-            # 没有 info.txt 也不报错，只是提示
             log(f'    作品：{work_name}（缺 info.txt，跳过）')
 
     return any_change
@@ -447,7 +584,6 @@ def process_station(station, cache, args, changed_paths):
     station_dir = station['path']
     any_change = False
 
-    # ---------- 电台级 info ----------
     all_items = list(station['songs'])
     for w in station['works']:
         all_items.append(w['path'])
@@ -475,9 +611,11 @@ def process_station(station, cache, args, changed_paths):
     else:
         log(f'  跳过电台级：{name}')
 
-    # ---------- 单曲级 info ----------
     if args.no_songs:
         return any_change
+
+    no_netease_dirs_lower = [d.lower() for d in NO_NETEASE_DIRS]
+    skip_netease_here = args.no_netease or (name.lower() in no_netease_dirs_lower)
 
     for mp3 in station['songs']:
         song_info_path = mp3.with_suffix('.info.txt')
@@ -488,19 +626,20 @@ def process_station(station, cache, args, changed_paths):
         if not should_process(song_info_path, song_hash, song_cached_hash, args.only_new):
             continue
 
-        log(f'    单曲：{mp3.stem}')
+        display = get_song_display_name(mp3)
+        log(f'    单曲：{display}')
         try:
             netease_info = None
-            if not args.no_netease and not args.dry_run:
-                netease_info = fetch_netease(mp3.name)
+            if not skip_netease_here and not args.dry_run:
+                netease_info = fetch_netease(mp3)
                 if netease_info:
                     log(f'      网易云命中：{netease_info["title"]} - {netease_info["artist"]}')
 
             if args.dry_run:
-                log(f'      [DRY RUN] 将查询网易云并调用 API')
+                log(f'      [DRY RUN] 将调用 API')
                 continue
 
-            prompt = build_song_prompt(mp3.name, netease_info)
+            prompt = build_song_prompt(mp3, netease_info)
             content = call_deepseek(
                 '你是一个中文音乐撰稿人，文字克制、有画面感，不浮夸。',
                 prompt,
@@ -563,6 +702,42 @@ def git_sync(changed_paths, commit_msg=GIT_COMMIT_MSG, dry_run=False):
         return False
 
 
+# ==================== 显示元数据 ====================
+
+def show_metadata():
+    """打印每个 mp3 的元数据和排序结果"""
+    stations = scan_stations()
+    if not stations:
+        log('没有找到任何电台')
+        return
+
+    for station in stations:
+        if not station['songs']:
+            continue
+        print(f'\n===== {station["name"]} =====')
+        for idx, mp3 in enumerate(station['songs'], 1):
+            meta = read_mp3_meta(mp3) if HAS_MUTAGEN else {}
+            track = meta.get('track')
+            disc = meta.get('disc')
+            title = meta.get('title', '')
+            artist = meta.get('artist', '')
+            album = meta.get('album', '')
+
+            flag = '  '
+            if track is None and not re.match(r'^\s*\d+', mp3.stem):
+                flag = '⚠ '
+
+            print(f'{flag}{idx:02d}. {mp3.name}')
+            if track is not None or disc is not None:
+                print(f'       disc {disc or "-"} / track {track or "-"}')
+            if title:
+                print(f'       title: {title}')
+            if artist:
+                print(f'       artist: {artist}')
+            if album:
+                print(f'       album: {album}')
+
+
 # ==================== 主流程 ====================
 
 def run_once(args):
@@ -605,12 +780,17 @@ def main():
     parser.add_argument('--only-new', action='store_true', help='只为没有 info.txt 的条目生成')
     parser.add_argument('--no-songs', action='store_true', help='只生成电台级，跳过单曲级')
     parser.add_argument('--no-netease', action='store_true', help='不查询网易云')
+    parser.add_argument('--show-meta', action='store_true', help='只打印元数据和排序，不生成')
     args = parser.parse_args()
+
+    if args.show_meta:
+        show_metadata()
+        return
 
     if not API_KEY and not args.dry_run:
         print('错误：请设置环境变量 DEEPSEEK_API_KEY')
-        print('  Windows:      set DEEPSEEK_API_KEY=（填入你的 key）')
-        print('  macOS/Linux:  export DEEPSEEK_API_KEY=（填入你的 key）')
+        print('  Windows:      set DEEPSEEK_API_KEY=YOUR_KEY_HERE')
+        print('  macOS/Linux:  export DEEPSEEK_API_KEY=YOUR_KEY_HERE')
         sys.exit(1)
 
     if args.watch:
