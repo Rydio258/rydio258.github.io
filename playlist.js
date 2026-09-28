@@ -39,7 +39,7 @@ window.PLAYLIST = {
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VII. The marketplace in Limoges.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VIIIa. Catacombs - Catacombae Sepulcrum Romanum.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VIIIb. Cum mortuis in lingua mortua.mp3',
-                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IX. The Hut on Fowl\'s Legs (Baba-Yaga).mp3',
+                        "music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IX. The Hut on Fowl's Legs (Baba-Yaga).mp3",
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ X. The Great Gate of Kiev.mp3'
                     ]
                 },
