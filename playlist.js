@@ -1,5 +1,5 @@
 // 此文件由脚本自动生成，请勿手动修改
-// 生成时间：2026-10-11 16:27:41
+// 生成时间：2026-10-11 19:06:25
 
 window.PLAYLIST = {
     stations: [
@@ -20,7 +20,7 @@ window.PLAYLIST = {
             ]
         },
         {
-            pos: 90,
+            pos: 50,
             name: 'classical',
             songs: [
                 {
@@ -48,7 +48,7 @@ window.PLAYLIST = {
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VII. The marketplace in Limoges.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VIIIa. Catacombs - Catacombae Sepulcrum Romanum.mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ VIIIb. Cum mortuis in lingua mortua.mp3',
-                        "music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IX. The Hut on Fowl's Legs (Baba-Yaga).mp3",
+                        'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ IX. The Hut on Fowl\'s Legs (Baba-Yaga).mp3',
                         'music/classical/Mussorgsky Pictures at an Exhibition/Pictures at an Exhibition_ X. The Great Gate of Kiev.mp3'
                     ]
                 },
@@ -60,6 +60,21 @@ window.PLAYLIST = {
                         'music/classical/Rachmaninoff Piano Concerto No.2/Piano Concerto No. 2 in C Minor, Op. 18 III. Allegro scherzando - 王羽佳, 洛杉矶爱乐乐团, 古斯塔夫・杜达梅尔.mp3'
                     ]
                 }
+            ]
+        },
+        {
+            pos: 90,
+            name: 'R \'N\' R',
+            songs: [
+                'music/R \'N\' R/If - Pink Floyd.mp3',
+                'music/R \'N\' R/Jump - Van Halen.mp3',
+                'music/R \'N\' R/Norwegian Wood (This Bird Has Flown) - The Beatles.mp3',
+                'music/R \'N\' R/I Can See Clearly Now - Hothouse Flower.mp3',
+                'music/R \'N\' R/Here Comes the Sun - The Beatles.mp3',
+                'music/R \'N\' R/Is This the World We Created... - Queen.mp3',
+                'music/R \'N\' R/November Rain - Guns \'N\' Roses.mp3',
+                'music/R \'N\' R/Amani - Beyond.mp3',
+                'music/R \'N\' R/Hammer To Fall - Queen.mp3'
             ]
         }
     ]
