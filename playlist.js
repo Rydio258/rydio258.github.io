@@ -1,5 +1,5 @@
 // 此文件由脚本自动生成，请勿手动修改
-// 生成时间：2026-09-28 22:21:19
+// 生成时间：2026-10-11 16:27:41
 
 window.PLAYLIST = {
     stations: [
@@ -23,6 +23,15 @@ window.PLAYLIST = {
             pos: 90,
             name: 'classical',
             songs: [
+                {
+                    work: 'Chopin Ballades',
+                    movements: [
+                        'music/classical/Chopin Ballades/Ballade No. 1 in G Minor, Op. 23.mp3',
+                        'music/classical/Chopin Ballades/Ballade No. 2 in F Major, Op. 38.mp3',
+                        'music/classical/Chopin Ballades/Ballade No. 3 in A-Flat Major, Op. 47.mp3',
+                        'music/classical/Chopin Ballades/Ballade No. 4 in F Minor, Op. 52.mp3'
+                    ]
+                },
                 {
                     work: 'Mussorgsky Pictures at an Exhibition',
                     movements: [
